@@ -1,4 +1,4 @@
-# MAD76 - Race against AI Cars
+# MAD76 - Mini-Auto-Drive AI Car Racing
 
 <img src="https://github.com/user-attachments/assets/716f57c0-00cd-4aff-b988-9254ffb9919d" width="200"/>
 
