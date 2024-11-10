@@ -55,6 +55,6 @@ Robot Racing Kit
 
 -   Installation Manuals
 
-    -   [Vision](../vision/vision.md)
+    -   [Computer Vision](doc/vision/vision.md)
 
 [^1]: frank.traenkle\@hs-heilbronn.de
