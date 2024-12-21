@@ -1,10 +1,6 @@
----
-author:
-- |
-  Frank Tränkle[^1]\
-  Hochschule Heilbronn, Germany
-title: 'Mini-Auto-Drive MAD76'
----
+author: Frank Tränkle[^1]  
+Hochschule Heilbronn, Germany
+title: Mini-Auto-Drive MAD76
 
 Mini-Auto-Drive MAD76
 =====================
@@ -21,8 +17,8 @@ Mini-Auto-Drive MAD76
 
 -   Program your own AI
 
--   \@home \@school \@university \@automotive partners \@open source
-    \@Hochschule Heilbronn \@Automotive Systems Engineering
+-   @home @school @university @automotive partners @open source
+    @Hochschule Heilbronn @Automotive Systems Engineering
 
 -   \#Computer Vision \#Motion Planning \#Motion Control \#Deep Neural
     Networks \#Reinforcement Learning \#Raspberry Pi Programmming \#C++
@@ -53,8 +49,10 @@ Robot Racing Kit
 
     -   Race Simulation
 
--   Installation Manuals
+-   User Manuals
 
-    -   [Computer Vision](doc/vision/vision.md)
+    -   [Installation](doc/install/install.md)
 
-[^1]: frank.traenkle\@hs-heilbronn.de
+    -   [Computer Vision Configuration](doc/vision/vision.md)
+
+[^1]: frank.traenkle@hs-heilbronn.de
