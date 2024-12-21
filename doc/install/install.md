@@ -1,5 +1,10 @@
-author: Frank Tränkle[^1]
-title: Mini-Auto-Drive (MAD76) Installation
+author: Frank Tränkle[^1]  
+Hochschule Heilbronn, Germany
+bibliography: ../lib/bib.bib
+csl: ../lib/ieee.csl
+link-citations: true
+reference-section-title: References
+title: MAD76 Installation
 
 MAD76 Box
 =========
@@ -121,7 +126,7 @@ Raspberry Pi Installation
 Raspbian OS
 -----------
 
--   Download and start installer: <https://raspberrypi.com/software>
+-   Download and start installer \[[1](#ref-raspberrypi:sw)\]
 
     -   Rasberry Pi OS with desktop
 
@@ -188,15 +193,10 @@ WiringPi
 ROS2
 ----
 
--   Building ROS2 Iron Irwini from source:
+-   Building ROS2 Iron Irwini from source
+    \[[2](#ref-ros:buildonlinux)\],
+    \[[3](#ref-ros:installubuntusource)\]
 
-    -   <https://docs.ros.org/en/eloquent/Installation/Linux-Development-Setup.html>
-
-    -   <https://docs.ros.org/en/iron/Installation/Alternatives/Ubuntu-Development-Setup.html>
-
-    ```{=html}
-    <!-- -->
-    ```
         mkdir -p ~/src/ros2_iron
         mkdir -p ~/src/ros2_iron/src
         cd ~/src/ros2_iron
@@ -338,5 +338,33 @@ MAD76 Software
         echo "@mad		 -	 rtprio		 98" >> /etc/security/limits.conf
         echo "@mad		 -	 memlock	 unlimited" >> /etc/security/limits.conf
         shutdown -r 0
+
+References [bibliography]
+==========
+
+<div id="refs" class="references" markdown="1">
+
+<div id="ref-raspberrypi:sw" markdown="1">
+
+\[1\] Raspberry Pi Foundation, “Raspberry Pi Software.” 2024. Available:
+<https://raspberrypi.com/software>
+
+</div>
+
+<div id="ref-ros:buildonlinux" markdown="1">
+
+\[2\] ROS, “Building ROS2 on Linux.” 2024. Available:
+<https://docs.ros.org/en/eloquent/Installation/Linux-Development-Setup.html>
+
+</div>
+
+<div id="ref-ros:installubuntusource" markdown="1">
+
+\[3\] ROS, “Installation Alternatives Ubuntu (Source).” 2024. Available:
+<https://docs.ros.org/en/iron/Installation/Alternatives/Ubuntu-Development-Setup.html>
+
+</div>
+
+</div>
 
 [^1]: frank.traenkle@hs-heilbronn.de
