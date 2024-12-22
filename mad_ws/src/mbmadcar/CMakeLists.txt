@@ -67,14 +67,15 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME}
 )
 
-install(DIRECTORY
-  launch
-  DESTINATION share/${PROJECT_NAME})
+if(MAD24)
+  install(DIRECTORY
+    launch
+    DESTINATION share/${PROJECT_NAME})
+endif()
 
 install(DIRECTORY
   data
   DESTINATION share/${PROJECT_NAME})
-
 
 install(DIRECTORY
   scripts/

@@ -57,8 +57,10 @@ install(DIRECTORY
   DESTINATION include
 )
 
-install(DIRECTORY
-  scripts/
-  DESTINATION lib/${PROJECT_NAME})
+if(MAD24)
+  install(DIRECTORY
+    scripts/
+    DESTINATION lib/${PROJECT_NAME})
+endif()
 
 ament_package()
