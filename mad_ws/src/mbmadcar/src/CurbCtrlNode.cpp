@@ -1,0 +1,299 @@
+/**
+  * MODBAS
+  * madcar
+  * 
+  * CurbCtrlNode
+  * from Robin Stumberger
+  * 
+  * Copyright (C) 2019, Frank Traenkle, http://www.modbas.de
+  * 
+  */
+
+#include <memory>
+#include <cstdint>
+#include <iostream>
+#include <mutex>
+#include <boost/log/core.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/trivial.hpp>
+#include "rclcpp/rclcpp.hpp"
+#include <diagnostic_updater/diagnostic_updater.hpp>
+#include "mbsafe/Platform.hpp"
+#include "mbsafe/CheckpointSequence.hpp"
+#include "mbsafe/CheckpointDeadlineMonitor.hpp"
+#include "mbsafe/CheckpointJitterMonitor.hpp"
+#include "mbsafe/Task.hpp"
+#include "mbmadmsgs/msg/car_inputs.hpp"
+#include "mbmadmsgs/msg/car_outputs_ext_list.hpp"
+#include "mbmadmsgs/msg/drive_maneuver.hpp"
+#include "mbmadmsgs/msg/ctrl_reference.hpp"
+#include "mbmadmsgs/srv/track_get_waypoints.hpp"
+#ifdef MAD24
+#include "mbmad/CarParameters24.hpp"
+#else
+#include "mbmad/CarParameters.hpp"
+#endif
+#include "mbmad/CheckpointGraph.hpp"
+#include "SpeedController.hpp"
+#include "PositionController.hpp"
+#include "PathController.hpp"
+#include "Acc.hpp"
+#include "OperationModeFsm.hpp"
+
+
+namespace mbmad
+{
+
+using namespace std::chrono_literals;
+
+/**
+* @brief The CurbCtrlNode C++ class
+*/
+class CurbCtrlNode : public rclcpp::Node
+{
+public:
+  /**
+   * @brief The only constructor
+   */
+  CurbCtrlNode()
+    : Node { "CurbCtrlNode", "/mad/car0" }, pathController { *this }
+  {
+    cpSeq.registerMonitor(cpJitterMonReceive);
+    cpSeq.registerMonitor(cpDeadlineMonPublish);
+    cpSeq.registerMonitor(cpDeadlineMonReceivePublish);
+    cpSeq.registerMonitor(cpGraphMon);
+    diagUpdater.setHardwareID(get_name());
+    diagUpdater.add("CheckpointSequence", this, &CurbCtrlNode::diagCheckpointSequence);
+  }
+
+  bool init()
+  {
+    boost::log::core::get()->set_filter(
+            boost::log::trivial::severity >= boost::log::trivial::error
+            );
+    CarParameters::p()->setCarid(this->get_namespace());
+    rclcpp::QoS qos { rclcpp::KeepLast(1) };
+    qos.best_effort().durability_volatile();
+    rclcpp::QoS qosReliable { rclcpp::KeepLast(1) };
+    qosReliable.reliable();
+    subManeuver = create_subscription<mbmadmsgs::msg::DriveManeuver>(
+      "maneuver", qosReliable, std::bind(&CurbCtrlNode::maneuverCallback, this, std::placeholders::_1));
+    subManeuverPass = create_subscription<mbmadmsgs::msg::DriveManeuver>(
+      "maneuverpass", qosReliable, std::bind(&CurbCtrlNode::maneuverPassCallback, this, std::placeholders::_1));
+    subOutputsExtList = create_subscription<mbmadmsgs::msg::CarOutputsExtList>(
+      "/mad/locate/caroutputsext", qos, std::bind(&CurbCtrlNode::outputsExtListCallback, this, std::placeholders::_1));
+    pubInputs = create_publisher<mbmadmsgs::msg::CarInputs>("carinputs", qos);
+    pubCtrlReference = create_publisher<mbmadmsgs::msg::CtrlReference>("ctrlreference", qos);
+    pubOutputsExt = this->create_publisher<mbmadmsgs::msg::CarOutputsExt>("caroutputsext", qos);
+    task.start();
+    return true;
+  }
+
+  bool exit()
+  {
+    mbmadmsgs::msg::CarInputs carInputsMsg;
+    carInputsMsg.carid = static_cast<uint8_t>(CarParameters::p()->carid);
+    carInputsMsg.cmd = carInputsMsg.CMD_HALT;
+    carInputsMsg.pedals = 0.0F;
+    carInputsMsg.steering = 0.0F;
+    pubInputs->publish(carInputsMsg);
+    return true;
+  }
+
+
+private:
+  mbsafe::CheckpointSequence cpSeq { *this, CheckpointGraph::lastCheckpoint };
+  mbsafe::CheckpointJitterMonitor cpJitterMonReceive { *this, cpSeq,
+                                    CheckpointGraph::Checkpoint::CtrlStart,
+                                    0.5 * static_cast<double>(mbmad::CarParameters::p()->Tva),
+                                    1.5 * static_cast<double>(mbmad::CarParameters::p()->Tva) };
+  mbsafe::CheckpointDeadlineMonitor cpDeadlineMonPublish { *this, cpSeq,
+                                    CheckpointGraph::Checkpoint::LocatePublish,
+                                    CheckpointGraph::Checkpoint::CtrlPublish,
+                                    0.0, CheckpointGraph::maxDeadline };
+  mbsafe::CheckpointDeadlineMonitor cpDeadlineMonReceivePublish { *this, cpSeq,
+                                    CheckpointGraph::Checkpoint::CtrlStart,
+                                    CheckpointGraph::Checkpoint::CtrlPublish,
+                                    0.0, CheckpointGraph::maxDeadline };
+  mbsafe::CheckpointGraphMonitor cpGraphMon { *this, CheckpointGraph::graph };
+  diagnostic_updater::Updater diagUpdater { this, 1.0 };
+  rclcpp::Subscription<mbmadmsgs::msg::CarOutputsExtList>::SharedPtr subOutputsExtList;
+  rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subManeuver;
+  rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subManeuverPass;
+  rclcpp::Publisher<mbmadmsgs::msg::CarInputs>::SharedPtr pubInputs;
+  rclcpp::Publisher<mbmadmsgs::msg::CtrlReference>::SharedPtr pubCtrlReference;
+  rclcpp::Publisher<mbmadmsgs::msg::CarOutputsExt>::SharedPtr pubOutputsExt;
+
+  SpeedController speedController; /**< The speed controller */
+  PositionController positionController; /**< The position controller */
+  PathController pathController; /**< The path controller */
+  Acc acc; /**< The ACC controller */
+  OperationModeFsm opModeFsm; /**< Operation Mode Management */
+  std::array<float, 2> s { { } }; /**< The current car position */
+  std::array<Spline, 2> splines; /**< The current path splines */
+  float prob { 0.0F }; /**< The current car location probability */
+  float psi { 0.0F }; /**< The current car yaw angle */
+  float v { 0.0F }; /**< The current car speed */
+  float x { 0.0F }; /**< The current longitudinal position */
+
+  float xref { 0.0F }; /**< The car reference position */
+  float vmax { 0.0F }; /**< The car max. speed from maneuver */
+  float vref { 0.0F }; /**< The car reference speed */
+  mbmadmsgs::msg::CarOutputsExtList carOutputsExtList; /**< The car outputs list message */
+  mbmadmsgs::msg::DriveManeuver::_type_type maneuverType { mbmadmsgs::msg::DriveManeuver::TYPE_HALT };
+
+  static constexpr double dt = static_cast<double>(CarParameters::Tva);
+  static constexpr int64_t dtMicro = static_cast<int64_t>(dt * 1e6);
+  mbsafe::Task<100000UL, 91> task { std::bind(&CurbCtrlNode::step, this), dtMicro };
+
+  std::mutex mutexStep;
+
+  /**
+  * @brief callback for /mad/caroutputsext topic
+  * @param[in] msg The ROS message
+  */
+  void outputsExtListCallback(const mbmadmsgs::msg::CarOutputsExtList::SharedPtr msgList)
+  { 
+    carOutputsExtList = *msgList;
+    cpSeq.init(msgList->cpseq);
+    cpSeq.update(CheckpointGraph::Checkpoint::CtrlStart);
+    for (auto& msg : msgList->list) {
+      if (msg.carid == CarParameters::p()->carid) {
+        prob = msg.prob;
+        s.at(0) = msg.s.at(0);
+        s.at(1) = msg.s.at(1);
+        psi = msg.psi;
+        v = msg.v;
+        pubOutputsExt->publish(msg); // publish for measurement
+        break;
+      }
+    }
+    task.triggerStep(static_cast<int64_t>(dt * 1.5F * 1.0e6));
+  }
+
+  /**
+   * @brief callback for /mad/car?/maneuver topic
+   * @param[in] msg The ROS message
+   */
+  void maneuverCallback(const mbmadmsgs::msg::DriveManeuver::SharedPtr msg)
+  {
+    std::unique_lock<std::mutex> lock(mutexStep);
+    splines.at(0) = Spline(msg->breaks, msg->s1, msg->s2, msg->segments, false);
+    maneuverType = msg->type;
+    xref = msg->xref;
+    vmax = msg->vmax;
+    positionController.init(vmax, xref, x);
+    pathController.init();
+    acc.init();
+  }
+
+  /**
+   * @brief callback for /mad/car?/maneuverpass topic
+   * @param[in] msg The ROS message for passing maneuvers
+   */
+  void maneuverPassCallback(const mbmadmsgs::msg::DriveManeuver::SharedPtr msg)
+  {
+    std::unique_lock<std::mutex> lock(mutexStep);
+    if (splines.at(1).breaks.empty()) {      
+      splines.at(1) = Spline(msg->breaks, msg->s1, msg->s2, msg->segments, false);    
+    }
+  }
+
+  /**
+   * @brief step function to execute one sampling step
+   */
+  void step()
+  {
+    std::unique_lock<std::mutex> lock(mutexStep);
+    float pedals { 0.0F };
+    float steering { 0.0F };
+    if (prob >= 1.0F) {
+      opModeFsm.dispatch<EventLocationGained>(EventLocationGained{});
+    } else if (prob <= 0.0F) {
+      opModeFsm.dispatch<EventLocationLost>(EventLocationLost{});
+    } else {
+      opModeFsm.dispatch<EventLocationDegraded>(EventLocationDegraded{});
+    }
+    float ey { 0.0F };
+    float wkappa { 0.0F };
+    steering = pathController.step(splines.at(acc.getLane()), opModeFsm, s, psi, vref, ey, wkappa);
+
+    if (maneuverType == mbmadmsgs::msg::DriveManeuver::TYPE_PATHFOLLOW) {
+      #ifdef MAD24
+        vref = vmax;
+      #else
+        float leadDist { 0.0F };
+        float leadV { 0.0F };
+        float otherDist { 0.0F };
+        bool faultLateral { false };
+        acc.step(vmax, splines, carOutputsExtList, v, pathController.wx, ey, wkappa, vref, leadDist, leadV, otherDist, faultLateral);        
+      #endif
+        pedals = speedController.step(opModeFsm, vref, v, dt);
+    } 
+    
+    else if (maneuverType == mbmadmsgs::msg::DriveManeuver::TYPE_PARK) {
+      float vrefPos = positionController.step(x, dt);
+      pedals = speedController.step(opModeFsm, vrefPos, v, dt);
+    }
+    
+    mbmadmsgs::msg::CarInputs carInputsMsg;
+    carInputsMsg.carid = static_cast<uint8_t>(CarParameters::p()->carid);
+    carInputsMsg.opmode = opModeFsm.getStateId();
+    carInputsMsg.cmd = carInputsMsg.CMD_FORWARD;
+    carInputsMsg.pedals = pedals;
+    carInputsMsg.steering = steering;
+    if (cpSeq.empty() == false) {
+      // avoid invalid deadline measurements when there is no camera data (i.e. during startup)
+      cpSeq.update(CheckpointGraph::Checkpoint::CtrlPublish);
+      carInputsMsg.cpseq = cpSeq.message();
+    }
+
+    #ifdef XXXXXXXX
+      if (cpSeq.health().health() == false) {
+        // emergency halt
+        carInputsMsg.cmd = carInputsMsg.CMD_HALT;
+        carInputsMsg.pedals = 0.0F;
+        // heal immediately
+        cpSeq.health().recover();
+        BOOST_LOG_TRIVIAL(error) << "[ERROR] no health -> emergency halt";
+      }
+    #endif
+
+    pubInputs->publish(carInputsMsg);
+
+    mbmadmsgs::msg::CtrlReference ctrlReferenceMsg;
+    ctrlReferenceMsg.carid = static_cast<uint8_t>(CarParameters::p()->carid);
+    ctrlReferenceMsg.s.at(0) = pathController.ws.at(0);
+    ctrlReferenceMsg.s.at(1) = pathController.ws.at(1);
+    ctrlReferenceMsg.psi = pathController.wpsi;
+    ctrlReferenceMsg.v = vref;
+    ctrlReferenceMsg.x = pathController.wx;
+    pubCtrlReference->publish(ctrlReferenceMsg);
+  }
+
+  void diagCheckpointSequence(diagnostic_updater::DiagnosticStatusWrapper& stat)
+  {
+    cpSeq.health().diag(stat);
+  }
+
+};
+
+}
+
+int main(int argc, char **argv)
+{
+  rclcpp::init(argc, argv);
+  if (mbsafe::Platform::init(1000ULL, false, false) && mbsafe::Platform::setPrio(SCHED_FIFO, 90) && mbsafe::Platform::prefaultStack<1000ULL>()) {
+    std::shared_ptr<mbmad::CurbCtrlNode> node = std::make_shared<mbmad::CurbCtrlNode>();
+    
+    if (node->init()) {
+      rclcpp::spin(node);
+      node->exit();
+    }
+    mbsafe::Platform::exit();
+  }
+  rclcpp::shutdown();
+
+  return EXIT_SUCCESS;
+}
+

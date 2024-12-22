@@ -1,0 +1,27 @@
+#
+# @brief TrackGetWaypoints.srv service type for /mad/get_waypoints service
+#    
+# Copyright (C) 2024, Frank Traenkle, Hochschule Heilbronn
+#  
+# This file is part of MAD.
+# MAD is free software: you can redistribute it and/or modify it under the terms 
+# of the GNU General Public License as published by the Free Software Foundation,
+# either version 3 of the License, or (at your option) any later version.
+# MAD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY 
+# without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License along with MAD.
+# If not, see <https://www.gnu.org/licenses/>.
+#
+
+float32 dx
+float32 alpha
+uint32[] segment_sequence
+---
+float32[] breaks
+float32[] s1
+float32[] s2
+uint32[] segments
+float32[] spline_coefs1
+float32[] spline_coefs2
+float32 x_end

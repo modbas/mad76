@@ -1,0 +1,32 @@
+<!-- ros2 run camera_ros camera_node -ros-args -p FrameDurationLimits:="[20000,20000]" -p role:="viewfinder" -p width:=800 -p height:=600 -p format:="XBGR8888"  -p ExposureTime:=2000 -p AnalogueGain:=1.0 -->
+
+<launch>
+    <node pkg="camera_ros" exec="camera_node" name="camera" namespace="/mad" output="screen">
+        <param name="FrameDurationLimits" value="[25000,25000]" />
+        <param name="role" value="viewfinder" />
+        <param name="width" value="800" />
+        <param name="height" value="600" />
+        <!--
+        <param name="width" value="1456" />
+        <param name="height" value="1088" /> 
+        <param name="width" value="1024" />
+        <param name="height" value="768" />
+        -->
+        <param name="format" value="XBGR8888" />
+        <param name="ExposureTime" value="2000" />
+        <param name="AnalogueGain" value="20.0" />
+    </node>
+    <node pkg="mbmadvisionaruco" exec="visionnode" name="vision" output="screen">
+        <param name="HeightCompensation" value="[-0.01, 0.000, 0.001, 0.008]"/>
+        <param name="DisplayImage" value="true"/>
+        <remap from="/diagnostics" to="diagnostics"/>
+    </node>    
+    <node pkg="mbmadrcpi" exec="rcnode" name="rc" output="screen">
+        <!-- <param name="steeringoffsets" value="[-0.1, -0.1]" /> -->
+        <remap from="/diagnostics" to="diagnostics"/>
+    </node>
+    <!-- <node pkg="image_tools" exec="showimage" name="showimage" output="log">
+        <remap from="image" to="/mad/camera/image_raw"/>
+    </node>
+    -->
+</launch>
