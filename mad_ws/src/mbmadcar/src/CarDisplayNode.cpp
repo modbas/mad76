@@ -246,7 +246,7 @@ private:
     marker.ns = ns;
     marker.id = id;
     marker.type = visualization_msgs::msg::Marker::MESH_RESOURCE;
-    marker.mesh_resource = "package://mbmadcar/data/R8_skeletal.dae";
+    marker.mesh_resource = "package://mbmadcar/data/car_skeletal.dae";
     marker.action = visualization_msgs::msg::Marker::ADD;
     marker.text = ns;
     marker.pose.position.x = static_cast<double>(CarParameters::p()->center * CarParameters::displayScale); // rear axle position
