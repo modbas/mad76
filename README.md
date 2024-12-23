@@ -1,58 +1,71 @@
-author: Frank Tränkle[^1]  
-Hochschule Heilbronn, Germany
-title: Mini-Auto-Drive MAD76
-
-Mini-Auto-Drive MAD76
-=====================
+# MAD76 Features
 
 ![image](turbocacing-foto.jpg)
 
--   Autonomous Driving in 1:76 scale
+  - Autonomous Driving in 1:76 scale
 
--   100 x 50cm tracks
+  - Multi-player robot car racing
 
--   Multi-player robot car racing
+  - Race against AI cars using XBox controllers
 
--   Race against AI cars
+  - Program your own AI
 
--   Program your own AI
+  - 100 x 50cm tracks
 
--   @home @school @university @automotive partners @open source
+  - Fits in a backpack for easy transport
+
+  - @home @school @university @automotive partners @open source
     @Hochschule Heilbronn @Automotive Systems Engineering
 
--   \#Computer Vision \#Motion Planning \#Motion Control \#Deep Neural
+  - \#Computer Vision \#Motion Planning \#Motion Control \#Deep Neural
     Networks \#Reinforcement Learning \#Raspberry Pi Programmming \#C++
     Coding \#Python Coding \#MATLAB/Simulink Simulation \#ROS2
 
--   <https://www.youtube.com/@ft7894>
+  - <https://www.youtube.com/@ft7894>
 
-Robot Racing Kit
-================
+# MAD76 Kit
 
--   Turboracing 1:76 RC cars (<https://www.turboracing.net>)
+![image](mad76.png)
 
--   Raspberry Pi 5
+  - Turboracing 1:76 RC cars (<https://www.turboracing.net>)
 
--   Raspberry Pi Global Shutter Camera
+  - Raspberry Pi 5 runs Raspberry Pi OS (Debian Linux)
 
--   MAD76 Box
+  - Raspberry Pi Global Shutter Camera is mounted on a tripod
 
--   ROS2 Packages
+  - MAD76 Box houses Raspberry Pi, MAD76 IO (PCB), and Turboracing
+    remote controllers
 
-    -   Computer Vision
+  - MAD76 Driving Stack is implemented as software packages in
+    middleware ROS2 (<https://docs.ros.org/en/iron/index.html>)
+    
+      - Computer Vision reads in frames from top-view camera and detects
+        cars by ArUco markers
+    
+      - Multi-Object Tracking computes the cars’ velocities
+    
+      - Motion Planning computes the optimal trajectories for the cars
+    
+      - Motion Control controls the cars on the trajectories
+    
+      - Optional race simulation
 
-    -   Multi-Object Tracking
+  - MAD76 Driving Stack is programmed in C++ and Python
 
-    -   Motion Planning
+  - MAD76 Driving Stack may run in a distributed computer environment
+    (Raspberry Pi and Linux-PCs)
 
-    -   Motion Control
+  - Optional Linux-PCs are for race simulation, programming,
+    MATLAB/Simulink simulation, deep neural network training
 
-    -   Race Simulation
+  - MAD76 IO is designed in Eagle
 
--   User Manuals
+  - MAD76 Driving Stack and MAD76 IO are open source
 
-    -   [Installation](doc/install/install.md)
+  - Contributions are greatly welcome
 
-    -   [Computer Vision Configuration](doc/vision/vision.md)
-
-[^1]: frank.traenkle@hs-heilbronn.de
+  - User Manuals
+    
+      - [Installation](doc/install/install.md)
+    
+      - [Computer Vision Configuration](doc/vision/vision.md)
