@@ -9,8 +9,6 @@ title: Mini-Auto-Drive MAD76
 MAD76 Features
 ==============
 
-![image](turbocacing-foto.jpg)
-
 -   Autonomous Driving in 1:76 scale
 
 -   Multi-player robot car racing
@@ -39,19 +37,19 @@ MAD76 Kit
 
 -   Turboracing 1:76 RC cars (<https://www.turboracing.net>)
 
--   Raspberry Pi 5 runs Raspberry Pi OS (Debian Linux)
+-   Raspberry Pi Global Shutter Camera is mounted in topview on tripod
 
--   Raspberry Pi Global Shutter Camera is mounted on a tripod
+-   Raspberry Pi 5 runs Raspberry Pi OS (Debian Linux)
 
 -   MAD76 Driving Stack is implemented as software components in
     middleware ROS2 (<https://docs.ros.org/en/iron/index.html>)
 
-    -   Computer Vision reads in frames from top-view camera and detects
+    -   Computer Vision reads in frames from topview camera and detects
         cars by ArUco markers
 
     -   Multi-Object Tracking computes the cars’ velocities
 
-    -   Motion Planning computes the optimal trajectories for the cars
+    -   Motion Planning computes optimal trajectories
 
     -   Motion Control controls the cars on the trajectories
 
@@ -65,9 +63,7 @@ MAD76 Kit
 -   Optional Linux-PCs are for race simulation, programming,
     MATLAB/Simulink simulation, deep neural network training
 
--   MAD76 IO is designed in Eagle
-
--   MAD76 Driving Stack and MAD76 IO are open source
+-   MAD76 is open source
 
 -   Contributions are greatly welcome
 

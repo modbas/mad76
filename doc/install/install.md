@@ -36,10 +36,10 @@ containing
 
 -   Raspberry Pi (RPi)
 
--   MAD76 IO: self-built PCB electronics for coupling of RPi to remote
-    controllers (RC) for the Turbotacing cars
+-   MAD76 IO: self-built PCB electronics for coupling RPi to remote
+    controllers (RC) for the Turboracing cars
 
--   up to 4 Turboracing remote controllers (RC)
+-   Up to 4 RC cars are supported
 
 This section first lists the bill of materials (BOM) for the MAD76 Box.
 Then the MAD76 IO is described in more detail.
