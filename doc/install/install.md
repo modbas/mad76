@@ -333,7 +333,7 @@ Software Architecture
 ---------------------
 
 <figure>
-<img src="ros2nodes.png" id="F:ros2nodes" alt="" /><figcaption>ROS2 nodes of MAD76 Driving Stack</figcaption>
+<img src="ros2nodes.png" id="F:sysarch" alt="" /><figcaption>ROS2 nodes of MAD76 Driving Stack</figcaption>
 </figure>
 
 <div id="T:ros2nodes" markdown="1">
@@ -363,6 +363,24 @@ Software Architecture
 Build MAD76
 -----------
 
+-   MAD76 can be built and run on Raspberry Pi and on Ubuntu Linux
+    computers
+
+-   ROS2 nodes can run distributedly on multiple computers
+
+-   ROS2 nodes `camera_node` and `rc_node` must run on the Raspberry Pi
+    for interfacing with the camera and Turboracing remote controllers
+
+-   All other nodes can run on other computers
+
+-   ROS2 supports this distributed computing transparently when setting
+    a common ROS domain ID
+
+-   For running MAD76 in Software-in-the-Loop (SiL) simulation mode (see
+    Section <a href="#software-in-the-loop-simulation" data-reference-type="ref" data-reference="software-in-the-loop-simulation">[software-in-the-loop-simulation]</a>),
+    a build of MAD76 on an Ubuntu Linux-PC is sufficient because SiL
+    mode does no do any input / output
+
 -   Clone Git repository and build MAD76 workspace
 
         export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
@@ -373,6 +391,11 @@ Build MAD76
         git clone https://<token>@github.com/modbas/mad76
         cd mad76/mad_ws
         colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+
+    For building on Raspberry Pi, the the `colcon build` command must be
+    extended by `–parallel-workers 2` to avoid out-of-memory problems
+
+        colcon build --parallel-workers 2 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 -   Add security limits
 
@@ -393,25 +416,38 @@ Build MAD76
 Software-in-the-Loop Simulation
 -------------------------------
 
--   Test MAD76 installation in software-in-the-loop (SiL) simulation
+<figure>
+<img src="ros2sil.png" id="F:silarch" alt="" /><figcaption>ROS2 nodes in SiL simulation mode</figcaption>
+</figure>
+
+<span id="software-in-the-loop-simulation"
+label="software-in-the-loop-simulation">\[software-in-the-loop-simulation\]</span>
+
+-   In order to test your MAD76 installation, you may run MAD76 in
+    software-in-the-loop (SiL) simulation mode
+
+    -   The real cars, the camera, and the ROS2 nodes `camera_node`,
+        `vision_node` and `rc_node` for computer vision and RC output
+        are replaced by simulation models
 
     -   The MAD76 Driving Stack runs in the loop with vehicle dynamics
-        simulations
+        simulation models
 
-    -   Full operation of the driving stack is supported in SiL mode
+    -   Full operation of the driving stack is supported in SiL
+        simulation mode
 
--   Start MAD76 in SiL mode
+-   Open a new terminal start MAD76 in SiL mode
 
         ros2 launch mbmad madpisim.launch
 
--   Open a new terminal and send maneuver to car 0 (yellow car)
+-   Open a new terminal and send a maneuver to car 0 (yellow car)
 
         ros2 run mbmadcar send_maneuver.py 0 0.3 0.25
 
     -   First argument is the car identifier (0 for yellow car, 1 for
         orange car)
 
-    -   Second argument is the car reference speed in $m/s$
+    -   Second argument is the car reference speed in $\frac{m}{s}$
 
     -   Third argument is the lateral reference position (0 for right
         curb, 0.25 for right lane, 0.5 for center line, 0.75 for left
@@ -421,6 +457,13 @@ Software-in-the-Loop Simulation
     1 (orange car)
 
         ros2 run mbmadcar send_maneuver.py 1 0.2 0.25
+
+-   The maximum speed of each car is $0.5 \frac{m}{s}$
+
+-   You may stop the individual car by sending a maneuver with reference
+    speed $0 \frac{m}{s}$
+
+-   Reverse driving is possible by setting a negative reference speed
 
 References [bibliography]
 ==========
