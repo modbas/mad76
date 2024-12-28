@@ -294,6 +294,7 @@ If you want to update ROS2 later on, you can do the following.
         cd ../camera_ros
         git pull
         cd ../..
+        source ~/src/ros2_iron/install/setup.bash
         colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 Xbox One Controllers
@@ -436,11 +437,11 @@ label="software-in-the-loop-simulation">\[software-in-the-loop-simulation\]</spa
     -   Full operation of the driving stack is supported in SiL
         simulation mode
 
--   Open a new terminal start MAD76 in SiL mode
+-   Open a new terminal and start MAD76 in SiL mode
 
         ros2 launch mbmad madpisim.launch
 
--   Open a new terminal and send a maneuver to car 0 (yellow car)
+-   Open a further terminal and send a maneuver to car 0 (yellow car)
 
         ros2 run mbmadcar send_maneuver.py 0 0.3 0.25
 
