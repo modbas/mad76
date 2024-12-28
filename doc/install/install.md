@@ -382,7 +382,7 @@ Build MAD76
     a common ROS domain ID
 
 -   For running MAD76 in Software-in-the-Loop (SiL) simulation mode (see
-    Section <a href="#software-in-the-loop-simulation" data-reference-type="ref" data-reference="software-in-the-loop-simulation">[software-in-the-loop-simulation]</a>),
+    Section <a href="#software-in-the-loop-simulation" data-reference-type="ref" data-reference="software-in-the-loop-simulation">5.3</a>),
     a build of MAD76 on an Ubuntu Linux-PC is sufficient because SiL
     mode does no do any input / output
 
@@ -424,9 +424,6 @@ Software-in-the-Loop Simulation
 <figure>
 <img src="ros2sil.png" id="F:silarch" alt="" /><figcaption>ROS2 nodes in SiL simulation mode</figcaption>
 </figure>
-
-<span id="software-in-the-loop-simulation"
-label="software-in-the-loop-simulation">\[software-in-the-loop-simulation\]</span>
 
 -   In order to test your MAD76 installation, you may run MAD76 in
     software-in-the-loop (SiL) simulation mode
