@@ -319,6 +319,10 @@ Linux-PC Installation
     other ROS2 version) is required, otherwise distributed computing
     with PC and Raspberry Pi will not work.
 
+-   However, if you only want to run MAD76 in Software-in-the-Loop (SiL)
+    simulation mode, you can use other ROS2 distributions and other
+    Linux distributions.
+
 -   Install ROS2 Iron Irwini binary (deb) packages according to
     \[[5](#ref-ros-installubuntudeb)\]. Make sure to install
     `ros-dev-tools` and `ros-iron-desktop` packages.
