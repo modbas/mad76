@@ -320,7 +320,7 @@ Linux-PC Installation
     with PC and Raspberry Pi will not work.
 
 -   However, if you only want to run MAD76 in Software-in-the-Loop (SiL)
-    simulation mode, you can use other ROS2 distributions and other
+    simulation mode, you may use other ROS2 distributions and other
     Linux distributions.
 
 -   Install ROS2 Iron Irwini binary (deb) packages according to
