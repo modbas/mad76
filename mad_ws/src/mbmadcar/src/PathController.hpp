@@ -154,12 +154,14 @@ class PathController
         wkappa = -wkappa;
       }
 
+#ifdef MAD24
       // if distance to the reference point is too large, move in to the
       // direction of the reference point
       if (dist > 4.0F * p->l) {
         wpsi = std::atan2(ws.at(1) - s.at(1), ws.at(0) - s.at(0));
         wkappa = 0.0F;
       }
+#endif
     }
 
     /**
@@ -190,11 +192,11 @@ class PathController
         v1 = -p->speedMin;
       }
       delta = -(ky/v1*ey + kpsi*psie) / v1;
-      std::vector<float> debug { ey, psie, delta/p->deltaMax };
+      std::vector<float> debug { ey, psie, delta * p->deltanMax / p->deltaMax };
       std_msgs::msg::Float32MultiArray msg;
       msg.data = debug;
       pubDebug->publish(msg);
-      //RCLCPP_INFO(node.get_logger(), "ey=%06.3f psie=%06.3f, delta=%06.3f", ye, psie, delta);
+      //RCLCPP_INFO(node.get_logger(), "ey=%06.3f psie=%06.3f, delta=%06.3f", ey, psie, delta);
 
       return delta;
     }

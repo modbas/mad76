@@ -49,59 +49,62 @@ Bill of Materials (BOM)
 
 ### Raspberry Pi and Camera
 
-<div id="T:bomrpi" markdown="1">
+<div id="T-bomrpi" markdown="1">
 
-|     | Description                                                               | Part Id          | Order Link                                                                                                  |
-|----:|:--------------------------------------------------------------------------|:-----------------|:------------------------------------------------------------------------------------------------------------|
-|    1| RPI5 BBDL 8GB Das Raspberry PI 5 B 8GB Black Bundle                       | RPI5 BBDL 8GB    | <https://www.reichelt.de/das-raspberry-pi-5-b-8gb-black-bundle-rpi5-bbdl-8gb-p362348.html>                  |
-|    1| microSD-Card 128 GB                                                       |                  | <https://www.rasppishop.de/Sandisk-microSDHC-UHS-I-128GB-Class10-mit-Raspberry-Pi-OS>                       |
-|    1| RASP ACTIVE COOL Raspberry Pi - Lüfter für Raspberry Pi 5                 | RASP ACTIVE COOL | <https://www.reichelt.de/raspberry-pi-luefter-fuer-raspberry-pi-5-rasp-active-cool-p360116.html>            |
-|    1| RASP CAM GS CS Raspberry Pi-Kamera, 1,6MP,Global Shutter,C-/CS-Fassung    | RASP CAM GS CS   | <https://www.reichelt.de/raspberry-pi-kamera-1-6mp-shutter-c-cs-fassung-rasp-cam-gs-cs-p345205.html>        |
-|    1| RPIZ CAM 6MM WW Raspberry Pi-Objektiv für CS-Fassung,6mm,Weitwinkel       | RPIZ CAM 6MM WW  | <https://www.reichelt.de/raspberry-pi-objektiv-fuer-cs-fassung-6mm-weitwinkel-rpiz-cam-6mm-ww-p276922.html> |
-|    1| AZDelivery Ersatz Flexkabel 50 cm kompatibel mit Raspberry Pi Zero Kamera |                  | <https://www.amazon.de/AZDelivery-Flexkabel-Raspberry-Zero-Display/dp/B07SQ3HKNF>                           |
-|    1| Joby GorillaPod 3K Kit                                                    |                  | <https://www.foto-erhardt.de/stative/joby-gorillapod/joby-gorillapod-3k-kit-black-charcoal.html>            |
+|     | Description                                                        | Part Id          | Order Link                                                                                                  |
+|----:|:-------------------------------------------------------------------|:-----------------|:------------------------------------------------------------------------------------------------------------|
+|    1| Raspberry PI 5 B 8GB Black Bundle                                  | RPI5 BBDL 8GB    | <https://www.reichelt.de/das-raspberry-pi-5-b-8gb-black-bundle-rpi5-bbdl-8gb-p362348.html>                  |
+|    1| microSD-Card 128 GB                                                |                  | <https://www.rasppishop.de/Sandisk-microSDHC-UHS-I-128GB-Class10-mit-Raspberry-Pi-OS>                       |
+|    1| Raspberry Pi Active Cooler                                         | RASP ACTIVE COOL | <https://www.reichelt.de/raspberry-pi-luefter-fuer-raspberry-pi-5-rasp-active-cool-p360116.html>            |
+|    1| Raspberry Pi Global Shutter Camera, 1.6MP, C/CS mount              | RASP CAM GS CS   | <https://www.reichelt.de/raspberry-pi-kamera-1-6mp-shutter-c-cs-fassung-rasp-cam-gs-cs-p345205.html>        |
+|    1| Raspberry Pi Lens, CS mount, 6mm wideangle                         | RPIZ CAM 6MM WW  | <https://www.reichelt.de/raspberry-pi-objektiv-fuer-cs-fassung-6mm-weitwinkel-rpiz-cam-6mm-ww-p276922.html> |
+|    1| AZDelivery Flex Cable 50cm, compatible to Raspberry Pi Zero Camera |                  | <https://www.amazon.de/AZDelivery-Flexkabel-Raspberry-Zero-Display/dp/B07SQ3HKNF>                           |
+|    1| Joby GorillaPod 3K Kit Tripod                                      |                  | <https://www.foto-erhardt.de/stative/joby-gorillapod/joby-gorillapod-3k-kit-black-charcoal.html>            |
 
 </div>
 
 ### MAD76 IO
 
-<div id="T:bommad76io" markdown="1">
+<div id="T-bommad76io" markdown="1">
 
-|     | Description                                                                | Part Id       | Order Link                                                                                          |
-|----:|:---------------------------------------------------------------------------|:--------------|:----------------------------------------------------------------------------------------------------|
-|    4| MCP42010 10kOhm DIL-14                                                     | MCP 42010-I/P | <https://www.reichelt.de/digitalpoti-2-kanal-256-schritte-10-kohm-dil-14-mcp-42010-i-p-p90112.html> |
-|    1| L293B 1A DIP-16                                                            | L 293 B       | <https://www.reichelt.de/push-pull-4-kanal-treiber-1a-dip-16-l-293-b-p9660.html>                    |
-|    4| 14-poliger DIL-Sockel (IC-Sockel, 14-polig, superflach, gedreht, vergold.) | GS 14P        | <https://www.reichelt.de/ic-sockel-14-polig-superflach-gedreht-vergold--gs-14p-p8207.html>          |
-|    1| 16-poliger DIL-Sockel (IC-Sockel, 16-polig, superflach, gedreht, vergold.) | GS 16P        | <https://www.reichelt.de/ic-sockel-16-polig-superflach-gedreht-vergold--gs-16p-p8209.html>          |
-|    4| Wannenstecker, 10-polig, gerade                                            | WSL 10G       | <https://www.reichelt.de/wannenstecker-10-polig-gerade-wsl-10g-p22816.html>                         |
-|    1| Wannenstecker, 40-polig, gewinkelt                                         | WSL 40W       | <https://www.reichelt.de/wannenstecker-40-polig-gewinkelt-wsl-40w-p22836.html>                      |
+|     | Description                              | Part Id                                                | Order Link                                                                                          |
+|----:|:-----------------------------------------|:-------------------------------------------------------|:----------------------------------------------------------------------------------------------------|
+|    1| Platine, Epoxyd, doppelseitig, 300x200mm | EP2CU 300X200                                          | <https://www.reichelt.de/de/de/shop/produkt/platine_epoxyd_doppelseitig_300_x_200_mm-7404>          |
+|    4| MCP42010 10kOhm DIL-14                   | MCP 42010-I/P                                          | <https://www.reichelt.de/digitalpoti-2-kanal-256-schritte-10-kohm-dil-14-mcp-42010-i-p-p90112.html> |
+|    1| L293B 1A DIP-16                          | L 293 B                                                | <https://www.reichelt.de/push-pull-4-kanal-treiber-1a-dip-16-l-293-b-p9660.html>                    |
+|    4| 14-poliger DIL-Socket                    | GS 14P                                                 | <https://www.reichelt.de/ic-sockel-14-polig-superflach-gedreht-vergold--gs-14p-p8207.html>          |
+|    1| 16-poliger DIL-Socket                    | GS 16P                                                 | <https://www.reichelt.de/ic-sockel-16-polig-superflach-gedreht-vergold--gs-16p-p8209.html>          |
+|    4| Wannenstecker, 10-polig, gerade          | WSL 10G                                                | <https://www.reichelt.de/wannenstecker-10-polig-gerade-wsl-10g-p22816.html>                         |
+|    1| Wannenstecker, 40-polig, gewinkelt       | WSL 40W                                                | <https://www.reichelt.de/wannenstecker-40-polig-gewinkelt-wsl-40w-p22836.html>                      |
+|    6| SMD-Kondensator 100nF                    | KEM X7R0805 100N or X7R-G0805 100N or WAL 0805B104K500 | <https://www.reichelt.de/de/de/shop/produkt/vielschicht-kerko_100nf_50v_125_c-207073>               |
+|    4| SMD-Kondensator 10uF                     | X5R-G0805 10/16 or KEM 0805 10U-2                      | <https://www.reichelt.de/de/de/shop/produkt/smd-vielschichtkondensator_g0805_-_10_f_16v-89734>      |
 
 </div>
 
 ### Housing
 
-<div id="T:bommad76housing" markdown="1">
+<div id="T-bommad76housing" markdown="1">
 
-|     | Description                                                                                                             | Part Id         | Order Link                                                                                         |
-|----:|:------------------------------------------------------------------------------------------------------------------------|:----------------|:---------------------------------------------------------------------------------------------------|
-|    1| Industriegehäuse, 250 x 160 x 90 mm, IP65, lichtgrau                                                                    | 5U340000        | <https://www.reichelt.de/industriegehaeuse-250-x-160-x-90-mm-ip65-lichtgrau-5u340000-p324394.html> |
-|    1| 40-poliges Flachbandkabel 30cm                                                                                          | RPI GPIO40 300  | <https://www.reichelt.de/raspberry-pi-gpio-kabel-40-pin-30cm-grau-rpi-gpio40-300-p293579.html>     |
-|    1| Sechskantmuttern, Edelstahl A2, M3, 100 Stück                                                                           | SK-E M3-100     | <https://www.reichelt.de/sechskantmuttern-edelstahl-a2-m3-100-stueck-sk-e-m3-100-p72592.html>      |
-|    1| sourcing map 20Stk. M2,5x8mm+5mm Stecker Buchse Messing PCB Motherboard Abstandhalter Ständer                           |                 | <https://www.amazon.de/gp/product/B08G1TP68G>                                                      |
-|    1| 300 Stück M2.5 Schrauben Set M2.5 Hex Flach-Knopf Schraube Set, A2 Edelstahl Innensechskantschrauben Schraubensortiment |                 | <https://www.amazon.de/gp/product/B08B648WWQ>                                                      |
-|    8| Stecker (Buchse) Kontakte für Funke / JST PH3P BU JST - Buchsengehäuse, 1x3-polig -                                     | PH 571-440129-3 | <https://www.mouser.de/ProductDetail/571-440129-3>                                                 |
-|    8| JST - Buchsengehäuse, 1x3-polig - PH JST PH3P BU                                                                        |                 | <https://www.reichelt.de/jst-buchsengehaeuse-1x3-polig-ph-jst-ph3p-bu-p185042.html>                |
+|     | Description                                                                                                             | Part Id                        | Order Link                                                                                                                                                                                       |
+|----:|:------------------------------------------------------------------------------------------------------------------------|:-------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|    1| Industriegehäuse, 250x160x90mm, IP65, lichtgrau                                                                         | 5U340000                       | <https://www.reichelt.de/industriegehaeuse-250-x-160-x-90-mm-ip65-lichtgrau-5u340000-p324394.html>                                                                                               |
+|    1| 40-poliges Flachbandkabel 30cm                                                                                          | RPI GPIO40 300                 | <https://www.reichelt.de/raspberry-pi-gpio-kabel-40-pin-30cm-grau-rpi-gpio40-300-p293579.html>                                                                                                   |
+|    4| Pfostenverbinder 2,54mm 2x5 (Flachbandkabel)                                                                            | BKL 10120668                   | <https://www.reichelt.de/de/de/shop/produkt/pfostenverbinder_2_54mm_2x5-262790>                                                                                                                  |
+|    1| sourcing map 20Stk. M2,5x8mm+5mm Stecker Buchse Messing PCB Motherboard Abstandhalter Ständer                           |                                | <https://www.amazon.de/gp/product/B08G1TP68G>                                                                                                                                                    |
+|    1| 300 Stück M2.5 Schrauben Set M2.5 Hex Flach-Knopf Schraube Set, A2 Edelstahl Innensechskantschrauben Schraubensortiment |                                | <https://www.amazon.de/gp/product/B08B648WWQ>                                                                                                                                                    |
+|    8| JST-Buchsengehäuse, 1x3-polig                                                                                           | JST PH3P BU or 571-440129-3    | <https://www.reichelt.de/jst-buchsengehaeuse-1x3-polig-ph-jst-ph3p-bu-p185042.html> <https://www.mouser.de/ProductDetail/571-440129-3>                                                           |
+|   24| JST-Crimpkontakt, Buchse or 2.0mm, Crimp Contact Cut Strip of 100                                                       | JST PH CKS or 571-1735801-1-CT | <https://www.reichelt.de/de/de/shop/produkt/jst_-_crimpkontakt_buchse_-_ph-185072> <https://www.mouser.de/ProductDetail/TE-Connectivity-AMP/1735801-1-Cut-Strip?qs=oXydCMRm13w8Ga1ULORh6A%3D%3D> |
 
 </div>
 
 ### Turboracing Cars
 
-<div id="T:bommad76cars" markdown="1">
+<div id="T-bommad76cars" markdown="1">
 
-|        | Description                                                          | Part Id | Order Link                                             |
-|-------:|:---------------------------------------------------------------------|:--------|:-------------------------------------------------------|
-|  1 to 4| Turbo Racing 1:76 Mini Cooper with RC <https://www.turboracing.net/> |         | <https://de.aliexpress.com/item/1005001936818767.html> |
-|       1| Turbo Racing Mat Track 50x95cm                                       |         | <https://de.aliexpress.com/item/1005006267808509.html> |
+|        | Description                                                          | Part Id | Order Link                                                                                                                                  |
+|-------:|:---------------------------------------------------------------------|:--------|:--------------------------------------------------------------------------------------------------------------------------------------------|
+|  1 to 4| Turbo Racing 1:76 Mini Cooper with RC <https://www.turboracing.net/> |         | <https://www.rcfox.de/TB-TR01-Turbo-Racing-1/76-Micro-Mini-Cooper> <https://de.aliexpress.com/item/1005001936818767.html>                   |
+|       1| Turbo Racing Mat Track 50x95cm                                       |         | <https://www.rcfox.de/TB-760101-Turbo-Racing-Race-Strecke-fuer-Micro-Rally-50x95-cm> <https://de.aliexpress.com/item/1005006267808509.html> |
 
 </div>
 
@@ -130,15 +133,15 @@ MAD76 IO
 -   The MAD76 IO is connected to the RCs via 8-pin flat ribbon cables.
 
 <figure>
-<img src="mad76io_schematics01.png" id="F:schematics01" alt="" /><figcaption>MAD76 IO Schematics Page 1 (Eagle schematics <a href="../../pcb/MAD76.sch">../../pcb/MAD76.sch</a>)</figcaption>
+<img src="mad76io_schematics01.png" id="F-schematics01" alt="" /><figcaption>MAD76 IO Schematics Page 1 (Eagle schematics <a href="../../pcb/MAD76.sch">../../pcb/MAD76.sch</a>)</figcaption>
 </figure>
 
 <figure>
-<img src="mad76io_schematics02.png" id="F:schematics02" alt="" /><figcaption>MAD76 IO Schematics Page 2 (Eagle schematics <a href="../../pcb/MAD76.sch">../../pcb/MAD76.sch</a>)</figcaption>
+<img src="mad76io_schematics02.png" id="F-schematics02" alt="" /><figcaption>MAD76 IO Schematics Page 2 (Eagle schematics <a href="../../pcb/MAD76.sch">../../pcb/MAD76.sch</a>)</figcaption>
 </figure>
 
 <figure>
-<img src="mad76io_board.png" id="F:board" alt="" /><figcaption>MAD76 IO Board Layout (Eagle layout <a href="../../pcb/MAD76.brd">../../pcb/MAD76.brd</a>)</figcaption>
+<img src="mad76io_board.png" id="F-board" alt="" /><figcaption>MAD76 IO Board Layout (Eagle layout <a href="../../pcb/MAD76.brd">../../pcb/MAD76.brd</a>)</figcaption>
 </figure>
 
 Raspberry Pi Installation
@@ -338,10 +341,10 @@ Software Architecture
 ---------------------
 
 <figure>
-<img src="ros2nodes.png" id="F:sysarch" alt="" /><figcaption>ROS2 nodes of MAD76 Driving Stack</figcaption>
+<img src="ros2nodes.png" id="F-swarch" alt="" /><figcaption>ROS2 nodes of MAD76 Driving Stack</figcaption>
 </figure>
 
-<div id="T:ros2nodes" markdown="1">
+<div id="T-ros2nodes" markdown="1">
 
 | ROS2 Node      | Description                                                        |
 |:---------------|:-------------------------------------------------------------------|
@@ -353,7 +356,7 @@ Software Architecture
 
 </div>
 
-<div id="T:ros2topics" markdown="1">
+<div id="T-ros2topics" markdown="1">
 
 | ROS2 Topic                  | ROS2 Message Type                   | Description                                      |
 |:----------------------------|:------------------------------------|:-------------------------------------------------|
@@ -397,7 +400,7 @@ Build MAD76
         cd mad76/mad_ws
         colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 
-    For building on Raspberry Pi, the the `colcon build` command must be
+    For building on Raspberry Pi, the `colcon build` command must be
     extended by `–parallel-workers 2` to avoid out-of-memory problems
 
         colcon build --parallel-workers 2 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
@@ -422,7 +425,7 @@ Software-in-the-Loop Simulation
 -------------------------------
 
 <figure>
-<img src="ros2sil.png" id="F:silarch" alt="" /><figcaption>ROS2 nodes in SiL simulation mode</figcaption>
+<img src="ros2sil.png" id="F-silarch" alt="" /><figcaption>ROS2 nodes in SiL simulation mode</figcaption>
 </figure>
 
 -   In order to test your MAD76 installation, you may run MAD76 in

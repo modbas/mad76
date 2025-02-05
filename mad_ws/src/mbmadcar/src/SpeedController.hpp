@@ -112,10 +112,10 @@ class SpeedController
     CarParameters const * const p { CarParameters::p() };
     rclcpp::Node& node;
     rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr pubDebug;
-    const float frictionPos { p->uFrictionPos }; // positive friction
-    const float frictionNeg { p->uFrictionNeg }; // negative friction
-    const float umax { p->uMax - p->uFrictionPos }; // maximum manipulation signal
-    const float umin { -p->uMax - p->uFrictionNeg }; // minimum manipulation signal
+    const float frictionPos { p->uFrictionKd0 }; // positive friction
+    const float frictionNeg { -p->uFrictionKd0 }; // negative friction
+    const float umax { p->uMax - p->uFrictionKd0 }; // maximum manipulation signal
+    const float umin { -p->uMax + p->uFrictionKd0 }; // minimum manipulation signal
     const float dt { p->Tva }; // sampling time
 #ifdef MAD24
     const float Ti { 247e-3F }; // integral time

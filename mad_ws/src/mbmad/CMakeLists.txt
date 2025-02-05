@@ -42,13 +42,13 @@ install(TARGETS
   RUNTIME DESTINATION bin
 )
 
-install(DIRECTORY
-  include/
+install(DIRECTORY include/
   DESTINATION include
 )
 
-install(DIRECTORY
+install(DIRECTORY 
   launch
-  DESTINATION share/${PROJECT_NAME})
+  DESTINATION share/${PROJECT_NAME}
+)
 
 ament_package()

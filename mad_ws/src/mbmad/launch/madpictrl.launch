@@ -14,13 +14,13 @@
         <remap from="/diagnostics" to="diagnostics"/>
     </node>
     <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car0" output="screen">
-        <param name="colorRGB" value="[ 0.8, 1.0, 0.0 ]"/>
+        <param name="colorRGB" value="[ 1.0, 0.4, 0.0 ]"/>
     </node>
     <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car0" output="screen">
         <remap from="/diagnostics" to="diagnostics"/>    
     </node>
     <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car1" output="screen">
-        <param name="colorRGB" value="[ 1.0, 0.4, 0.0 ]"/>
+        <param name="colorRGB" value="[ 0.8, 1.0, 0.0 ]"/>
     </node>
     <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car1" output="screen">
         <remap from="/diagnostics" to="diagnostics"/>        

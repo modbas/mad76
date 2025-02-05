@@ -84,18 +84,18 @@ public:
     // total dead time [ s ]
     const float Tt { uTt + outputTt };
     // longitudinal friction
-    const float uFrictionPos { 0.04F };
-    const float uFrictionNeg { -0.035F };
+    const float uFrictionKd0 { 0.04F };
+    const float uFrictionKd1 { 0.15F };
     // pedals max
     const float uMax { 0.2F };
     // normalized delta max [ 1 ]
-    const float deltanMax { 0.9F }; 
+    const float deltanMax { 0.93F }; 
     // delta max [ rad ]
-    const float deltaMax { Utils::deg2rad(20.0F) }; 
+    float deltaMax { Utils::deg2rad(19.5F) }; 
     // wheel base [ m ]
     const float l { 32.5e-3F };
     // minimum speed [ m/s ]
-    const float speedMin { 0.05F };
+    const float speedMin { 0.15F };
     // maximum speed [ m/s ]
     float speedMax { k };
     // maximum speed limit [ m/s ]
@@ -120,16 +120,12 @@ public:
     const float lr { 16.25e-3F }; // distance COG to rear axle [ m ]
 
     // tyre coefficients of Pacejka Model (Magic Formula)
-    const float Br { 0.7F }; // rear: stiffness factor
-    const float Cr { 2.0F }; // rear: shape factor
-    const float Dr { 2.5F }; // rear: peak value
-    const float Er { -0.05F }; // rear: shape factor
-    const float Bf { 0.7F }; // front: stiffness factor
-    const float Cf { 2.0F }; // front: shape factor
-    const float Df { 2.0F }; // front: peak value
-    const float Ef { -0.1F }; // front: shape factor
+    const float cf { 0.09F }; // cornering stiffness front [ N/rad ]
+    const float cr { 0.12F }; // cornering stiffness rear [ N/rad ]
 
-
+    // Eigenlenkgradient
+    const float EG { 0.02F };
+    
     // // lateral control
     // const float lateralAccMax { 3.0F }; // maximum lateral acceleration [ m/s^2 ]
     // const float lateralTw { 200e-3F}; // closed-loop longitudinal dynamics time constant [ s ]

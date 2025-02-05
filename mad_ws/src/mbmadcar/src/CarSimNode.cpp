@@ -104,6 +104,7 @@ private:
         CarParameters::p()->x0.at(idx) = static_cast<float>(x0.at(idx));
       }
     }
+    CarParameters::p()->deltaMax =  Utils::deg2rad(declare_parameter<float>("deltaMax", Utils::rad2deg(CarParameters::p()->deltaMax)));
   }
 
   static constexpr double dt = static_cast<double>(CarParameters::Ta);

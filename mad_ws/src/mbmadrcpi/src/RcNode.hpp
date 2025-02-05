@@ -24,6 +24,9 @@
 #include <string>
 #include <cstdint>
 
+#include <chrono>
+#include <thread>
+
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 
@@ -120,7 +123,7 @@ namespace mbmad
       for (auto pin : POWER_PINS)
       {
         pinMode(pin, OUTPUT);
-        digitalWrite(pin, LOW);
+        digitalWrite(pin, LOW);        
       }
       
       // write zeros to steering, pedals
@@ -133,6 +136,7 @@ namespace mbmad
       for (auto pin : POWER_PINS)
       {
         digitalWrite(pin, HIGH);
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // wait to protect against undervoltage
       }
       
       spiInitialized = true;

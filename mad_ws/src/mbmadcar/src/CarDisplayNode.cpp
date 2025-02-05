@@ -88,7 +88,7 @@ public:
 
 private:
   using ColorType = std::vector<double>;
-  ColorType colorRGB { { 1.0, 0.3, 0.3 } }; /** marker color */
+  ColorType colorRGB { { 1.0, 0.4, 0.0 } }; /** marker color */
   rclcpp::Subscription<mbmadmsgs::msg::CarOutputsList>::SharedPtr subOutputs;
   rclcpp::Subscription<mbmadmsgs::msg::CarOutputsExtList>::SharedPtr subOutputsExt;
   rclcpp::Subscription<mbmadmsgs::msg::CtrlReference>::SharedPtr subCtrlReference;

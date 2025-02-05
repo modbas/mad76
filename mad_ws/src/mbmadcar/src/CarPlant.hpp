@@ -44,8 +44,8 @@ class CarPlant
       for (std::size_t i = p->x0.size(); i < x.size(); ++i) {
         x[i] = 0.0F;
       }
-      uFifo.resize(static_cast<size_t>(p->uTt / p->Ta), 0.0F);
-      deltaFifo.resize(static_cast<size_t>(p->deltaTt / p->Ta), 0.0F);
+      uFifo.resize(static_cast<size_t>((p->uTt - p->Tva) / p->Ta), 0.0F);
+      deltaFifo.resize(static_cast<size_t>((p->deltaTt - p->Tva) / p->Ta), 0.0F);
     }
 
     CarPlant(const CarPlant& that) = delete;
@@ -116,11 +116,12 @@ class CarPlant
       (void)t; // unused parameter
       float u = 0.0F;
 
-      // friction at standstill
-      if (uDelayed > p->uFrictionPos) {
-          u = uDelayed - p->uFrictionPos;
-      } else if (uDelayed < p->uFrictionNeg) {
-          u = uDelayed - p->uFrictionNeg;
+      // friction at standstill and in curves
+      const float und = p->uFrictionKd0 + p->uFrictionKd1 * std::fabs(uDelayed * deltaDelayed);
+      if (uDelayed > und) {
+          u = uDelayed - und;
+      } else if (uDelayed < -und) {
+          u = uDelayed + und;
       } else {
           u = 0.0F;
       }
@@ -141,8 +142,13 @@ class CarPlant
           alphaf = -alphaf;
           alphar = -alphar;
         }
+#ifdef MAD24
         const float Ff = p->Df * std::sin(p->Cf * std::atan(p->Bf * (1.0F - p->Ef) * alphaf - p->Ef * std::atan(p->Bf * alphaf)));
         const float Fr = p->Dr * std::sin(p->Cr * std::atan(p->Br * (1.0F - p->Er) * alphar - p->Er * std::atan(p->Br * alphar)));
+#else
+        const float Ff = p->cf * alphaf;
+        const float Fr = p->cr * alphar;
+#endif
         // ODE
         xd.at(0) = -Ff * std::sin(delta) / p->m + x.at(5) * x.at(4)
             + (-x.at(0) + p->k * u) / p->T; // vc1=vr: rear wheel speed
@@ -154,10 +160,18 @@ class CarPlant
         xd.at(6) = x.at(0); // arc length x of rear axle
       } else { // stand still or kinematics model
         // nonlinear kinematics model (Section 5.4)
+        const float vc1 = x.at(0);
+        float psid = 0.0F;
+        if (vc1 >= 0.0F) {
+          psid =  vc1 * std::tan(delta) / (p->l + vc1*vc1 * p->EG);
+        } else {
+          psid =  vc1 * std::tan(delta) / (p->l - vc1*vc1 * p->EG);
+        }
+        const float vc2 = p->lr * psid;
         xd.at(0) = (-x.at(0) + p->k * u) / p->T; // COG speed
-        xd.at(1) = x.at(0) * std::cos(x.at(3) + beta); // s1
-        xd.at(2) = x.at(0) * std::sin(x.at(3) + beta); // s2
-        xd.at(3) = x.at(0) * std::tan(delta) / (p->l * std::sqrt(1.0f + tanDeltaMod * tanDeltaMod)); // psi
+        xd.at(1) = vc1 * std::cos(x.at(3)) - vc2 * std::sin(x.at(3)); // s1
+        xd.at(2) = vc1 * std::sin(x.at(3)) + vc2 * std::cos(x.at(3)); // s2
+        xd.at(3) = psid; // psi
         xd.at(4) = xd.at(0) * std::tan(delta) / p->l; // dot{psi}
         xd.at(5) = p->lr * xd.at(4); // vc2
         xd.at(6) = x.at(0) * std::cos(x.at(3)); // arc length x of rear axle

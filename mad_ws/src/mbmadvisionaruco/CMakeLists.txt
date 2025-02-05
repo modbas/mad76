@@ -34,6 +34,24 @@ target_include_directories(visionnode PUBLIC
 target_compile_features(visionnode PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 ament_target_dependencies(visionnode rclcpp std_msgs diagnostic_msgs diagnostic_updater sensor_msgs image_transport cv_bridge mbmad mbmadmsgs mbsafe mbsafemsgs)
 target_link_libraries(visionnode dl ${Boost_LIBRARIES} ${OpenCV_LIBRARIES})
+install(TARGETS visionnode
+  DESTINATION lib/${PROJECT_NAME})
+
+add_executable(create_board src/create_board.cpp)
+target_include_directories(create_board PUBLIC
+  ${OpenCV_INCLUDE_DIRS}
+  )
+target_link_libraries(create_board ${OpenCV_LIBRARIES})
+install(TARGETS create_board
+    DESTINATION lib/${PROJECT_NAME})
+
+add_executable(create_board_charuco src/create_board_charuco.cpp)
+target_include_directories(create_board_charuco PUBLIC
+  ${OpenCV_INCLUDE_DIRS}
+  )
+target_link_libraries(create_board_charuco ${OpenCV_LIBRARIES})
+install(TARGETS create_board_charuco
+    DESTINATION lib/${PROJECT_NAME})
 
 # add_executable(delaytestnode src/DelayTestNode.cpp)
 # target_include_directories(delaytestnode PUBLIC
@@ -45,10 +63,6 @@ target_link_libraries(visionnode dl ${Boost_LIBRARIES} ${OpenCV_LIBRARIES})
 # target_compile_features(delaytestnode PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 # ament_target_dependencies(delaytestnode rclcpp std_msgs diagnostic_msgs diagnostic_updater sensor_msgs image_transport cv_bridge mbmad mbmadmsgs mbsafemsgs)
 # target_link_libraries(delaytestnode wiringPi dl ${Boost_LIBRARIES} ${OpenCV_LIBRARIES})
-
-install(TARGETS visionnode
-  DESTINATION lib/${PROJECT_NAME})
-
 # install(TARGETS delaytestnode
 #   DESTINATION lib/${PROJECT_NAME})
 

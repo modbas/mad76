@@ -54,16 +54,16 @@ target_link_libraries(carctrlnode dl ${Boost_LIBRARIES})
 ament_target_dependencies(carctrlnode rclcpp std_msgs diagnostic_msgs diagnostic_updater mbsafe mbsafemsgs mbmad mbmadmsgs)
 
 # CurbCtrlNode
-#add_executable(curbctrlnode src/CrubCtrlNode.cpp)
-#target_link_libraries(curbctrlnode dl ${Boost_LIBRARIES})
-#ament_target_dependencies(curbctrlnode rclcpp std_msgs diagnostic_msgs diagnostic_updater mbsafe mbsafemsgs mbmad mbmadmsgs)
+add_executable(curbctrlnode src/CurbCtrlNode.cpp)
+target_link_libraries(curbctrlnode dl ${Boost_LIBRARIES})
+ament_target_dependencies(curbctrlnode rclcpp std_msgs diagnostic_msgs diagnostic_updater mbsafe mbsafemsgs mbmad mbmadmsgs)
 
 add_executable(cardisplaynode src/CarDisplayNode.cpp)
 ament_target_dependencies(cardisplaynode rclcpp std_msgs visualization_msgs geometry_msgs tf2 tf2_ros tf2_msgs mbmad mbmadmsgs)
 
 # install
 install(TARGETS
-  carsimnode visionsimnode carctrlnode cardisplaynode # curbctrlnode carsimnode2 
+  carsimnode visionsimnode carctrlnode cardisplaynode curbctrlnode  #carsimnode2 
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -9,6 +9,7 @@
   * 
   */
 
+// all includes
 #include <memory>
 #include <cstdint>
 #include <iostream>
@@ -37,6 +38,7 @@
 #include "SpeedController.hpp"
 #include "PositionController.hpp"
 #include "PathController.hpp"
+#include "PathController2.hpp"
 #include "Acc.hpp"
 #include "OperationModeFsm.hpp"
 
@@ -55,8 +57,7 @@ public:
   /**
    * @brief The only constructor
    */
-  CurbCtrlNode()
-    : Node { "CurbCtrlNode", "/mad/car0" }, pathController { *this }
+  CurbCtrlNode() : Node { "CurbCtrlNode", "/mad/car0" }, pathController { *this }, pathController2{ *this}
   {
     cpSeq.registerMonitor(cpJitterMonReceive);
     cpSeq.registerMonitor(cpDeadlineMonPublish);
@@ -68,20 +69,34 @@ public:
 
   bool init()
   {
-    boost::log::core::get()->set_filter(
-            boost::log::trivial::severity >= boost::log::trivial::error
-            );
+    boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::error);
     CarParameters::p()->setCarid(this->get_namespace());
     rclcpp::QoS qos { rclcpp::KeepLast(1) };
     qos.best_effort().durability_volatile();
     rclcpp::QoS qosReliable { rclcpp::KeepLast(1) };
     qosReliable.reliable();
-    subManeuver = create_subscription<mbmadmsgs::msg::DriveManeuver>(
-      "maneuver", qosReliable, std::bind(&CurbCtrlNode::maneuverCallback, this, std::placeholders::_1));
-    subManeuverPass = create_subscription<mbmadmsgs::msg::DriveManeuver>(
-      "maneuverpass", qosReliable, std::bind(&CurbCtrlNode::maneuverPassCallback, this, std::placeholders::_1));
+
+    // subscriber
     subOutputsExtList = create_subscription<mbmadmsgs::msg::CarOutputsExtList>(
       "/mad/locate/caroutputsext", qos, std::bind(&CurbCtrlNode::outputsExtListCallback, this, std::placeholders::_1));
+
+    // hier ensteht ein fehler wenn "/mad/car0/joystickinputs" --> /mad/car0/mad/car0/joystickinputs ist dann das topic 
+    subJoystickInputs = create_subscription<mbmadmsgs::msg::CarInputs>(
+      "joystickinputs", qos, std::bind(&CurbCtrlNode::joystickReadCallback, this, std::placeholders::_1));
+
+    subinner_curb = create_subscription<mbmadmsgs::msg::DriveManeuver>(
+      "inner_curb", qosReliable, std::bind(&CurbCtrlNode::innerCurbCallback, this, std::placeholders::_1));
+
+    subinner_line = create_subscription<mbmadmsgs::msg::DriveManeuver>(
+      "inner_line", qosReliable, std::bind(&CurbCtrlNode::innerSplineCallback, this, std::placeholders::_1));
+
+    subouter_curb = create_subscription<mbmadmsgs::msg::DriveManeuver>(
+      "outer_curb", qosReliable, std::bind(&CurbCtrlNode::outerCurbCallback, this, std::placeholders::_1));
+
+    subouter_line = create_subscription<mbmadmsgs::msg::DriveManeuver>(
+      "outer_line", qosReliable, std::bind(&CurbCtrlNode::outerSplineCallback, this, std::placeholders::_1));
+
+    // publisher
     pubInputs = create_publisher<mbmadmsgs::msg::CarInputs>("carinputs", qos);
     pubCtrlReference = create_publisher<mbmadmsgs::msg::CtrlReference>("ctrlreference", qos);
     pubOutputsExt = this->create_publisher<mbmadmsgs::msg::CarOutputsExt>("caroutputsext", qos);
@@ -89,6 +104,7 @@ public:
     return true;
   }
 
+  // save state after exiting
   bool exit()
   {
     mbmadmsgs::msg::CarInputs carInputsMsg;
@@ -117,28 +133,39 @@ private:
                                     0.0, CheckpointGraph::maxDeadline };
   mbsafe::CheckpointGraphMonitor cpGraphMon { *this, CheckpointGraph::graph };
   diagnostic_updater::Updater diagUpdater { this, 1.0 };
+
   rclcpp::Subscription<mbmadmsgs::msg::CarOutputsExtList>::SharedPtr subOutputsExtList;
-  rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subManeuver;
-  rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subManeuverPass;
+  rclcpp::Subscription<mbmadmsgs::msg::CarInputs>::SharedPtr subJoystickInputs;
+
+  rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subinner_curb;
+  rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subinner_line;
+  rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subouter_curb;
+  rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subouter_line;
+
   rclcpp::Publisher<mbmadmsgs::msg::CarInputs>::SharedPtr pubInputs;
   rclcpp::Publisher<mbmadmsgs::msg::CtrlReference>::SharedPtr pubCtrlReference;
   rclcpp::Publisher<mbmadmsgs::msg::CarOutputsExt>::SharedPtr pubOutputsExt;
 
-  SpeedController speedController; /**< The speed controller */
-  PositionController positionController; /**< The position controller */
   PathController pathController; /**< The path controller */
-  Acc acc; /**< The ACC controller */
+  PathController2 pathController2; /**< The path controller */
   OperationModeFsm opModeFsm; /**< Operation Mode Management */
   std::array<float, 2> s { { } }; /**< The current car position */
-  std::array<Spline, 2> splines; /**< The current path splines */
+  std::array<Spline, 4> splines; /**< The current path splines */
   float prob { 0.0F }; /**< The current car location probability */
   float psi { 0.0F }; /**< The current car yaw angle */
   float v { 0.0F }; /**< The current car speed */
   float x { 0.0F }; /**< The current longitudinal position */
 
-  float xref { 0.0F }; /**< The car reference position */
-  float vmax { 0.0F }; /**< The car max. speed from maneuver */
-  float vref { 0.0F }; /**< The car reference speed */
+  float joystick_pedals { 0.0F }; /**< The joystick pedals data*/
+  float joystick_steering { 0.0F}; /**< The joystick steering data*/
+  float joystick_carid {0}; /**< The joystick car id*/
+
+  float pedals {0.0F}; 
+  float steering {0.0F};
+
+  float dist2RefSpline {0.0F}; /**< The distance to the reference Spline (inner or outer curb) */
+  float safty_margin { 0.03F }; /**< The witdh of the catchment area */
+
   mbmadmsgs::msg::CarOutputsExtList carOutputsExtList; /**< The car outputs list message */
   mbmadmsgs::msg::DriveManeuver::_type_type maneuverType { mbmadmsgs::msg::DriveManeuver::TYPE_HALT };
 
@@ -172,31 +199,63 @@ private:
   }
 
   /**
-   * @brief callback for /mad/car?/maneuver topic
+   * @brief callback for /mad/car?/inner_curb topic
    * @param[in] msg The ROS message
    */
-  void maneuverCallback(const mbmadmsgs::msg::DriveManeuver::SharedPtr msg)
+  void innerCurbCallback(const mbmadmsgs::msg::DriveManeuver::SharedPtr msg)
   {
     std::unique_lock<std::mutex> lock(mutexStep);
     splines.at(0) = Spline(msg->breaks, msg->s1, msg->s2, msg->segments, false);
     maneuverType = msg->type;
-    xref = msg->xref;
-    vmax = msg->vmax;
-    positionController.init(vmax, xref, x);
+    // xref = msg->xref;
+    // vmax = msg->vmax;
     pathController.init();
-    acc.init();
+    pathController2.init();
   }
 
   /**
-   * @brief callback for /mad/car?/maneuverpass topic
-   * @param[in] msg The ROS message for passing maneuvers
+   * @brief callback for /mad/car?/inner_line topic
+   * @param[in] msg The ROS message
    */
-  void maneuverPassCallback(const mbmadmsgs::msg::DriveManeuver::SharedPtr msg)
+  void innerSplineCallback(const mbmadmsgs::msg::DriveManeuver::SharedPtr msg)
   {
     std::unique_lock<std::mutex> lock(mutexStep);
-    if (splines.at(1).breaks.empty()) {      
-      splines.at(1) = Spline(msg->breaks, msg->s1, msg->s2, msg->segments, false);    
-    }
+    splines.at(1) = Spline(msg->breaks, msg->s1, msg->s2, msg->segments, false);
+    
+  }
+  
+  /**
+   * @brief callback for /mad/car?/outer_curb topic
+   * @param[in] msg The ROS message
+   */
+  void outerCurbCallback(const mbmadmsgs::msg::DriveManeuver::SharedPtr msg)
+  {
+    std::unique_lock<std::mutex> lock(mutexStep);
+    splines.at(2) = Spline(msg->breaks, msg->s1, msg->s2, msg->segments, false);
+
+  }
+
+  /**
+   * @brief callback for /mad/car?/outer_line topic
+   * @param[in] msg The ROS message
+   */
+  void outerSplineCallback(const mbmadmsgs::msg::DriveManeuver::SharedPtr msg)
+  {
+    std::unique_lock<std::mutex> lock(mutexStep);
+    splines.at(3) = Spline(msg->breaks, msg->s1, msg->s2, msg->segments, false);
+
+  }
+ 
+  /**
+   * @brief callback for mad/car0/joystickinputs topic
+   * @param[in] msg The ROS message
+   */
+  void joystickReadCallback(const mbmadmsgs::msg::CarInputs::SharedPtr msg)
+  {
+    std::unique_lock<std::mutex> lock(mutexStep);
+    joystick_pedals = msg->pedals;
+    joystick_steering = msg->steering;
+    joystick_carid = msg->carid;
   }
 
   /**
@@ -205,59 +264,75 @@ private:
   void step()
   {
     std::unique_lock<std::mutex> lock(mutexStep);
-    float pedals { 0.0F };
-    float steering { 0.0F };
+
+
     if (prob >= 1.0F) {
       opModeFsm.dispatch<EventLocationGained>(EventLocationGained{});
-    } else if (prob <= 0.0F) {
+    } 
+    else if (prob <= 0.0F) {
       opModeFsm.dispatch<EventLocationLost>(EventLocationLost{});
-    } else {
+    } 
+    else {
       opModeFsm.dispatch<EventLocationDegraded>(EventLocationDegraded{});
     }
+
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------
+    // Logik für die CurbCtrlNode
+    pedals = joystick_pedals;
+    
     float ey { 0.0F };
     float wkappa { 0.0F };
-    steering = pathController.step(splines.at(acc.getLane()), opModeFsm, s, psi, vref, ey, wkappa);
 
-    if (maneuverType == mbmadmsgs::msg::DriveManeuver::TYPE_PATHFOLLOW) {
-      #ifdef MAD24
-        vref = vmax;
-      #else
-        float leadDist { 0.0F };
-        float leadV { 0.0F };
-        float otherDist { 0.0F };
-        bool faultLateral { false };
-        acc.step(vmax, splines, carOutputsExtList, v, pathController.wx, ey, wkappa, vref, leadDist, leadV, otherDist, faultLateral);        
-      #endif
-        pedals = speedController.step(opModeFsm, vref, v, dt);
-    } 
-    
-    else if (maneuverType == mbmadmsgs::msg::DriveManeuver::TYPE_PARK) {
-      float vrefPos = positionController.step(x, dt);
-      pedals = speedController.step(opModeFsm, vrefPos, v, dt);
+    // dist to inner spline
+    dist2RefSpline = pathController2.getey(splines.at(0), opModeFsm, s, v, wkappa);
+
+    // inner curb area
+    if (dist2RefSpline < safty_margin && dist2RefSpline > -1.0F){
+      steering = pathController.step(splines.at(1), opModeFsm, s, psi, v, ey, wkappa);
+      // RCLCPP_INFO(this->get_logger(), "inner curb dist2RefSpline: %f", dist2RefSpline);
+    }
+
+    // if dist >= middelline --> outer spline
+    // 0.07m is the middelline at the smalest point
+    else if(dist2RefSpline > 0.07F){
+      dist2RefSpline = pathController2.getey(splines.at(2), opModeFsm, s, v, wkappa);
+
+      // outer curb area
+      if (dist2RefSpline > -1.0*safty_margin && dist2RefSpline > -1.0F){
+       steering = pathController.step(splines.at(3), opModeFsm, s, psi, v, ey, wkappa);
+       // RCLCPP_INFO(this->get_logger(), "outer curb dist2RefSpline: %f", dist2RefSpline);
+      }
+
+      // mittel area
+      else{
+        steering = joystick_steering;
+        // RCLCPP_INFO(this->get_logger(), "outer curb SelfSteering  : %f", dist2RefSpline);
+      }
+
     }
     
+    // mittel area
+    else{
+      steering = joystick_steering;
+      // RCLCPP_INFO(this->get_logger(), "inner curb Self seering: %f", dist2RefSpline);
+    }
+    
+    // -------------------------------------------------------------------------------------------------------------------------------------------------------------
+  
+  
+    // sending the CarInputs
     mbmadmsgs::msg::CarInputs carInputsMsg;
     carInputsMsg.carid = static_cast<uint8_t>(CarParameters::p()->carid);
     carInputsMsg.opmode = opModeFsm.getStateId();
     carInputsMsg.cmd = carInputsMsg.CMD_FORWARD;
     carInputsMsg.pedals = pedals;
     carInputsMsg.steering = steering;
+
     if (cpSeq.empty() == false) {
       // avoid invalid deadline measurements when there is no camera data (i.e. during startup)
       cpSeq.update(CheckpointGraph::Checkpoint::CtrlPublish);
       carInputsMsg.cpseq = cpSeq.message();
     }
-
-    #ifdef XXXXXXXX
-      if (cpSeq.health().health() == false) {
-        // emergency halt
-        carInputsMsg.cmd = carInputsMsg.CMD_HALT;
-        carInputsMsg.pedals = 0.0F;
-        // heal immediately
-        cpSeq.health().recover();
-        BOOST_LOG_TRIVIAL(error) << "[ERROR] no health -> emergency halt";
-      }
-    #endif
 
     pubInputs->publish(carInputsMsg);
 
@@ -266,7 +341,7 @@ private:
     ctrlReferenceMsg.s.at(0) = pathController.ws.at(0);
     ctrlReferenceMsg.s.at(1) = pathController.ws.at(1);
     ctrlReferenceMsg.psi = pathController.wpsi;
-    ctrlReferenceMsg.v = vref;
+    ctrlReferenceMsg.v = 0; //vref
     ctrlReferenceMsg.x = pathController.wx;
     pubCtrlReference->publish(ctrlReferenceMsg);
   }
@@ -280,6 +355,8 @@ private:
 
 }
 
+
+// main
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
@@ -296,4 +373,3 @@ int main(int argc, char **argv)
 
   return EXIT_SUCCESS;
 }
-
