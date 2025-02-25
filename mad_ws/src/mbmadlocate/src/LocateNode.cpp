@@ -28,6 +28,7 @@
 #include "mbsafe/Task.hpp"
 #include "mbmadmsgs/msg/car_outputs_list.hpp"
 #include "mbmadmsgs/msg/car_outputs_ext_list.hpp"
+#include "mbmad/CarParameters.hpp"
 #include "Car.hpp"
 
 namespace mbmad
@@ -56,6 +57,7 @@ public:
     diagUpdater.setHardwareID(get_name());
     diagUpdater.add("CheckpointSequence", this, &LocateNode::diagCheckpointSequence);
     diagUpdater.add("cars", this, &LocateNode::diagCar);
+    msgExtList.list.resize(mbmad::CarParameters::p()->carCnt);
   }
 
   bool init()
@@ -106,6 +108,8 @@ private:
   using CarMap = std::unordered_map<uint8_t, Car>;
   CarMap carMap;
 
+  mbmadmsgs::msg::CarOutputsExtList msgExtList;
+
 
   /**
   * @brief callback for /mad/vision/caroutputslist topic
@@ -127,12 +131,13 @@ private:
         carMap.at(msg.carid).update(msgList->cpseq.cpseq.at(msgList->cpseq.cur_cpid).seqctr, msg, camTime);        
       }
     }
-    // degrade if car has not been detected and publish detected and undetected cars
-    mbmadmsgs::msg::CarOutputsExtList msgExtList;
+    // degrade if car has not been detected and publish detected and undetected cars    
     for (auto& car : carMap) {
       car.second.updateVerify(msgList->cpseq.cpseq.at(msgList->cpseq.cur_cpid).seqctr);
       mbmadmsgs::msg::CarOutputsExt msgExt = car.second.message();
-      msgExtList.list.push_back(msgExt);
+      if (msgExt.carid < msgExtList.list.size()) {
+        msgExtList.list.at(msgExt.carid) = msgExt;
+      }
     }
     cpSeq.update(CheckpointGraph::Checkpoint::LocatePublish);
     msgExtList.cpseq = cpSeq.message();

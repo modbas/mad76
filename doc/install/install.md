@@ -37,7 +37,7 @@ containing
 -   Raspberry Pi (RPi)
 
 -   MAD76 IO: self-built PCB electronics for coupling RPi to remote
-    controllers (RC) for the Turboracing cars
+    controllers (RC) for the Turbo Racing cars
 
 -   Up to 4 RC cars are supported
 
@@ -97,7 +97,7 @@ Bill of Materials (BOM)
 
 </div>
 
-### Turboracing Cars
+### Turbo Racing Cars
 
 <div id="T-bommad76cars" markdown="1">
 
@@ -111,7 +111,7 @@ Bill of Materials (BOM)
 MAD76 IO
 --------
 
--   MAD76 IO is the bridge from RPi to the Turboracing RCs.
+-   MAD76 IO is the bridge from RPi to the Turbo Racing RCs.
 
 -   MAD76 IO controls up to 4 cars.
 
@@ -171,8 +171,8 @@ Raspberry Pi OS
         # reboot in case of kernel/firmware updates
         sudo shutdown -r 0 
 
-Rasberry Pi Configuration
--------------------------
+Raspberry Pi Configuration
+--------------------------
 
 -   Enable SPI
 
@@ -184,6 +184,9 @@ Rasberry Pi Configuration
 
 VNC Server
 ----------
+
+VNC Server allows you to remotely connect to the Raspberry Pi from your
+development PC, either Linux, Windows or MacOS.
 
 -   Remove RealVNC
 
@@ -198,7 +201,9 @@ VNC Server
 
         vncserver -localhost no -geometry 2550x1350 -depth 24
 
--   Connect to VNC server: `<hostname>:1`
+-   Connect to VNC server from your VNC client: `<hostname>:1`
+
+-   TightVNC on Windows or Remmina on Linux are popular VNC clients.
 
 WiringPi
 --------
@@ -215,12 +220,18 @@ WiringPi
 ROS2
 ----
 
--   Building ROS2 Iron Irwini from source
+ROS2 is the middleware for the MAD76 software stack.
+
+-   ROS2 Jazzy Jalisco is required. No other ROS2 distribution is
+    supported because of compatibility to both Debian Bookworm and
+    MATLAB/Simulink R2025a.
+
+-   Building ROS2 Jazzy Jalisco from source
     \[[2](#ref-ros-buildonlinux)\],
     \[[3](#ref-ros-installubuntusource)\]
 
-        mkdir -p ~/src/ros2_iron/src
-        cd ~/src/ros2_iron
+        mkdir -p ~/src/ros2_jazzy/src
+        cd ~/src/ros2_jazzy
 
         locale  # check for UTF-8
 
@@ -236,7 +247,7 @@ ROS2
 
         sudo apt-get install python3-lark python3-netifaces
         sudo apt-get install python3-flake8-blind-except python3-flake8-builtins python3-flake8-class-newline python3-flake8-comprehensions    python3-flake8-deprecated    python3-flake8-import-order python3-flake8-quotes python3-pytest-repeat python3-pytest-rerunfailures
-        sudo apt-get install python3-rosdep2
+        sudo apt-get install python3-rosdep2 python3-vcstools
         sudo apt-get install python3-opencv python3-scipy python3-matplotlib
         sudo apt-get install libbullet-dev libboost-dev
         sudo apt-get install libasio-dev libtinyxml2-dev
@@ -246,11 +257,11 @@ ROS2
         sudo apt-get install liblttng-ust-dev
         sudo apt-get install libboost-python-dev libboost-system-dev libboost-log-dev libgtest-dev libjsoncpp-dev
 
-        wget https://raw.githubusercontent.com/ros2/ros2/iron/ros2.repos
+        wget https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos
         vcs import src < ros2.repos
 
         rosdep update
-        rosdep install --from-paths src --ignore-src --rosdistro iron -y # --skip-keys "console_bridge fastcdr fastrtps libopensplice67 libopensplice69"
+        rosdep install --from-paths src --ignore-src --rosdistro jazzy -y --skip-keys "rti-connext-dds-6.0.1 python3-vcstool"
 
         touch src/eclipse-cyclonedds/COLCON_IGNORE
         touch src/eclipse-iceoryx/COLCON_IGNORE
@@ -262,15 +273,20 @@ ROS2
 
         colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 
--   Install ROS2 packages for camera and diagnostics
+-   Install ROS2 packages for camera, diagnostics, and Xbox controller
 
         sudo apt-get install libcamera-dev
-        source ~/src/ros2_iron/install/setup.bash
+        source ~/src/ros2_jazzy/install/setup.bash
         mkdir -p /src/ros_ws/src
         cd ~/src/ros_ws/src
-        git clone https://github.com/ros/diagnostics.git -b ros2-iron  
-        git clone https://github.com/ros-perception/vision_opencv.git -b iron
-        git clone  https://github.com/christianrauch/camera_ros -b main
+        git clone https://github.com/ros/diagnostics.git -b ros2-jazzy  
+        git clone https://github.com/ros-perception/vision_opencv.git -b rolling
+        git clone https://github.com/christianrauch/camera_ros -b main
+        git clone https://github.com/ros-drivers/joystick_drivers -b ros2
+        touch joystick_drivers/ps3joy/COLCON_IGNORE
+        touch joystick_drivers/spacenav/COLCON_IGNORE
+        touch joystick_drivers/wiimote/COLCON_IGNORE
+        touch joystick_drivers/wiimote_msgs/COLCON_IGNORE
         cd ..
         colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release  
 
@@ -281,7 +297,7 @@ If you want to update ROS2 later on, you can do the following.
 
 -   Update ROS2 distribution
 
-        cd ~/src/ros2_iron
+        cd ~/src/ros2_jazzy
         vcs custom --args remote update
         vcs import src < ros2.repos
         vcs pull src
@@ -296,19 +312,24 @@ If you want to update ROS2 later on, you can do the following.
         git pull
         cd ../camera_ros
         git pull
+        cd ../joystick_drivers
+        git pull
         cd ../..
-        source ~/src/ros2_iron/install/setup.bash
+        source ~/src/ros2_jazzy/install/setup.bash
         colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 Xbox One Controllers
 --------------------
 
--   Enable Bluetooth Low Energy (BLE) privacy
+Optionally, Xbox One controllers can be used to manually control the
+MAD76 cars in car racing mode.
 
-    -   <https://www.reddit.com/r/linux_gaming/comments/js0trh/comment/gddwyjk/>
+-   Enable Bluetooth Low Energy (BLE) privacy, so that Xbox One
+    controllers can be paired to Raspberry Pi
 
     -   Add line `Privacy=device` to the `[General]` section of
-        `/etc/bluetooth/main.conf`
+        `/etc/bluetooth/main.conf` according to
+        <https://www.reddit.com/r/linux_gaming/comments/js0trh/comment/gddwyjk/>
 
 -   Follow the instructions on
     <https://pimylifeup.com/xbox-controllers-raspberry-pi/>
@@ -316,23 +337,30 @@ Xbox One Controllers
 Linux-PC Installation
 =====================
 
--   Install an Ubuntu Desktop version that supports ROS2 Iron Irwini,
-    such as Ubuntu Jammy Jellyfish 22.04
-    \[[4](#ref-ubuntu-alternativedownloads)\]. ROS2 Iron Irwini (and no
-    other ROS2 version) is required, otherwise distributed computing
+Next to the Raspberry Pi installation, MAD76 may be further installed
+optionally on a Linux PC. The Linux PC allows for more efficient MAD76
+software development and debugging. Furthermore, MAD76 may be run in
+Software-in-the-Loop (SiL) simulation mode on the Linux PC.
+MATLAB/Simulink may be applied for model-based software engineering of
+MAD76. For controlling the real MAD76 system, The MAD76 software stack
+may be run on a distributed ROS2 environment including the Raspberry Pi
+and the Linux PC.
+
+-   Install an Ubuntu Desktop version that supports ROS2 Jazzy Jalisco,
+    such as Ubuntu Noble Numbat 24.04
+    \[[4](#ref-ubuntu-alternativedownloads)\]. ROS2 Jazzy Jalisco (and
+    no other ROS2 version) is required, otherwise distributed computing
     with PC and Raspberry Pi will not work.
 
 -   However, if you only want to run MAD76 in Software-in-the-Loop (SiL)
-    simulation mode, you may use other ROS2 distributions and other
-    Linux distributions.
+    simulation mode only, you may use other ROS2 and Linux
+    distributions.
 
--   Install ROS2 Iron Irwini binary (deb) packages according to
-    \[[5](#ref-ros-installubuntudeb)\]. Make sure to install
-    `ros-dev-tools` and `ros-iron-desktop` packages.
+-   Install ROS2 Jazzy Jalisco binary (deb) packages according to
+    \[[5](#ref-ros-installubuntudeb)\]. Make sure to install the
+    following ROS2 packages:
 
--   Install additonal Ubuntu packages required by MAD76
-
-        sudo apt-get install git ros-iron-diagnostic-updater
+        sudo apt-get install ros-dev-tools ros-jazzy-desktop ros-jazzy-diagnostic-updater
 
 MAD76 Driving Stack
 ===================
@@ -353,6 +381,8 @@ Software Architecture
 | `locate_node`  | multi-object tracking                                              |
 | `carctrl_node` | motion planning and control for each individual car                |
 | `rc_node`      | remote control signals output to $2.4\mathrm{GHz}$ channel via SPI |
+| `track_node`   | track map                                                          |
+| `joy_node`     | optional node for manual control via joystick                      |
 
 </div>
 
@@ -364,7 +394,9 @@ Software Architecture
 | `/mad/camera/camera_info`   | `sensor_msgs::msg::CameraInfo`      | camera calibration info                          |
 | `/mad/vision/caroutputs`    | `mbmadmsgs::msg::CarOutputsList`    | list of car poses                                |
 | `/mad/locate/caroutputsext` | `mbmadmsgs::msg::CarOutputsExtList` | list of car poses including velocities           |
-| `/mad/car?/carinput`        | `mbmadmsgs::msg::CarInputs`         | control signals for each individual car          |
+| `/mad/car?/carinputs`       | `mbmadmsgs::msg::CarInputs`         | control signals for each individual car          |
+| `/mad/car?/maneuver`        | `mbmadmsgs::msg::DriveManeuver`     | maneuvers for path following and parking         |
+| `/mad/car?/joy`             | `sensor_msgs::msg::Joy`             | standard ROS2 joystick messages                  |
 
 </div>
 
@@ -387,7 +419,8 @@ Build MAD76
 -   For running MAD76 in Software-in-the-Loop (SiL) simulation mode (see
     Section <a href="#software-in-the-loop-simulation" data-reference-type="ref" data-reference="software-in-the-loop-simulation">5.3</a>),
     a build of MAD76 on an Ubuntu Linux-PC is sufficient because SiL
-    mode does no do any input / output
+    mode does not do any input / output, except for optional joystick
+    control
 
 -   Clone Git repository and build MAD76 workspace
 
@@ -491,22 +524,22 @@ References [bibliography]
 
 <div id="ref-ros-installubuntusource" markdown="1">
 
-\[3\] ROS, “Installation Alternatives Ubuntu (Source).” 2024. Available:
-<https://docs.ros.org/en/iron/Installation/Alternatives/Ubuntu-Development-Setup.html>
+\[3\] ROS, “Installation Alternatives Ubuntu (Source).” 2025. Available:
+<https://docs.ros.org/en/jazzy/Installation/Alternatives/Ubuntu-Development-Setup.html>
 
 </div>
 
 <div id="ref-ubuntu-alternativedownloads" markdown="1">
 
-\[4\] Canonical Ubuntu, “Alternative Downloads.” 2024. Available:
+\[4\] Canonical Ubuntu, “Alternative Downloads.” 2025. Available:
 <https://ubuntu.com/download/alternative-downloads>
 
 </div>
 
 <div id="ref-ros-installubuntudeb" markdown="1">
 
-\[5\] ROS, “Installation Ubuntu (deb packages).” 2024. Available:
-<https://docs.ros.org/en/iron/Installation/Ubuntu-Install-Debs.html>
+\[5\] ROS, “Installation Ubuntu (deb packages).” 2025. Available:
+<https://docs.ros.org/en/jazzy/Installation/Alternatives/Ubuntu-Install-Binary.html>
 
 </div>
 

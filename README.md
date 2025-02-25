@@ -13,7 +13,7 @@ MAD76 Features
 
 -   Multi-player robot car racing
 
--   Race against AI cars using XBox controllers
+-   Race against AI cars using Xbox controllers
 
 -   Program your own AI
 

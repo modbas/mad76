@@ -21,6 +21,7 @@ import rclpy
 from rclpy.node import Node
 import rclpy.parameter
 from rclpy.qos import QoSDurabilityPolicy, QoSHistoryPolicy, QoSReliabilityPolicy, QoSProfile
+from scipy.interpolate import CubicSpline
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker, MarkerArray
@@ -30,6 +31,7 @@ from ament_index_python.packages import get_package_share_directory
 import numpy as np
 #from sensor_msgs.msg import Image
 import cv_bridge
+import matplotlib.pyplot as plt
 
 class TrackNode(Node):
     def __init__(self):
@@ -41,20 +43,20 @@ class TrackNode(Node):
         self.declare_parameter('sr1', rclpy.Parameter.Type.DOUBLE_ARRAY)
         self.declare_parameter('sr2', rclpy.Parameter.Type.DOUBLE_ARRAY)
 
-        self.processImageMessage = False
+        self.curbs_available = False
         sl1 = self.get_parameter_or('sl1', rclpy.Parameter('sl1', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
-        sl2 = self.get_parameter_or('sl1', rclpy.Parameter('sl2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
-        sr1 = self.get_parameter_or('sl1', rclpy.Parameter('sr1', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
-        sr2 = self.get_parameter_or('sl1', rclpy.Parameter('sr2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+        sl2 = self.get_parameter_or('sl2', rclpy.Parameter('sl2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+        sr1 = self.get_parameter_or('sr1', rclpy.Parameter('sr1', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+        sr2 = self.get_parameter_or('sr2', rclpy.Parameter('sr2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
         if not sl1 or not sl2 or not sr1 or not sr2:
-            self.get_logger().info('no curb parametes found, waiting for image')
-            self.processImageMessage = True
+            self.get_logger().info('no curb parameters found, waiting for image')
             # transform pointts client
             self.clientTransform = self.create_client(VisionTransformPoints, '/mad/vision/transform_points')        
             while not self.clientTransform.wait_for_service(timeout_sec = 1.0):
                 self.get_logger().info('service /mad/vision/transform_points is not available, waiting again ...')
         else:
-            self.get_logger().info('curb parametes read from parameter server')
+            self.get_logger().info('curb parameters read from parameter server')
+            self.curbs_available = True
 
         
         qos = QoSProfile(
@@ -80,7 +82,7 @@ class TrackNode(Node):
         self.create_timer(1.0, self.step)
 
     def imgCallback(self, msg):
-        if self.processImageMessage:
+        if not self.curbs_available:
             self.get_logger().info('image received')
             # convert image to OpenCV format
             bridge = cv_bridge.CvBridge()
@@ -90,11 +92,20 @@ class TrackNode(Node):
             _sc, sl, sr = vision.computeWaypoints()
             if _sc is None:
                 self.get_logger().error(vision.errtxt)
-                return
-            self.get_logger().info('computeWaypoints done')            
-            self.__transformWaypoints(sl, self.__transformFutureCallbackSl)
-            self.__transformWaypoints(sr, self.__transformFutureCallbackSr)
-            self.processImageMessage = False
+            else:
+                plt.figure(1)
+                vision.showImage(image)
+                plt.plot(_sc[:,0], _sc[:,1], 'y.')
+                plt.plot(sl[:,0], sl[:,1], 'g.')
+                plt.plot(sr[:,0], sr[:,1], 'r.')
+                plt.plot(_sc[0,0], _sc[0,1], 'yo')
+                plt.plot(sl[0,0], sl[0,1], 'go')
+                plt.plot(sr[0,0], sr[0,1], 'ro')             
+                plt.show()
+                self.get_logger().info('computeWaypoints done')            
+                self.__transformWaypoints(sl, self.__transformFutureCallbackSl)
+                self.__transformWaypoints(sr, self.__transformFutureCallbackSr)
+                self.curbs_available = True            
 
     def getWaypoints(self, request, response):    
         self.get_logger().info('getWaypoints service called')
@@ -102,28 +113,42 @@ class TrackNode(Node):
         sr = np.array([ self.get_parameter('sr1').value, self.get_parameter('sr2').value ]).T
         if len(sl) > 1 and len(sr) > 1:
             s = np.add(sr * (1.0 - request.alpha), sl * request.alpha)
-            x = [ 0 ]
+            x = [ 0.0 ]
             for i in range(len(s)-1):
                 x.append(np.sqrt((s[i+1,0] - s[i,0])**2 + (s[i+1,1] - s[i,1])**2) + x[i])
-            response.s1 = s[:,0].tolist()
-            response.s2 = s[:,1].tolist()
-            response.breaks = x
-            response.x_end = x[-1]
+            # spline at non-equidistant points
+            pp = CubicSpline(x, s, bc_type='periodic')
+            # new spline at equidistant points
+            newx = np.linspace(0.0, x[-1], len(x))
+            news = pp(newx)
+            newpp = CubicSpline(newx, news, bc_type='periodic')
+            response.s1 = news[:,0].tolist()
+            response.s2 = news[:,1].tolist()
+            response.breaks = newx
+            response.x_end = newx[-1]
+            response.spline_coefs1 = newpp.c[:,:,0].reshape(-1, order='F').tolist()
+            response.spline_coefs2 = newpp.c[:,:,1].reshape(-1, order='F').tolist()
         return response
     
     def step(self):
-        markerArray = MarkerArray()
-        sl1 = self.get_parameter('sl1').value
-        sl2 = self.get_parameter('sl2').value
-        sl = np.array([ sl1, sl2 ]).T
-        if len(sl) > 0:
-            markerArray.markers.append(self.__createSplineMarker(sl, [0.0, 1.0, 0.0], 0))
-        sr1 = self.get_parameter('sr1').value
-        sr2 = self.get_parameter('sr2').value
-        sr = np.array([ sr1, sr2 ]).T
-        if len(sr) > 0:
-            markerArray.markers.append(self.__createSplineMarker(sr, [1.0, 0.0, 0.0], 1))
-        self.pubTrack.publish(markerArray)        
+        if self.curbs_available:
+            sl1 = self.get_parameter_or('sl1', rclpy.Parameter('sl1', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+            sl2 = self.get_parameter_or('sl2', rclpy.Parameter('sl2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+            sr1 = self.get_parameter_or('sr1', rclpy.Parameter('sr1', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+            sr2 = self.get_parameter_or('sr2', rclpy.Parameter('sr2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+            if sl1 and sl2 and sr1 and sr2:
+                # self.get_logger().info('curb parameters retrieved')  
+                markerArray = MarkerArray()
+                sl = np.array([ sl1, sl2 ]).T
+                if len(sl) > 0:
+                    markerArray.markers.append(self.__createSplineMarker(sl, [0.0, 1.0, 0.0], 0))
+                sr = np.array([ sr1, sr2 ]).T
+                if len(sr) > 0:
+                    markerArray.markers.append(self.__createSplineMarker(sr, [1.0, 0.0, 0.0], 1))
+                self.pubTrack.publish(markerArray)
+            else:         
+                self.get_logger().info('curb markers not sent because curb parameters not set')  
+            
 
     
     def __transformWaypoints(self, sboard, callback):

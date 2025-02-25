@@ -71,12 +71,34 @@ public:
     const std::array<float,2> size {{ 49e-3F, 22e-3F }}; // {{ 250e-3F, 150e-3F }}; //{{ 348e-3F, 164e-3F }};
     // distance of center relative to rear axle [ m ]
     const float center { 16.25e-3F };
+
+    // car 00 (orange home)
+    // pedals max
+    const float uMax { 0.2F };
     // longitudinal dynamics gain [ m/s ]
-    const float k { 3.2F };
+    const float k { 3.4F };
     // open-loop longitudinal dynamics time constant [ s ]
-    const float T { 90.0e-3F };
+    const float T { 120.0e-3F };
     // open-loop dead time of longitudinal dynamics [ s ]
-    const float uTt { 125e-3F };
+    const float uTt { 100e-3F };
+    // normalized delta max [ 1 ]
+    const float deltanMax { 0.93F }; 
+    // delta max [ rad ]
+    float deltaMax { Utils::deg2rad(22.0F) }; 
+    
+    // car 10 (yellow home)
+    // pedals max
+    // const float uMax { 0.2F };
+    // // longitudinal dynamics gain [ m/s ]
+    // const float k { 3.2F };
+    // // open-loop longitudinal dynamics time constant [ s ]
+    // const float T { 90.0e-3F };
+    // // open-loop dead time of longitudinal dynamics [ s ]
+    // const float uTt { 125e-3F };
+    // const float deltanMax { 0.93F }; 
+    // // delta max [ rad ]
+    // float deltaMax { Utils::deg2rad(19.5F) }; 
+    
     // open-loop dead time of steering [ s ]
     const float deltaTt { uTt };
     // image processing dead time
@@ -86,12 +108,6 @@ public:
     // longitudinal friction
     const float uFrictionKd0 { 0.04F };
     const float uFrictionKd1 { 0.15F };
-    // pedals max
-    const float uMax { 0.2F };
-    // normalized delta max [ 1 ]
-    const float deltanMax { 0.93F }; 
-    // delta max [ rad ]
-    float deltaMax { Utils::deg2rad(19.5F) }; 
     // wheel base [ m ]
     const float l { 32.5e-3F };
     // minimum speed [ m/s ]

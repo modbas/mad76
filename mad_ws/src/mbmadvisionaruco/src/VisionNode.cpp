@@ -124,9 +124,9 @@ public:
     
     subImg = this->create_subscription<sensor_msgs::msg::Image>("/mad/camera/image_raw", qos, std::bind(&VisionNode::imageCallback, this, std::placeholders::_1));
     subCaminfo = this->create_subscription<sensor_msgs::msg::CameraInfo>("/mad/camera/camera_info", qos, std::bind(&VisionNode::camerainfoCallback, this, std::placeholders::_1));
-    pubImg = this->create_publisher<sensor_msgs::msg::Image>("image", qos);
+    pubImg = this->create_publisher<sensor_msgs::msg::Image>("image", qos );
     pubOutputs = this->create_publisher<mbmadmsgs::msg::CarOutputsList>("caroutputs", qos);
-    timer = this->create_wall_timer(std::chrono::milliseconds(100), std::bind(&VisionNode::timerCallback, this));
+    timer = this->create_wall_timer(std::chrono::milliseconds(1000), std::bind(&VisionNode::timerCallback, this));
 
     return true;
   }

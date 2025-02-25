@@ -109,7 +109,7 @@ class PathController
     const float Tw { 300e-3F }; // closed-loop time constant [ s ]
     const float deltanmax { p->deltanMax }; // maximum manipulation signal
     const float deltanmin { -deltanmax }; // minimum manipulation signal
-    const float Tt { 125.0e-3F }; // lookahead time    
+    const float Tt { p->Tt }; // lookahead time    
 #endif
     const float ky { p->l / (Tw*Tw) };
     const float kpsi { 2.0F * p->l / Tw };

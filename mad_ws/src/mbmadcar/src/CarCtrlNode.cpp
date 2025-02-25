@@ -21,7 +21,8 @@
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/trivial.hpp>
-#include "rclcpp/rclcpp.hpp"
+#include <rclcpp/rclcpp.hpp>
+#include <sensor_msgs/msg/joy.hpp>
 #include <diagnostic_updater/diagnostic_updater.hpp>
 #include "mbsafe/Platform.hpp"
 #include "mbsafe/CheckpointSequence.hpp"
@@ -87,6 +88,8 @@ public:
       "maneuverpass", qosReliable, std::bind(&CarCtrlNode::maneuverPassCallback, this, std::placeholders::_1));
     subOutputsExtList = create_subscription<mbmadmsgs::msg::CarOutputsExtList>(
       "/mad/locate/caroutputsext", qos, std::bind(&CarCtrlNode::outputsExtListCallback, this, std::placeholders::_1));
+    subJoy = create_subscription<sensor_msgs::msg::Joy>(
+      "joy", qosReliable, std::bind(&CarCtrlNode::joyCallback, this, std::placeholders::_1));
     pubInputs = create_publisher<mbmadmsgs::msg::CarInputs>("carinputs", qos);
     pubCtrlReference = create_publisher<mbmadmsgs::msg::CtrlReference>("ctrlreference", qos);   
     task.start();
@@ -124,6 +127,7 @@ private:
   rclcpp::Subscription<mbmadmsgs::msg::CarOutputsExtList>::SharedPtr subOutputsExtList;
   rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subManeuver;
   rclcpp::Subscription<mbmadmsgs::msg::DriveManeuver>::SharedPtr subManeuverPass;
+  rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subJoy;
   rclcpp::Publisher<mbmadmsgs::msg::CarInputs>::SharedPtr pubInputs;
   rclcpp::Publisher<mbmadmsgs::msg::CtrlReference>::SharedPtr pubCtrlReference;
   
@@ -144,6 +148,14 @@ private:
   float vref { 0.0F }; /**< The car reference speed */
   mbmadmsgs::msg::CarOutputsExtList carOutputsExtList; /**< The car outputs list message */
   mbmadmsgs::msg::DriveManeuver::_type_type maneuverType { mbmadmsgs::msg::DriveManeuver::TYPE_HALT };
+
+  const float joySteeringAxis = declare_parameter<int64_t>("joySteeringAxis", 2); /**< The joystick steering axis */
+  const float joySpeedAxis = declare_parameter<int64_t>("joySpeedAxis", 1); /**< The joystick steering axis */
+  const float joySteeringLevel = declare_parameter<float>("joySteeringLevel", 1.0F); /**< The joystick control overlay level [ 0 ... 1 ]*/
+  const float joySpeedMax = declare_parameter<float>("joySpeedMax", 0.5F); /**< The joystick maximal speed setpoint [ m/s ] */
+  const float joySpeedPassive = declare_parameter<float>("joySpeedPassive", 0.7F); /**< The joystick speed level to detect passive player and reduce steering control [ 0 ... 1 ]*/
+  sensor_msgs::msg::Joy joyMsg; /**< The current joystick message */
+  const rclcpp::Duration joyTimeout = 200ms; /**< The joystick timeout */
 
   static constexpr float dt = static_cast<float>(CarParameters::Tva);
   static constexpr int64_t dtMicro = static_cast<int64_t>(dt * 1e6);
@@ -202,6 +214,15 @@ private:
   }
 
   /**
+   * @brief callback for /mad/car?/joy topic
+   * @param[in] msg The ROS message for joystick control
+   */
+  void joyCallback(const sensor_msgs::msg::Joy::SharedPtr msg)
+  {
+    joyMsg = *msg;
+  }
+
+  /**
    * @brief step function to execute one sampling step
    */
   void step()
@@ -221,15 +242,33 @@ private:
     float ey { 0.0F };
     float wkappa { 0.0F };
     steering = pathController.step(splines.at(acc.getLane()), opModeFsm, s, psi, v, ey, wkappa);
+    // subtract joystrick timestamp to from current timestamp
+    rclcpp::Duration joyTimeDiff = this->now() - rclcpp::Time(joyMsg.header.stamp);
+    if (joyTimeDiff <= joyTimeout  && joyMsg.axes.size() > joySteeringAxis && joyMsg.axes.size() > joySpeedAxis) {
+      if (joyMsg.axes.at(joySpeedAxis) < joySpeedPassive) { // if player is passive, only thrusts and does not need to steer
+        steering += joyMsg.axes.at(joySteeringAxis);
+      } else {
+        steering = (1.0F - joySteeringLevel) * steering + joySteeringLevel * joyMsg.axes.at(joySteeringAxis); // reduce control overlay at higher speed
+      }
+      if (steering > 1.0F) {
+        steering = 1.0F;
+      } else if (steering < -1.0F) {
+        steering = -1.0F;
+      }
+    }
     if (maneuverType == mbmadmsgs::msg::DriveManeuver::TYPE_PATHFOLLOW) {
 #ifdef MAD24
       vref = vmax;
 #else
+    if (joyTimeDiff <= joyTimeout && joyMsg.axes.size() > joySpeedAxis) {
+      vref = joyMsg.axes.at(joySpeedAxis) * joySpeedMax;
+    } else {
       float leadDist { 0.0F };
       float leadV { 0.0F };
       float otherDist { 0.0F };
       bool faultLateral { false };
       acc.step(vmax, splines, carOutputsExtList, v, pathController.wx, ey, wkappa, vref, leadDist, leadV, otherDist, faultLateral);
+    }
 #endif
       pedals = speedController.step(opModeFsm, vref, v);
       if (vref >= 0.0F) {

@@ -2,5 +2,6 @@
 
 <launch>
     <include file="$(find-pkg-share mbmad)/launch/madpicam.launch"/>
+    <include file="$(find-pkg-share mbmad)/launch/madpitrack.launch"/>
     <include file="$(find-pkg-share mbmad)/launch/madpictrl.launch"/>
 </launch>

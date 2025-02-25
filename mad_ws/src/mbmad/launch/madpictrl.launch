@@ -1,28 +1,9 @@
 <launch>    
-    <arg name="trackparams" default="$(find-pkg-share mbmadvisionaruco)/data/trackparams.yaml"/>
-    <node pkg="mbmadvisionaruco" exec="TrackNode.py" name="track" output="screen">
-        <param from="$(var trackparams)"/>
-    </node>
-    <!--
-    <node pkg="mbmadvisionaruco" exec="visionnode" name="vision" output="screen">
-        <param name="HeightCompensation" value="[-0.01, 0.000, 0.001, 0.008]"/>
-        <param name="DisplayImage" value="true"/>
-        <remap from="/diagnostics" to="diagnostics"/>
-    </node>
-    -->
-    <node pkg="mbmadlocate" exec="locatenode" name="locate" output="screen">
-        <remap from="/diagnostics" to="diagnostics"/>
-    </node>
-    <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car0" output="screen">
-        <param name="colorRGB" value="[ 1.0, 0.4, 0.0 ]"/>
-    </node>
     <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car0" output="screen">
+        <param name="joySteeringLevel" value="0.5"/>
         <remap from="/diagnostics" to="diagnostics"/>    
-    </node>
-    <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car1" output="screen">
-        <param name="colorRGB" value="[ 0.8, 1.0, 0.0 ]"/>
     </node>
     <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car1" output="screen">
         <remap from="/diagnostics" to="diagnostics"/>        
-    </node>    
+    </node>
 </launch>

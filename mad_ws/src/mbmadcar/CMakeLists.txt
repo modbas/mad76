@@ -17,6 +17,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(diagnostic_msgs REQUIRED)
 find_package(diagnostic_updater REQUIRED)
 find_package(visualization_msgs REQUIRED)
@@ -39,7 +40,7 @@ endif()
 # targets
 add_executable(carsimnode src/CarSimNode.cpp)
 target_link_libraries(carsimnode dl ${Boost_LIBRARIES})
-ament_target_dependencies(carsimnode rclcpp std_msgs diagnostic_msgs diagnostic_updater mbsafe mbsafemsgs mbmad mbmadmsgs)
+ament_target_dependencies(carsimnode rclcpp std_msgs sensor_msgs diagnostic_msgs diagnostic_updater mbsafe mbsafemsgs mbmad mbmadmsgs)
 
 # add_executable(carsimnode2 src/CarSimNode2.cpp)
 # target_link_libraries(carsimnode2 dl ${Boost_LIBRARIES})
@@ -58,7 +59,7 @@ ament_target_dependencies(cardisplaynode rclcpp std_msgs visualization_msgs geom
 
 # install
 install(TARGETS
-  carsimnode visionsimnode carctrlnode cardisplaynode  #carsimnode2 
+  carsimnode visionsimnode carctrlnode cardisplaynode #carsimnode2 
   DESTINATION lib/${PROJECT_NAME}
 )
 
