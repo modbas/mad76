@@ -174,7 +174,7 @@ Raspberry Pi OS
 Raspberry Pi Configuration
 --------------------------
 
--   Enable SPI
+-   Enable SPI for MAD76 IO
 
     -   `sudo raspi-config`
 
@@ -205,10 +205,21 @@ development PC, either Linux, Windows or MacOS.
 
 -   TightVNC on Windows or Remmina on Linux are popular VNC clients.
 
+Python Coding
+-------------
+
+    sudo apt-get purge python3-rpi.gpio      # remove GPIO library for RPi4
+    sudo apt-get install python3-rpi-lgpio   # install GPIO library for RPi5
+    sudo apt-get install python3-ipykernel   # install Jupyter kernel
+    sudo apt-get install python3-sphinx      # install Sphinx for code documentation
+
 WiringPi
 --------
 
--   Install WiringPi for GPIO access
+WiringPi is a GPIO library for C / C++ programming that is used to
+access the MAD76 IO board.
+
+-   Install WiringPi for MAD76 IO
 
         cd
         mkdir src
@@ -244,11 +255,12 @@ ROS2 is the middleware for the MAD76 software stack.
           vcstool \
           wget
 
-
+        sudo apt-get install sqlite3
         sudo apt-get install python3-lark python3-netifaces
         sudo apt-get install python3-flake8-blind-except python3-flake8-builtins python3-flake8-class-newline python3-flake8-comprehensions    python3-flake8-deprecated    python3-flake8-import-order python3-flake8-quotes python3-pytest-repeat python3-pytest-rerunfailures
         sudo apt-get install python3-rosdep2 python3-vcstools
         sudo apt-get install python3-opencv python3-scipy python3-matplotlib
+        sudo apt-get install python3-flask python3-peewee
         sudo apt-get install libbullet-dev libboost-dev
         sudo apt-get install libasio-dev libtinyxml2-dev
         sudo apt-get install qtbase5-dev qtbase5-dev-tools
@@ -266,7 +278,6 @@ ROS2 is the middleware for the MAD76 software stack.
         touch src/eclipse-cyclonedds/COLCON_IGNORE
         touch src/eclipse-iceoryx/COLCON_IGNORE
         touch src/gazebo-release/COLCON_IGNORE
-        touch src/ros-visualization/COLCON_IGNORE
         touch src/ros2/rviz/COLCON_IGNORE
         touch src/ros2/rmw_connextdds/COLCON_IGNORE
         touch src/ros2/rmw_cyclonedds/COLCON_IGNORE
@@ -478,21 +489,34 @@ Software-in-the-Loop Simulation
 
         ros2 launch mbmad madpisim.launch
 
--   Open a further terminal and send a maneuver to car 0 (yellow car)
+-   Open a further terminal and send a maneuver to car 0 (orange car)
 
         ros2 run mbmadcar send_maneuver.py 0 0.3 0.25
 
-    -   First argument is the car identifier (0 for yellow car, 1 for
-        orange car)
+    -   First argument is the car identifier (0 for orange car, 1 for
+        yellow car)
+
+        |     |            |
+        |:----|:-----------|
+        | 0   | orange car |
+        | 1   | yellow car |
+        | 2   | blue car   |
+        | 3   | white car  |
 
     -   Second argument is the car reference speed in $\frac{m}{s}$
 
-    -   Third argument is the lateral reference position (0 for right
-        curb, 0.25 for right lane, 0.5 for center line, 0.75 for left
-        lane, 1 for left curb)
+    -   Third argument is the lateral reference position
+
+        |      |             |
+        |:-----|:------------|
+        | 0    | right curb  |
+        | 0.25 | right lane  |
+        | 0.5  | center line |
+        | 0.75 | left lane   |
+        | 1    | left curb   |
 
 -   Stop `send_maneuver.py` by hitting `Ctrl+c` and send maneuver to car
-    1 (orange car)
+    1 (yellow car)
 
         ros2 run mbmadcar send_maneuver.py 1 0.2 0.25
 
