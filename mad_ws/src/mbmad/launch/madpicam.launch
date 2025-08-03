@@ -13,8 +13,12 @@
         <param name="height" value="768" />
         -->
         <param name="format" value="XBGR8888" />
+        <param name="ExposureTimeMode" value="1" />
+        <!-- <param name="AeEnable" value="false" /> -->
         <param name="ExposureTime" value="2000" />
         <param name="AnalogueGain" value="20.0" />
+    </node>
+    <node pkg="mbmadvisionaruco" exec="setexposuretime.sh" name="workaround" output="screen">
     </node>
     <node pkg="mbmadvisionaruco" exec="visionnode" name="vision" output="screen">
         <param name="HeightCompensation" value="[-0.01, 0.000, 0.001, 0.008]"/>
@@ -29,4 +33,5 @@
         <remap from="image" to="/mad/camera/image_raw"/>
     </node>
     -->
+    <include file="$(find-pkg-share mbmad)/launch/madpijoy.launch"/>
 </launch>

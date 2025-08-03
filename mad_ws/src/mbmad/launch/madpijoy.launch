@@ -1,55 +1,5 @@
 <!-- ros2 run camera_ros camera_node -ros-args -p FrameDurationLimits:="[20000,20000]" -p role:="viewfinder" -p width:=800 -p height:=600 -p format:="XBGR8888"  -p ExposureTime:=2000 -p AnalogueGain:=1.0 -->
 
 <launch>
-    <include file="$(find-pkg-share mbmad)/launch/madpicam.launch"/>
-
-    <arg name="trackparams" default="$(find-pkg-share mbmadvisionaruco)/data/trackparams.yaml"/>
-    <node pkg="mbmadvisionaruco" exec="TrackNode.py" name="track" output="screen">
-        <param from="$(var trackparams)"/>
-    </node>
-
-    <node pkg="mbmadlocate" exec="locatenode" name="locate" output="screen">
-        <remap from="/diagnostics" to="diagnostics"/>
-    </node>
-
-    <!-- car 0 yellow-->
-    <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car0" output="screen">
-        <param name="colorRGB" value="[ 0.8, 1.0, 0.0 ]"/>
-    </node>
-
-     <node pkg="mbmadcar" exec="curbctrlnode" name="curbctrlnode" namespace="/mad/car0" output="screen">
-        <remap from="/diagnostics" to="diagnostics"/>
-    </node>
-
-    <!-- car 1 orang -->
-    <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car1" output="screen">
-        <param name="colorRGB" value="[ 1.0, 0.4, 0.0 ]"/>
-    </node>
-
-     <node pkg="mbmadcar" exec="curbctrlnode" name="curbctrlnode" namespace="/mad/car1" output="screen">
-        <remap from="/diagnostics" to="diagnostics"/>
-    </node>
-
-   
-
+    <node pkg="joy" exec="joy_node" name="joy_node" namespace="/mad/car0" output="screen"/>
 </launch>
-
-<!--
-    car 2 blau 
-    <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car2" output="screen">
-        <param name="colorRGB" value="[ 0.0, 0.5, 1.0 ]"/>
-    </node>
-
-     <node pkg="mbmadcar" exec="curbctrlnode" name="curbctrlnode" namespace="/mad/car2" output="screen">
-        <remap from="/diagnostics" to="diagnostics"/>
-    </node>
-
-    car 3 grün 
-    <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car3" output="screen">
-        <param name="colorRGB" value="[ 0.0, 1.0, 0.0 ]"/>
-    </node>
-
-     <node pkg="mbmadcar" exec="curbctrlnode" name="curbctrlnode" namespace="/mad/car3" output="screen">
-        <remap from="/diagnostics" to="diagnostics"/>
-    </node>
--->

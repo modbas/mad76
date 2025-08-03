@@ -28,8 +28,11 @@
 #endif
 
 #include "mbmad/Vector.hpp"
+#include "mbmad/Spline.hpp"
+
 #include "mbmadmsgs/msg/car_outputs.hpp"
 #include "mbmadmsgs/msg/car_outputs_ext.hpp"
+#include "mbmadmsgs/msg/car_obs.hpp"
 
 namespace mbmad {
 
@@ -42,9 +45,11 @@ public:
   Car(mbmadmsgs::msg::CarOutputs& msg)
   {
     msgExt.carid = msg.carid;
+    msgExt.prob = 0.0F; // initial probability
+    msgObs.prob = 0.0F; // initial probability
   }
 
-  void update(const uint64_t newSeqctr, mbmadmsgs::msg::CarOutputs& msg, rclcpp::Time& camTime)
+  void update(const uint64_t newSeqctr, mbmadmsgs::msg::CarOutputs& msg, rclcpp::Time& camTime, std::shared_ptr<Spline> spline)
   {
     msgExt.s = msg.s;
     msgExt.psi = msg.psi;
@@ -69,8 +74,7 @@ public:
 
     if (std::fabs(v) > vValidMax) {
       diagErrMsg = "invalid speed car=" + std::to_string(msg.carid) + " v=" + std::to_string(v);
-      ++diagErrCnt;
-      
+      ++diagErrCnt;      
     // } else if (!(msgExt.prob < 1.0F) &&
     //             std::fabs(v - msgExt.v) > aValidMax * dt) {
     //   diagErrMsg = "invalid acceleration car=" + std::to_string(msg.carid) + " v=" + std::to_string(v) + " vkm1=" + std::to_string(msgExt.v);
@@ -82,6 +86,39 @@ public:
     } else {
       msgExt.v = v;
     }
+
+    // carobs message for RL agents
+    float dist = 0.0F;
+    float wx = 0.0F;
+    std::array<float,2> ws;
+    std::array<float,2> wsd;
+    std::array<float,2> wsdd;
+
+    int idx = spline->getNearest(msg.s, wx, dist);
+    spline->interpolate(wx, ws, wsd, wsdd, idx);
+    float wpsi = std::atan2(wsd.at(1), wsd.at(0));
+    msgObs.s = msg.s;
+    msgObs.psi = msg.psi;
+    msgObs.beta = msgExt.beta;
+    msgObs.v = msgExt.v;
+    msgObs.cxe = spline->breaks.back();
+    if (firstCall) {
+      msgObs.cxd = 0.0F;      
+    } else {
+      msgObs.cxd = (std::fmod(wx - msgObs.cx + 10.5F * msgObs.cxe, msgObs.cxe) - 0.5F * msgObs.cxe) / CarParameters::p()->Tva;  
+    }
+    msgObs.cx = wx;
+    msgObs.cey = -std::sin(wpsi) * (msg.s.at(0) - ws.at(0)) + std::cos(wpsi) * (msg.s.at(1) - ws.at(1));;
+    msgObs.cepsi = Utils::normalizeRad(msg.psi - wpsi);
+    msgObs.ckappa = std::sqrt(wsdd.at(0)*wsdd.at(0) + wsdd.at(1)*wsdd.at(1));
+    const float binormal = wsd.at(0)*wsdd.at(1) - wsdd.at(0)*wsd.at(1);
+    if (binormal < 0.0F) {
+        msgObs.ckappa = -msgObs.ckappa;
+    }
+    msgObs.rey = 0.0F;
+    msgObs.ley = 0.0F;
+    msgObs.prob = msgExt.prob;
+    
     seqctr = newSeqctr;          
     timekm1 = camTime;
     firstCall = false;    
@@ -102,11 +139,18 @@ public:
     return msgExt;
   }
 
+  mbmadmsgs::msg::CarObs& messageObs()
+  {
+    return msgObs;
+  }
+
+
 private:
   const float vValidMax { 3.0F }; // maximum valid speed [ m/s ]
   const float aValidMax { 20.0F }; // maximum valid acceleration [ m/s^2 ]
   uint64_t seqctr { 0ULL };
   mbmadmsgs::msg::CarOutputsExt msgExt;
+  mbmadmsgs::msg::CarObs msgObs;
   const float probDecay { 0.1F };
   rclcpp::Time timekm1;
   bool firstCall { true };

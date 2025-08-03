@@ -61,7 +61,7 @@ class PathController
      * @param[in] v current car yaw angle
      * @param[in] Ts sampling time
      * @param[out] ey lateral deviation
-     * @param[out] wcscmp curvature
+     * @param[out] wkappa curvature
      * @return manipulation signal steering
      */
     float step(Spline& spline, const OperationModeFsm& opModeFsm, const std::array<float,2> s, const float psi,
@@ -72,7 +72,7 @@ class PathController
       if (initialized) {
         // maneuver received and thus spline is initialized
         if (std::holds_alternative<StateNormal>(opModeFsm.getState())) {
-          stepReference(spline, s, wx, ws, wpsi, wkappa, v);
+          stepReference(spline, s, v, ws, wpsi, wkappa);
           float delta = stepFeedback(s, psi, ws, wpsi, v, ey);
           delta += stepFeedforward(wkappa);
 
@@ -118,18 +118,17 @@ class PathController
 
     /**
      * @brief stepReference generates reference
-     * @param spline reference path
-     * @param s current position
-     * @param ws reference position
-     * @param wpsi reference yaw angle
-     * @param wkappa reference curvature
+     * @param[in] spline reference path
+     * @param[in] s current position
+     * @param[in] v current speed
+     * @param[out] wpsi reference yaw angle
+     * @param[out] wkappa reference curvature
      */
     void stepReference(Spline& spline,
                        const std::array<float,2>& s,
-                       float& wx,
+                       const float v,
                        std::array<float,2>& ws, float& wpsi,
-                       float& wkappa,
-                       const float v)
+                       float& wkappa)                 
     {
       std::array<float,2> wsd;
       std::array<float,2> wsdd;

@@ -1,9 +1,18 @@
 <launch>    
+    <include file="$(find-pkg-share mbmad)/launch/madpitrack.launch"/>
     <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car0" output="screen">
-        <param name="joySteeringLevel" value="0.5"/>
+        <param name="joySteeringLevel" value="0.7"/>
         <remap from="/diagnostics" to="diagnostics"/>    
     </node>
     <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car1" output="screen">
         <remap from="/diagnostics" to="diagnostics"/>        
     </node>
+    <!--
+    <node pkg="c41_race" exec="c41_race" name="carctrl" namespace="/mad/car1" output="screen">
+        <param name="carid" value="1"/>
+        <remap from="/mad/car0/carinputs" to="/mad/car1/carinputs"/>
+        <remap from="/mad/car0/maneuver" to="/mad/car1/maneuver"/>
+        <remap from="/diagnostics" to="diagnostics"/>
+    </node>
+    -->
 </launch>

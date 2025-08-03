@@ -64,7 +64,7 @@ public:
     ModelType modelType { ModelType::bicycle };
 
     // max. number of virtual cars
-    static constexpr uint32_t carCnt { 2U };
+    static constexpr uint32_t carCnt { 4U };
     // max. number of real cars
     static constexpr uint32_t realCarCnt { 1U };
     // size [ m ]

@@ -34,6 +34,7 @@
 #include "mbmadmsgs/msg/drive_maneuver.hpp"
 #include "mbmadmsgs/msg/ctrl_reference.hpp"
 #include "mbmadmsgs/srv/track_get_waypoints.hpp"
+#include "mbmadmsgs/srv/reset_lapcounter.hpp"
 #ifdef MAD24
 #include "mbmad/CarParameters24.hpp"
 #else
@@ -44,12 +45,14 @@
 #include "PositionController.hpp"
 #include "PathController.hpp"
 #include "Acc.hpp"
+#include "LapCounter.hpp" 
 #include "OperationModeFsm.hpp"
 
 
 namespace mbmad
 {
 
+using namespace std::placeholders;
 using namespace std::chrono_literals;
 
 /**
@@ -92,6 +95,7 @@ public:
       "joy", qosReliable, std::bind(&CarCtrlNode::joyCallback, this, std::placeholders::_1));
     pubInputs = create_publisher<mbmadmsgs::msg::CarInputs>("carinputs", qos);
     pubCtrlReference = create_publisher<mbmadmsgs::msg::CtrlReference>("ctrlreference", qos);   
+    srvResetLapcounter = create_service<mbmadmsgs::srv::ResetLapcounter>("reset_lapcounter", std::bind(&CarCtrlNode::resetLapcounter, this, _1, _2, _3));
     task.start();
     return true;
   }
@@ -130,11 +134,14 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::Joy>::SharedPtr subJoy;
   rclcpp::Publisher<mbmadmsgs::msg::CarInputs>::SharedPtr pubInputs;
   rclcpp::Publisher<mbmadmsgs::msg::CtrlReference>::SharedPtr pubCtrlReference;
+  rclcpp::Service<mbmadmsgs::srv::ResetLapcounter>::SharedPtr srvResetLapcounter;
+  
   
   SpeedController speedController; /**< The speed controller */
   PositionController positionController; /**< The position controller */
   PathController pathController; /**< The path controller */
   Acc acc; /**< The ACC controller */
+  LapCounter lapCounter { *this }; /**< The lap counter */
   OperationModeFsm opModeFsm; /**< Operation Mode Management */
   std::array<float, 2> s { { } }; /**< The current car position */
   std::array<Spline, 2> splines; /**< The current path splines */
@@ -222,6 +229,17 @@ private:
     joyMsg = *msg;
   }
 
+  void resetLapcounter(
+    const std::shared_ptr<rmw_request_id_t> request_header,
+    const mbmadmsgs::srv::ResetLapcounter::Request::SharedPtr request,
+    mbmadmsgs::srv::ResetLapcounter::Response::SharedPtr response)
+  {
+    (void)request_header; // unused param
+    (void)request; // unused param
+    (void)response; // unused param
+    lapCounter.reset();
+  }
+
   /**
    * @brief step function to execute one sampling step
    */
@@ -260,15 +278,15 @@ private:
 #ifdef MAD24
       vref = vmax;
 #else
-    if (joyTimeDiff <= joyTimeout && joyMsg.axes.size() > joySpeedAxis) {
-      vref = joyMsg.axes.at(joySpeedAxis) * joySpeedMax;
-    } else {
-      float leadDist { 0.0F };
-      float leadV { 0.0F };
-      float otherDist { 0.0F };
-      bool faultLateral { false };
-      acc.step(vmax, splines, carOutputsExtList, v, pathController.wx, ey, wkappa, vref, leadDist, leadV, otherDist, faultLateral);
-    }
+      if (joyTimeDiff <= joyTimeout && joyMsg.axes.size() > joySpeedAxis) {
+        vref = joyMsg.axes.at(joySpeedAxis) * joySpeedMax;
+      } else {
+        float leadDist { 0.0F };
+        float leadV { 0.0F };
+        float otherDist { 0.0F };
+        bool faultLateral { false };
+        acc.step(vmax, splines, carOutputsExtList, v, pathController.wx, ey, wkappa, vref, leadDist, leadV, otherDist, faultLateral);
+      }
 #endif
       pedals = speedController.step(opModeFsm, vref, v);
       if (vref >= 0.0F) {
@@ -276,11 +294,14 @@ private:
       } else {
         carInputsMsg.cmd = carInputsMsg.CMD_REVERSE;
       }
+      lapCounter.step(splines.at(acc.getLane()), acc.getLane(), pathController.wx, opModeFsm);
     } else if (maneuverType == mbmadmsgs::msg::DriveManeuver::TYPE_PARK) {
       float vrefPos = positionController.step(x, dt);
       pedals = speedController.step(opModeFsm, vrefPos, v);
       carInputsMsg.cmd = carInputsMsg.CMD_SLOW;
     }
+    
+    // Send carinputs message
     carInputsMsg.carid = static_cast<uint8_t>(CarParameters::p()->carid);
     carInputsMsg.opmode = opModeFsm.getStateId();
     carInputsMsg.pedals = pedals;
@@ -291,7 +312,7 @@ private:
       cpSeq.update(CheckpointGraph::Checkpoint::CtrlPublish);
       carInputsMsg.cpseq = cpSeq.message();
     }
-#ifdef XXXXXXXX
+#ifdef XXXXXXXX // too restrictive
     if (cpSeq.health().health() == false) {
       // emergency halt
       carInputsMsg.cmd = carInputsMsg.CMD_HALT;
@@ -310,6 +331,12 @@ private:
     ctrlReferenceMsg.psi = pathController.wpsi;
     ctrlReferenceMsg.v = vref;
     ctrlReferenceMsg.x = pathController.wx;
+    ctrlReferenceMsg.crashctr = lapCounter.getCrashCtr();
+    ctrlReferenceMsg.lapctr = lapCounter.getLapCtr();
+    ctrlReferenceMsg.laptime = lapCounter.getLapTime();
+    ctrlReferenceMsg.avgspeed = lapCounter.getAvgSpeed();
+    ctrlReferenceMsg.currentlaptime = lapCounter.getCurrentLapTime();
+    ctrlReferenceMsg.prob = prob;
     pubCtrlReference->publish(ctrlReferenceMsg);
   }
 

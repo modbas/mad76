@@ -1,5 +1,5 @@
 #
-# @brief CarReference.msg message type for RViz display of car reference signals
+# @brief ResetLapcounter.srv service type for /mad/car?/reset_lapcounter service
 #    
 # Copyright (C) 2024, Frank Traenkle, Hochschule Heilbronn
 #  
@@ -14,16 +14,4 @@
 # If not, see <https://www.gnu.org/licenses/>.
 #
 
-mbsafemsgs/CheckpointSequence cpseq
-uint8 carid
-float32[2] s     # cartesian center position [ m ]
-float32 psi      # yaw angle [ rad ]
-float32 kappa    # curvature [ 1/m ]
-float32 v        # center point velocity [ m/s ]
-float32 x        # driven arc length of rearaxle [ m ]
-uint32 crashctr  # track crash counter
-uint32 lapctr        # lap counter
-float32 laptime      # lap time [ s ]
-float32 avgspeed     # average speed [ m/s ]
-float32 currentlaptime      # lap time [ s ]
-float32 prob         # probability of valid measurement [ 0 ... 1 ]
+---

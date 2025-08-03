@@ -33,10 +33,13 @@ set(msg_files
   "msg/CarOutputsList.msg"
   "msg/CarOutputsExt.msg"
   "msg/CarOutputsExtList.msg"
+  "msg/CarObs.msg"
+  "msg/CarObsList.msg"
   "msg/CtrlReference.msg"
   "msg/DriveManeuver.msg"
   "srv/TrackGetWaypoints.srv"
-  "srv/VisionTransformPoints.srv")
+  "srv/VisionTransformPoints.srv"
+  "srv/ResetLapcounter.srv")
 
 if(MAD24)
   list(APPEND msg_files

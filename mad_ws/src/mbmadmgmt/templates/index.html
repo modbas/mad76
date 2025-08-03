@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MAD76</title>
+    <script>
+        const prec = 1e3;
+        const maxpos = 20;
+        const maxposscore = 10;
+        lapctr = 0;
+
+        async function fetchLapData() {
+            try {
+                const response = await fetch('/getlapdata');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                displayLapData(data);
+                if (data != null && data.lapctr > lapctr && data.lapctr > 1) {
+                    lapctr = data.lapctr;
+                    fetchRanking();
+                }                
+            } catch (error) {
+            }            
+        }
+
+        async function fetchRanking() {
+            try {
+                const response = await fetch('/getranking');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const rankingData = await response.json();
+                displayRanking(rankingData);
+            } catch (error) {
+                console.error("Error in rankingDate:", error);
+            }
+        } 
+
+        function displayLapData(data) {
+            document.getElementById('lapctr').textContent = data.lapctr;
+            document.getElementById('trackcrashctr').textContent = data.crashctr;
+            document.getElementById('minlaptime').textContent = Math.round(data.minlaptime * prec) / prec;
+            document.getElementById('laptime').textContent = Math.round(data.laptime * prec) / prec;
+            document.getElementById('currentlaptime').textContent = Math.round(data.currentlaptime * prec) / prec;
+            document.getElementById('maxavgspeed').textContent =  Math.round(data.maxavgspeed * prec) / prec;
+            document.getElementById('avgspeed').textContent = Math.round(data.avgspeed * prec) / prec;
+        }
+
+        function displayRanking(data) {
+            for (let i = 0; i < data.length; ++i) {
+                const istr = (i+1).toString().padStart(2, '0');                    
+                if (data[i].active) {
+                    document.getElementById('rank').textContent = istr;
+                }
+                if (i < maxpos) {
+                    document.getElementById('active' + istr).textContent = data[i].active ? "*" : "";
+                    document.getElementById('pos' + istr).textContent = istr;
+                    document.getElementById('driver' + istr).textContent = data[i].driver;
+                    document.getElementById('team' + istr).textContent = data[i].team;
+                    document.getElementById('laptime' + istr).textContent = Math.round(data[i].laptime * prec) / prec;
+                    document.getElementById('avgspeed' + istr).textContent = Math.round(data[i].avgspeed * prec) / prec;
+                    score = 0;
+                    if (i < maxposscore) {
+                        score = maxposscore - i;
+                    }
+                    document.getElementById('score' + istr).textContent = score;
+                }
+            }
+            for (let i = data.length; i < maxpos; ++i) {
+                const istr = (i+1).toString().padStart(2, '0');
+                document.getElementById('active' + istr).textContent = "";
+                document.getElementById('pos' + istr).textContent = "";
+                document.getElementById('driver' + istr).textContent = "";
+                document.getElementById('team' + istr).textContent = "";
+                document.getElementById('laptime' + istr).textContent = "";
+                document.getElementById('avgspeed' + istr).textContent = "";
+                document.getElementById('score' + istr).textContent = "";
+            }
+        }
+
+        function createRace() {
+            const raceName = document.getElementById('racename').value;
+            
+            if (raceName) {
+                fetch('/createrace', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: raceName })
+                })
+                .then(response => response.json())              
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert("Please enter a valid race name.");
+            }
+
+            lapctr = 0;
+            fetchLapData();
+            fetchRanking();
+        }
+
+        function createDriver() {
+            const driverName = document.getElementById('drivername').value;
+            const driverTeam = document.getElementById('driverteam').value;
+            
+            if (driverName) {
+                fetch('/createdriver', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: driverName, team: driverTeam })
+                })
+                .then(response => response.json())              
+                .catch(error => console.error('Error:', error));
+            } else {
+                alert("Please enter a valid driver name and team.");
+            }
+
+            lapctr = 0;
+        }
+
+        window.onload = fetchRanking;
+        window.setInterval(fetchLapData, 1000);
+    </script>
+</head>
+<body>
+    <h1>MAD76</h1>
+    <form onsubmit="createRace(); return false;">
+        <table>
+            <tr>
+                <td>Race</td>
+                <td><input id="racename" type="text" placeholder="Enter race name"></td>
+                <td><button id="racecreate" type="submit">New race</button></td>
+            </tr>
+        </table>
+    </form>
+    <form onsubmit="createDriver(); return false;">
+        <table>
+            <tr>
+                <td>Driver</td>
+                <td><input id="drivername" type="text" placeholder="Enter driver name"></td>
+                <td>Team</td>
+                <td><input id="driverteam" type="text" placeholder="Enter team name"></td>
+                <td><button id="drivercreate" type="submit">Start</button></td>
+            </tr>
+        </table>
+    </form>
+    <table>
+        <tr>
+            <td>Lap</td>
+            <td id="lapctr"></td>
+        </tr>
+        <tr>
+            <td>Position</td>
+            <td id="rank"></td>
+        </tr>
+        <tr>
+            <td>Crash</td>
+            <td id="trackcrashctr"></td>
+        </tr>
+        <tr>
+            <td>Time [s]</td>            
+            <td id="minlaptime"></td>
+            <td id="laptime"></td>
+            <td id="currentlaptime"></td>
+        </tr>    
+        <tr>
+            <td>Speed [m/s]</td>
+            <td id="maxavgspeed"></td>
+            <td id="avgspeed"></td>
+        </tr>    
+    </table>
+    <p></p>
+    <table>
+        <tr><th></th><th>Pos</th><th>Driver</th><th>Team</th><th>Time [s]</th><th>Speed [m/s]</th><th>Score</th></tr>
+        <tr><td id="active01"></td><td id="pos01"></td> <td id="driver01"></td> <td id="team01"></td> <td id="laptime01"></td> <td id="avgspeed01"><td id="score01"></td> </tr>
+        <tr><td id="active02"></td><td id="pos02"></td> <td id="driver02"></td> <td id="team02"></td> <td id="laptime02"></td> <td id="avgspeed02"><td id="score02"></td> </tr>
+        <tr><td id="active03"></td><td id="pos03"></td> <td id="driver03"></td> <td id="team03"></td> <td id="laptime03"></td> <td id="avgspeed03"><td id="score03"></td> </tr>
+        <tr><td id="active04"></td><td id="pos04"></td> <td id="driver04"></td> <td id="team04"></td> <td id="laptime04"></td> <td id="avgspeed04"><td id="score04"></td> </tr>
+        <tr><td id="active05"></td><td id="pos05"></td> <td id="driver05"></td> <td id="team05"></td> <td id="laptime05"></td> <td id="avgspeed05"><td id="score05"></td> </tr>
+        <tr><td id="active06"></td><td id="pos06"></td> <td id="driver06"></td> <td id="team06"></td> <td id="laptime06"></td> <td id="avgspeed06"><td id="score06"></td> </tr>
+        <tr><td id="active07"></td><td id="pos07"></td> <td id="driver07"></td> <td id="team07"></td> <td id="laptime07"></td> <td id="avgspeed07"><td id="score07"></td> </tr>
+        <tr><td id="active08"></td><td id="pos08"></td> <td id="driver08"></td> <td id="team08"></td> <td id="laptime08"></td> <td id="avgspeed08"><td id="score08"></td> </tr>
+        <tr><td id="active09"></td><td id="pos09"></td> <td id="driver09"></td> <td id="team09"></td> <td id="laptime09"></td> <td id="avgspeed09"><td id="score09"></td> </tr>
+        <tr><td id="active10"></td><td id="pos10"></td> <td id="driver10"></td> <td id="team10"></td> <td id="laptime10"></td> <td id="avgspeed10"><td id="score10"></td> </tr>
+        <tr><td id="active11"></td><td id="pos11"></td> <td id="driver11"></td> <td id="team11"></td> <td id="laptime11"></td> <td id="avgspeed11"><td id="score11"></td> </tr>
+        <tr><td id="active12"></td><td id="pos12"></td> <td id="driver12"></td> <td id="team12"></td> <td id="laptime12"></td> <td id="avgspeed12"><td id="score12"></td> </tr>
+        <tr><td id="active13"></td><td id="pos13"></td> <td id="driver13"></td> <td id="team13"></td> <td id="laptime13"></td> <td id="avgspeed13"><td id="score13"></td> </tr>
+        <tr><td id="active14"></td><td id="pos14"></td> <td id="driver14"></td> <td id="team14"></td> <td id="laptime14"></td> <td id="avgspeed14"><td id="score14"></td> </tr>
+        <tr><td id="active15"></td><td id="pos15"></td> <td id="driver15"></td> <td id="team15"></td> <td id="laptime15"></td> <td id="avgspeed15"><td id="score15"></td> </tr>
+        <tr><td id="active16"></td><td id="pos16"></td> <td id="driver16"></td> <td id="team16"></td> <td id="laptime16"></td> <td id="avgspeed16"><td id="score16"></td> </tr>
+        <tr><td id="active17"></td><td id="pos17"></td> <td id="driver17"></td> <td id="team17"></td> <td id="laptime17"></td> <td id="avgspeed17"><td id="score17"></td> </tr>
+        <tr><td id="active18"></td><td id="pos18"></td> <td id="driver18"></td> <td id="team18"></td> <td id="laptime18"></td> <td id="avgspeed18"><td id="score18"></td> </tr>
+        <tr><td id="active19"></td><td id="pos19"></td> <td id="driver19"></td> <td id="team19"></td> <td id="laptime19"></td> <td id="avgspeed19"><td id="score19"></td> </tr>
+        <tr><td id="active20"></td><td id="pos20"></td> <td id="driver20"></td> <td id="team20"></td> <td id="laptime20"></td> <td id="avgspeed20"><td id="score20"></td> </tr>
+    </table>
+    <div id="results"></div>
+</body>
+</html>

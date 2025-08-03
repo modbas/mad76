@@ -121,7 +121,7 @@ class SpeedController
     const float Ti { 247e-3F }; // integral time
     const float kp { 0.344F }; // gain  
 #else
-    const float Tw { 300e-3F }; // time constant of closed loop
+    const float Tw { 200e-3F }; // time constant of closed loop
     const float Ti { p->T }; // integral time (dynamic compensation)
     const float kp { p->T / (p->k * Tw) }; // gain    
     SmithPredictor smithPredictor { static_cast<uint32_t>(p->uTt / dt), p->k * (1.0F - std::exp(-dt / p->T)), std::exp(-dt / p->T) }; // Smith predictor

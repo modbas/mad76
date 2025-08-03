@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>mbmadmgmt</name>
+  <version>0.1.0</version>
+  <description>Mini-Auto-Drive Vision with Auruco Markers</description>
+  <maintainer email="frank.traenkle@hs-heilbronn.de">Frank Traenkle</maintainer>
+  <license>GPL3</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <build_depend>mbmad</build_depend>
+  <build_depend>mbsafe</build_depend>
+  <build_depend>mbsafemsgs</build_depend>
+  <build_depend>mbmadmsgs</build_depend>
+
+  <exec_depend>mbmad</exec_depend>
+  <exec_depend>mbsafe</exec_depend>
+  <exec_depend>mbsafemsgs</exec_depend>
+  <exec_depend>mbmadmsgs</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

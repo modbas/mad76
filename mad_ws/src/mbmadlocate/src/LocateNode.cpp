@@ -17,6 +17,10 @@
 #include <memory>
 #include <cstdint>
 #include <unordered_map>
+#include <thread>
+#include <boost/log/core.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/trivial.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <diagnostic_updater/diagnostic_updater.hpp>
 #include "mbsafe/Platform.hpp"
@@ -28,7 +32,10 @@
 #include "mbsafe/Task.hpp"
 #include "mbmadmsgs/msg/car_outputs_list.hpp"
 #include "mbmadmsgs/msg/car_outputs_ext_list.hpp"
+#include "mbmadmsgs/msg/car_obs_list.hpp"
+#include "mbmadmsgs/srv/track_get_waypoints.hpp"
 #include "mbmad/CarParameters.hpp"
+#include "mbmad/Spline.hpp"
 #include "Car.hpp"
 
 namespace mbmad
@@ -58,6 +65,7 @@ public:
     diagUpdater.add("CheckpointSequence", this, &LocateNode::diagCheckpointSequence);
     diagUpdater.add("cars", this, &LocateNode::diagCar);
     msgExtList.list.resize(mbmad::CarParameters::p()->carCnt);
+    msgObsList.list.resize(mbmad::CarParameters::p()->carCnt);
   }
 
   bool init()
@@ -73,9 +81,19 @@ public:
     if (name != namespaceDefault && name.length() > namespaceDefault.length()) {
         namespaceTopic = namespaceTopic + name.substr(namespaceDefault.length());
     }
+    pubOutputsExt = create_publisher<mbmadmsgs::msg::CarOutputsExtList>("caroutputsext", qos);
+    pubObs = create_publisher<mbmadmsgs::msg::CarObsList>("carobs", qos);
+    clientWaypoints = create_client<mbmadmsgs::srv::TrackGetWaypoints>("/mad/get_waypoints");
+
+    bool success = getSpline(0.5F, 0.01F, true, spline);
+    if (!success) {
+      RCLCPP_ERROR(get_logger(), "failed to get center spline");
+      return false;
+    }
+
     subOutputs = create_subscription<mbmadmsgs::msg::CarOutputsList>(
       namespaceTopic + "/caroutputs", qos, std::bind(&LocateNode::outputsCallback, this, std::placeholders::_1));
-    pubOutputsExt = create_publisher<mbmadmsgs::msg::CarOutputsExtList>("caroutputsext", qos);
+    
     //task.start();
     return true;
   }
@@ -100,6 +118,10 @@ private:
   diagnostic_updater::Updater diagUpdater { this, 1.0 };
   rclcpp::Subscription<mbmadmsgs::msg::CarOutputsList>::SharedPtr subOutputs;
   rclcpp::Publisher<mbmadmsgs::msg::CarOutputsExtList>::SharedPtr pubOutputsExt;
+  rclcpp::Publisher<mbmadmsgs::msg::CarObsList>::SharedPtr pubObs;
+  rclcpp::CallbackGroup::SharedPtr callbackGroup;
+  rclcpp::Client<mbmadmsgs::srv::TrackGetWaypoints>::SharedPtr clientWaypoints;
+  std::shared_ptr<mbmad::Spline> spline;
 
 //  static constexpr double dt = static_cast<double>(CarParameters::Tva);
 //  static constexpr int64_t dtMicro = static_cast<int64_t>(dt * 1e6);
@@ -109,6 +131,7 @@ private:
   CarMap carMap;
 
   mbmadmsgs::msg::CarOutputsExtList msgExtList;
+  mbmadmsgs::msg::CarObsList msgObsList;
 
 
   /**
@@ -128,20 +151,25 @@ private:
           carMap.emplace(msg.carid, msg);
         }
         // update existing car
-        carMap.at(msg.carid).update(msgList->cpseq.cpseq.at(msgList->cpseq.cur_cpid).seqctr, msg, camTime);        
+        carMap.at(msg.carid).update(msgList->cpseq.cpseq.at(msgList->cpseq.cur_cpid).seqctr, msg, 
+          camTime, spline);        
       }
     }
     // degrade if car has not been detected and publish detected and undetected cars    
     for (auto& car : carMap) {
       car.second.updateVerify(msgList->cpseq.cpseq.at(msgList->cpseq.cur_cpid).seqctr);
       mbmadmsgs::msg::CarOutputsExt msgExt = car.second.message();
+      mbmadmsgs::msg::CarObs msgObs = car.second.messageObs();
       if (msgExt.carid < msgExtList.list.size()) {
         msgExtList.list.at(msgExt.carid) = msgExt;
+        msgObsList.list.at(msgExt.carid) = msgObs;
       }
     }
     cpSeq.update(CheckpointGraph::Checkpoint::LocatePublish);
     msgExtList.cpseq = cpSeq.message();
     pubOutputsExt->publish(msgExtList);
+    msgObsList.cpseq = cpSeq.message();
+    pubObs->publish(msgObsList);
   }
 
 
@@ -171,6 +199,33 @@ private:
     cpSeq.health().diag(stat);
   }
 
+  bool getSpline(const float alpha, const float dx, const bool periodic, std::shared_ptr<Spline>& spline)
+  {
+    while (!clientWaypoints->wait_for_service(1s)) {
+      if (!rclcpp::ok()) {
+        RCLCPP_ERROR(get_logger(), "Interrupted while waiting for the service /mad/get_waypoints. Exiting.");
+        return false;
+      }
+      RCLCPP_INFO(get_logger(), "service /mad/get_waypoints not available, waiting again...");
+    }
+    mbmadmsgs::srv::TrackGetWaypoints::Request::SharedPtr req =
+        std::make_shared<mbmadmsgs::srv::TrackGetWaypoints::Request>();
+    req->segment_sequence = { 0 };
+    req->alpha = alpha;
+    req->dx = dx;
+
+    auto result = clientWaypoints->async_send_request(req);
+    // Wait for the result.
+    if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::FutureReturnCode::SUCCESS)
+    {
+      auto resp = result.get();
+      spline = std::make_shared<Spline>(resp->breaks, resp->s1, resp->s2, resp->segments, periodic);
+    } else {
+      RCLCPP_ERROR(get_logger(), "Failed to call service /mad/get_waypoints");
+      return false;
+    }
+    return true;
+  }
 };
 
 }

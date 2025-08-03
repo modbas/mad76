@@ -2,6 +2,6 @@
 
 <launch>
     <include file="$(find-pkg-share mbmad)/launch/madpicam.launch"/>
-    <include file="$(find-pkg-share mbmad)/launch/madpitrack.launch"/>
     <include file="$(find-pkg-share mbmad)/launch/madpictrl.launch"/>
+    <node pkg="mbmadmgmt" exec="MgmtServer.py" name="mgmtserver" output="screen"/>     
 </launch>

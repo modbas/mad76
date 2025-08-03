@@ -1,5 +1,5 @@
 /**
-  * @brief ROS2 node VisionNode for MAD76 ArUco marker tracking
+  * @brief ROS2 component VisionComponent for MAD76 ArUco marker tracking
   *    
   * Copyright (C) 2024, Frank Traenkle, Hochschule Heilbronn
   * 
@@ -43,11 +43,15 @@ namespace mbmad {
 
 const std::string namespaceDefault { "/mad/vision" };
 
-class VisionNode : public rclcpp::Node
+class Vision : public rclcpp::Node
 {
 public:
-  VisionNode() : Node("visionnode", namespaceDefault)
+  explicit Vision(const rclcpp::NodeOptions& options) : Node("Vision", options)
   {
+    mbsafe::Platform::init(10000ULL, false, false)
+        && mbsafe::Platform::setPrio(SCHED_FIFO, 90)
+        && mbsafe::Platform::prefaultStack<10000ULL>();
+
     // create aruco dictionary and detector parameters
     dictionary = cv::aruco::generateCustomDictionary(8, 3);
     detectorParams = cv::aruco::DetectorParameters::create();
@@ -59,7 +63,9 @@ public:
     cpSeq.registerMonitor(cpDeadlineMonPublish);
 
     diagUpdater.setHardwareID(get_name());
-    diagUpdater.add("CheckpointSequence", this, &VisionNode::diagCheckpointSequence);
+    diagUpdater.add("CheckpointSequence", this, &Vision::diagCheckpointSequence);
+
+    init();
   }
 
   bool init()
@@ -67,7 +73,7 @@ public:
     boost::log::core::get()->set_filter(
         boost::log::trivial::severity >= boost::log::trivial::error
         );
-    RCLCPP_INFO(get_logger(), "Initializing VisionNode");
+    RCLCPP_INFO(get_logger(), "Initializing Vision");
 
     // ROS2 param HeightCompensation
     heightCompensation = declare_parameter<std::vector<double>>("HeightCompensation", heightCompensation);
@@ -122,11 +128,11 @@ public:
     //qos.reliable();
     qos.best_effort().durability_volatile();
     
-    subImg = this->create_subscription<sensor_msgs::msg::Image>("/mad/camera/image_raw", qos, std::bind(&VisionNode::imageCallback, this, std::placeholders::_1));
-    subCaminfo = this->create_subscription<sensor_msgs::msg::CameraInfo>("/mad/camera/camera_info", qos, std::bind(&VisionNode::camerainfoCallback, this, std::placeholders::_1));
+    subImg = this->create_subscription<sensor_msgs::msg::Image>("/mad/camera/image_raw", qos, std::bind(&Vision::imageCallback, this, std::placeholders::_1));
+    subCaminfo = this->create_subscription<sensor_msgs::msg::CameraInfo>("/mad/camera/camera_info", qos, std::bind(&Vision::camerainfoCallback, this, std::placeholders::_1));
     pubImg = this->create_publisher<sensor_msgs::msg::Image>("image", qos );
     pubOutputs = this->create_publisher<mbmadmsgs::msg::CarOutputsList>("caroutputs", qos);
-    timer = this->create_wall_timer(std::chrono::milliseconds(1000), std::bind(&VisionNode::timerCallback, this));
+    timer = this->create_wall_timer(std::chrono::milliseconds(1000), std::bind(&Vision::timerCallback, this));
 
     return true;
   }
@@ -134,7 +140,7 @@ public:
   
   bool exit()
   {
-    RCLCPP_INFO(get_logger(), "Exiting VisionNode");
+    RCLCPP_INFO(get_logger(), "Exiting Vision");
 
     return true;
   }
@@ -237,7 +243,7 @@ private:
       }
 
       if (displayImage && seqctr % displayImageDownsample == 0U) {
-        cv::imshow("VisionNode", cvImg.image);
+        cv::imshow("Vision", cvImg.image);
         cv::waitKey(1);
       }
     }
@@ -299,7 +305,7 @@ private:
     if (boardCalibDone) {
       if (srvTransform == nullptr) {
           srvTransform = this->create_service<mbmadmsgs::srv::VisionTransformPoints>("transform_points",
-            std::bind(&VisionNode::transformCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+            std::bind(&Vision::transformCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
       }
     }
   }
@@ -356,19 +362,6 @@ private:
 
 }
 
-int main(int argc, char **argv)
-{
-  rclcpp::init(argc, argv);
-  if (mbsafe::Platform::init(10000ULL, false, false)
-        && mbsafe::Platform::setPrio(SCHED_FIFO, 90)
-        && mbsafe::Platform::prefaultStack<10000ULL>()) {
-    std::shared_ptr<mbmad::VisionNode> node = std::make_shared<mbmad::VisionNode>();
-    if (node->init()) {
-      rclcpp::spin(node);
-    }
-    mbsafe::Platform::exit();
-  }
-  rclcpp::shutdown();
+#include <rclcpp_components/register_node_macro.hpp>
 
-  return EXIT_SUCCESS;
-}
+RCLCPP_COMPONENTS_REGISTER_NODE(mbmad::Vision)

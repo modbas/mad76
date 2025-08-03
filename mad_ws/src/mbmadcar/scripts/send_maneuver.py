@@ -42,7 +42,10 @@ class SendManeuverNode(Node):
 
     if len(sys.argv) > 3:
       alpha = float(sys.argv[3])
-      #type = DriveManeuver.TYPE_PARK
+    
+    if len(sys.argv) > 4:
+      xref = float(sys.argv[4])
+      type = DriveManeuver.TYPE_PARK
 
     # register DriveManeuver publisher
     qos = QoSProfile(
