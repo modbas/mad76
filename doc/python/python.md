@@ -222,27 +222,27 @@ Solve Linear Equation Systems
 -----------------------------
 
 -   Solve linear equation systems of order $n \ge 1$
-    
+   
 
 $$
 \begin{array}{rcl}
         a_{11} x_1 + a_{12} x_2 + ... + a_{1n} x_n & = & b_1 \\
         a_{21} x_1 + a_{22} x_2 + ... + a_{2n} x_n & = & b_2 \\
-        \vdots & & \\
+        & \vdots  & \\
         a_{m1} x_1 + a_{m2} x_2 + ... + a_{mn} x_n & = & b_m
       \end{array}
 $$
 
 
 -   This equation system can be formulated as a matrix equation
-    
+   
 
 $$
 \mathbf{A} \cdot \mathbf{x} = \mathbf{b}
 $$
 
 
--   with 
+-   with
 
 $$
 \mathbf{A} = \begin{pmatrix}
@@ -266,7 +266,7 @@ $$
 $$
 
 
--   Example with $m = 2$ and $n = 2$: 
+-   Example with $m = 2$ and $n = 2$:
 
 $$
 \begin{array}{rcl}
@@ -274,7 +274,7 @@ $$
         3 x_1 + 4 x_2 &=& 6
       \end{array}
 $$
- 
+
 
 $$
 \mathbf{A} = \begin{pmatrix}
@@ -308,7 +308,7 @@ $$
 #### Exercises
 
 1.  Solve the linear equation system of order $n = 2$
-    
+   
 
 $$
 \begin{array}{rcl}
@@ -319,7 +319,7 @@ $$
 
 
 2.  Solve the linear equation system of order $n = 3$
-    
+   
 
 $$
 \begin{array}{rcl}
