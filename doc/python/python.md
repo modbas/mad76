@@ -223,24 +223,28 @@ Solve Linear Equation Systems
 
 -   Solve linear equation systems of order $n \ge 1$
 
-    $$\begin{aligned}
+    $$
+    \begin{aligned}
         a_{11} x_1 + a_{12} x_2 + ... + a_{1n} x_n &=& b_1 \\
         a_{21} x_1 + a_{22} x_2 + ... + a_{2n} x_n &=& b_2 \\
         &\vdots \\
         a_{m1} x_1 + a_{m2} x_2 + ... + a_{mn} x_n &=& b_m
-      \end{aligned}$$
+      \end{aligned}
+    $$
 
 -   This equation system can be formulated as a matrix equation
     $$\mathbf{A} \cdot \mathbf{x} = \mathbf{b}$$
 
 -   with
 
-    $$\mathbf{A} = \begin{pmatrix}
+    $$
+    \mathbf{A} = \begin{pmatrix}
           a_{11} & a_{12} & ... & a_{1n} \\
           a_{21} & a_{22} & ... & a_{2n} \\
           \vdots & \vdots & \ddots & \vdots \\
           a_{m1} & a_{m2} & ... & a_{mn}
-    \end{pmatrix}$$
+    \end{pmatrix}
+    $$
         
     $$\mathbf{x} = \begin{pmatrix}
           x_1 \\
