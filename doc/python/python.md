@@ -222,76 +222,80 @@ Solve Linear Equation Systems
 -----------------------------
 
 -   Solve linear equation systems of order $n \ge 1$
+    
 
-    |                                              |     |       |
-    |---------------------------------------------:|:---:|:------|
-    |  $a_{11} x_1 + a_{12} x_2 + ... + a_{1n} x_n$|  =  | $b_1$ |
-    |  $a_{21} x_1 + a_{22} x_2 + ... + a_{2n} x_n$|  =  | $b_2$ |
-    |                                      $\vdots$|     |       |
-    |  $a_{m1} x_1 + a_{m2} x_2 + ... + a_{mn} x_n$|  =  | $b_m$ |
+$$
+\begin{array}{rcl}
+        a_{11} x_1 + a_{12} x_2 + ... + a_{1n} x_n & = & b_1 \\
+        a_{21} x_1 + a_{22} x_2 + ... + a_{2n} x_n & = & b_2 \\
+        \vdots & & \\
+        a_{m1} x_1 + a_{m2} x_2 + ... + a_{mn} x_n & = & b_m
+      \end{array}
+
+$$
+
 
 -   This equation system can be formulated as a matrix equation
     
+
 $$
 \mathbf{A} \cdot \mathbf{x} = \mathbf{b}
+
 $$
 
 
--   with
+-   with 
 
-    
 $$
-\mathbf{A} = \left( \begin{array}{cccc}
+\mathbf{A} = \begin{pmatrix}
           a_{11} & a_{12} & ... & a_{1n} \\
           a_{21} & a_{22} & ... & a_{2n} \\
           \vdots & \vdots & \ddots & \vdots \\
           a_{m1} & a_{m2} & ... & a_{mn}
-        \end{array} \right)
-$$
-
-
-    
-$$
-\mathbf{x} = \left( \begin{array}{cccc}
+        \end{pmatrix}
+        \mathbf{x} = \begin{pmatrix}
           x_1 \\
           x_2 \\
           \vdots \\
           x_n
-        \end{array} \right)
-$$
- 
-$$
-\mathbf{b} = \left( \begin{array}{c}
+        \end{pmatrix}
+        \mathbf{b} = \begin{pmatrix}
           b_1 \\
           b_2 \\
           \vdots \\
           b_m
-        \end{array} \right)
+        \end{pmatrix}
+
 $$
 
 
 -   Example with $m = 2$ and $n = 2$: 
+
 $$
 \begin{array}{rcl}
         x_1 + 2 x_2 &=& 5 \\
         3 x_1 + 4 x_2 &=& 6
       \end{array}
+
 $$
  
+
 $$
 \mathbf{A} = \begin{pmatrix}
         1 & 2 \\
         3 & 4 
       \end{pmatrix}
-$$
-
- $\mathbf{x} = \begin{pmatrix}
+      \mathbf{x} = \begin{pmatrix}
         x_1 \\
         x_2
-      \end{pmatrix}$ $\mathbf{b} = \begin{pmatrix}
+      \end{pmatrix}
+      \mathbf{b} = \begin{pmatrix}
         5 \\
         6
-      \end{pmatrix}$
+      \end{pmatrix}
+
+$$
+
 
 -   Use the `numpy.linalg.solve` function
 
@@ -308,22 +312,28 @@ $$
 
 #### Exercises
 
-1.  Solve the linear equation system of order $n = 2$ 
+1.  Solve the linear equation system of order $n = 2$
+    
+
 $$
-\begin{aligned}
+\begin{array}{rcl}
         2 x_1 + 4 x_2 &=& 2 \\
         x_1 + 2 x_2 &=& 1
-      \end{aligned}
+      \end{array}
+
 $$
 
 
-2.  Solve the linear equation system of order $n = 3$ 
+2.  Solve the linear equation system of order $n = 3$
+    
+
 $$
-\begin{aligned}
+\begin{array}{rcl}
         x_1 + 2 x_2 + 3 x_3  &=& 10 \\
         4 x_1 + 5 x_2 + 6 x_3  &=& 11 \\
         7 x_1 + 8 x_2 + 9 x_3  &=& 12
-      \end{aligned}
+      \end{array}
+
 $$
 
 
