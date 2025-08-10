@@ -221,7 +221,9 @@ Solve Quadratic Equations
 Solve Linear Equation Systems
 -----------------------------
 
--   Solve linear equation systems of order $n \ge 1$ $$\begin{aligned}
+-   Solve linear equation systems of order $n \ge 1$
+
+    $$\begin{aligned}
         a_{11} x_1 + a_{12} x_2 + ... + a_{1n} x_n &=& b_1 \\
         a_{21} x_1 + a_{22} x_2 + ... + a_{2n} x_n &=& b_2 \\
         &\vdots \\
@@ -231,22 +233,28 @@ Solve Linear Equation Systems
 -   This equation system can be formulated as a matrix equation
     $$\mathbf{A} \cdot \mathbf{x} = \mathbf{b}$$
 
--   with $\mathbf{A} = \begin{pmatrix}
+-   with
+
+    $$\mathbf{A} = \begin{pmatrix}
           a_{11} & a_{12} & ... & a_{1n} \\
           a_{21} & a_{22} & ... & a_{2n} \\
           \vdots & \vdots & \ddots & \vdots \\
           a_{m1} & a_{m2} & ... & a_{mn}
-        \end{pmatrix}$ $\mathbf{x} = \begin{pmatrix}
+    \end{pmatrix}$$
+        
+    $$\mathbf{x} = \begin{pmatrix}
           x_1 \\
           x_2 \\
           \vdots \\
           x_n
-        \end{pmatrix}$ $\mathbf{b} = \begin{pmatrix}
+    \end{pmatrix}$$
+    
+    $$\mathbf{b} = \begin{pmatrix}
           b_1 \\
           b_2 \\
           \vdots \\
           b_m
-        \end{pmatrix}$
+    \end{pmatrix}$$
 
 -   Example with $m = 2$ and $n = 2$: $$\begin{aligned}
         x_1 + 2 x_2 &=& 5 \\
