@@ -44,6 +44,8 @@ MAD76 Kit
 -   MAD76 Driving Stack is implemented as software components in
     middleware ROS2 (<https://docs.ros.org/en/iron/index.html>)
 
+-   MAD76 Driving Stack consists of the following software components:
+
     -   Computer Vision reads in frames from topview camera and detects
         cars by ArUco markers
 
@@ -55,7 +57,7 @@ MAD76 Kit
 
     -   Optional race simulation
 
--   MAD76 Driving Stack is programmed in C++ and Python
+-   MAD76 Driving Stack is programmed in C++, Python,
 
 -   MAD76 Driving Stack may run in a distributed computer environment
     (Raspberry Pi and Linux-PCs)
@@ -72,5 +74,11 @@ MAD76 Kit
     -   [Installation](doc/install/install.md)
 
     -   [Computer Vision Configuration](doc/vision/vision.md)
+
+-   MAD76 Academy for Education
+
+    -   [Linux Getting Started](doc/linux/linux.md)
+
+    -   [Python Getting Started](doc/python/python.md)
 
 [^1]: frank.traenkle@hs-heilbronn.de

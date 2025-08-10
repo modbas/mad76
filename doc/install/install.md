@@ -268,6 +268,7 @@ ROS2 is the middleware for the MAD76 software stack.
         sudo apt-get install libopencv-dev
         sudo apt-get install liblttng-ust-dev
         sudo apt-get install libboost-python-dev libboost-system-dev libboost-log-dev libgtest-dev libjsoncpp-dev
+        sudo apt-get install netcat-openbsd netcat-openbsd
 
         wget https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos
         vcs import src < ros2.repos
