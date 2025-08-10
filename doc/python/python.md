@@ -1,5 +1,3 @@
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script"></script>
-
 author: Frank Tränkle[^1]
 Hochschule Heilbronn, Germany
 bibliography: ../lib/bib.bib
@@ -7,6 +5,9 @@ csl: ../lib/ieee.csl
 link-citations: true
 reference-section-title: References
 title: MAD76 Academy: Python
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script"></script>
+
 
 Agenda
 ======
