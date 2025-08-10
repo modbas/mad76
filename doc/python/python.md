@@ -231,10 +231,15 @@ Solve Linear Equation Systems
     |  $a_{m1} x_1 + a_{m2} x_2 + ... + a_{mn} x_n$|  =  | $b_m$ |
 
 -   This equation system can be formulated as a matrix equation
-    $$\mathbf{A} \cdot \mathbf{x} = \mathbf{b}$$
+    
+$$
+\mathbf{A} \cdot \mathbf{x} = \mathbf{b}
+$$
+
 
 -   with
 
+    
 $$
 \mathbf{A} = \left( \begin{array}{cccc}
           a_{11} & a_{12} & ... & a_{1n} \\
@@ -244,25 +249,43 @@ $$
         \end{array} \right)
 $$
 
- $\mathbf{x} = \left( \begin{array}{cccc}
+
+    
+$$
+\mathbf{x} = \left( \begin{array}{cccc}
           x_1 \\
           x_2 \\
           \vdots \\
           x_n
-        \end{array} \right)$ $\mathbf{b} = \left( \begin{array}{c}
+        \end{array} \right)
+$$
+ 
+$$
+\mathbf{b} = \left( \begin{array}{c}
           b_1 \\
           b_2 \\
           \vdots \\
           b_m
-        \end{array} \right)$
+        \end{array} \right)
+$$
 
--   Example with $m = 2$ and $n = 2$: $$\begin{aligned}
+
+-   Example with $m = 2$ and $n = 2$: 
+$$
+\begin{array}{rcl}
         x_1 + 2 x_2 &=& 5 \\
         3 x_1 + 4 x_2 &=& 6
-      \end{aligned}$$ $\mathbf{A} = \begin{pmatrix}
+      \end{array}
+$$
+ 
+$$
+\mathbf{A} = \begin{pmatrix}
         1 & 2 \\
         3 & 4 
-      \end{pmatrix}$ $\mathbf{x} = \begin{pmatrix}
+      \end{pmatrix}
+$$
+
+ $\mathbf{x} = \begin{pmatrix}
         x_1 \\
         x_2
       \end{pmatrix}$ $\mathbf{b} = \begin{pmatrix}
@@ -285,16 +308,24 @@ $$
 
 #### Exercises
 
-1.  Solve the linear equation system of order $n = 2$ $$\begin{aligned}
+1.  Solve the linear equation system of order $n = 2$ 
+$$
+\begin{aligned}
         2 x_1 + 4 x_2 &=& 2 \\
         x_1 + 2 x_2 &=& 1
-      \end{aligned}$$
+      \end{aligned}
+$$
 
-2.  Solve the linear equation system of order $n = 3$ $$\begin{aligned}
+
+2.  Solve the linear equation system of order $n = 3$ 
+$$
+\begin{aligned}
         x_1 + 2 x_2 + 3 x_3  &=& 10 \\
         4 x_1 + 5 x_2 + 6 x_3  &=& 11 \\
         7 x_1 + 8 x_2 + 9 x_3  &=& 12
-      \end{aligned}$$
+      \end{aligned}
+$$
+
 
 Function Plotting
 -----------------
