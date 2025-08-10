@@ -233,12 +233,18 @@ Solve Linear Equation Systems
 -   This equation system can be formulated as a matrix equation
     $$\mathbf{A} \cdot \mathbf{x} = \mathbf{b}$$
 
--   with $\mathbf{A} = \left( \begin{array}{cccc}
+-   with
+
+$$
+\mathbf{A} = \left( \begin{array}{cccc}
           a_{11} & a_{12} & ... & a_{1n} \\
           a_{21} & a_{22} & ... & a_{2n} \\
           \vdots & \vdots & \ddots & \vdots \\
           a_{m1} & a_{m2} & ... & a_{mn}
-        \end{array} \right)$ $\mathbf{x} = \left( \begin{array}{cccc}
+        \end{array} \right)
+$$
+
+ $\mathbf{x} = \left( \begin{array}{cccc}
           x_1 \\
           x_2 \\
           \vdots \\
