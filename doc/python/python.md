@@ -1,4 +1,4 @@
-author: Frank Tränkle[^1]
+author: Frank Tränkle[^1]  
 Hochschule Heilbronn, Germany
 bibliography: ../lib/bib.bib
 csl: ../lib/ieee.csl
@@ -223,42 +223,32 @@ Solve Linear Equation Systems
 
 -   Solve linear equation systems of order $n \ge 1$
 
-    $$
-    \begin{aligned}
-        a_{11} x_1 + a_{12} x_2 + ... + a_{1n} x_n &=& b_1 \\
-        a_{21} x_1 + a_{22} x_2 + ... + a_{2n} x_n &=& b_2 \\
-        &\vdots \\
-        a_{m1} x_1 + a_{m2} x_2 + ... + a_{mn} x_n &=& b_m
-      \end{aligned}
-    $$
+    |                                              |     |       |
+    |---------------------------------------------:|:---:|:------|
+    |  $a_{11} x_1 + a_{12} x_2 + ... + a_{1n} x_n$|  =  | $b_1$ |
+    |  $a_{21} x_1 + a_{22} x_2 + ... + a_{2n} x_n$|  =  | $b_2$ |
+    |                                      $\vdots$|     |       |
+    |  $a_{m1} x_1 + a_{m2} x_2 + ... + a_{mn} x_n$|  =  | $b_m$ |
 
 -   This equation system can be formulated as a matrix equation
     $$\mathbf{A} \cdot \mathbf{x} = \mathbf{b}$$
 
--   with
-
-    $$
-    \mathbf{A} = \begin{pmatrix}
+-   with $\mathbf{A} = \left( \begin{array}{cccc}
           a_{11} & a_{12} & ... & a_{1n} \\
           a_{21} & a_{22} & ... & a_{2n} \\
           \vdots & \vdots & \ddots & \vdots \\
           a_{m1} & a_{m2} & ... & a_{mn}
-    \end{pmatrix}
-    $$
-        
-    $$\mathbf{x} = \begin{pmatrix}
+        \end{array} \right)$ $\mathbf{x} = \left( \begin{array}{cccc}
           x_1 \\
           x_2 \\
           \vdots \\
           x_n
-    \end{pmatrix}$$
-    
-    $$\mathbf{b} = \begin{pmatrix}
+        \end{array} \right)$ $\mathbf{b} = \left( \begin{array}{c}
           b_1 \\
           b_2 \\
           \vdots \\
           b_m
-    \end{pmatrix}$$
+        \end{array} \right)$
 
 -   Example with $m = 2$ and $n = 2$: $$\begin{aligned}
         x_1 + 2 x_2 &=& 5 \\
