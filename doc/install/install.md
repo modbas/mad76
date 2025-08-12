@@ -632,8 +632,8 @@ Test Simulink for Code Generation
 -   Test your new MATLAB/Simulink installation by simulating this model
     which communicates with the ROS environment
 
--   Run the ROS environment in manual simulation model (without MAD76
-    driving state)
+-   Run the ROS environment in manual simulation mode (without MAD76
+    driving stack)
 
         ros2 launch mbmad madpisimman.launch
 
