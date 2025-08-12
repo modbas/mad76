@@ -74,5 +74,4 @@ data.coefs = single(zeros(SPLINE.Elements(3).Dimensions));
 data.coefs(1:length(path.pp.coefs),:) = single(path.pp.coefs);
 data.segments = uint32(zeros(SPLINE.Elements(4).Dimensions));
 data.periodic = periodic;
-data.dx = single(path.dx);
 end
