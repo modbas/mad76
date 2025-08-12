@@ -75,10 +75,11 @@ MAD76 Kit
 
     -   [Computer Vision Configuration](doc/vision/vision.md)
 
--   MAD76 Academy for Education
+MAD76 Academy
+=============
 
-    -   [Linux Getting Started](doc/linux/linux.md)
+-   [Getting Started with Linux](doc/linux/linux.md)
 
-    -   [Python Getting Started](doc/python/python.md)
+-   [Getting Started with Python](doc/python/python.md)
 
 [^1]: frank.traenkle@hs-heilbronn.de

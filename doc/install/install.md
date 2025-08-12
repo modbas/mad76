@@ -28,6 +28,10 @@ The installation steps are:
 -   Install MAD76 Driving Stack (see
     Section <a href="#mad76-driving-stack" data-reference-type="ref" data-reference="mad76-driving-stack">5</a>)
 
+-   Optionally install MATLAB/Simulink for model-based software
+    engineering (see
+    Section <a href="#matlab-installation" data-reference-type="ref" data-reference="matlab-installation">6</a>)
+
 MAD76 Box
 =========
 
@@ -527,6 +531,126 @@ Software-in-the-Loop Simulation
     speed $0 \frac{m}{s}$
 
 -   Reverse driving is possible by setting a negative reference speed
+
+MATLAB/Simulink Installation [matlab-installation]
+============================
+
+-   The following MATLAB release and toolboxes are required
+
+    -   MATLAB R2025a
+
+    -   Simulink
+
+    -   Stateflow
+
+    -   Control-System-Toolbox
+
+    -   Curve-Fitting-Toolbox
+
+    -   ROS-Toolbox
+
+    -   Simulink Coder
+
+    -   Embedded Coder
+
+-   For model-in-the-loop (MiL) simulation and control design, MATLAB
+    can be installed on any supported platform
+
+-   For code generation and MAD76 programming, MATLAB needs to be
+    installed on the MAD76 Linux PC
+
+Python 3.10 Installation
+------------------------
+
+-   MATLAB ROS-Toolbox requires Python 3.10 which is not installed per
+    default on Ubuntu Noble Numbat 24.04
+
+-   The default Python 3.12 installation does not work
+
+-   Install Python 3.10 on the MAD76 Linux PC from the PPA `Deadsnakes`
+
+        sudo add-apt-repository ppa:deadsnakes/ppa
+        sudo apt update
+        sudo apt install python3.10 python3.10-venv
+
+-   Activate Python 3.10 in MATLAB ROS-Toolbox
+
+    1.  Open MATLAB Settings ROS-Toolbox
+
+    2.  Browse for `/usr/bin/python3.10`
+
+    3.  Hit pushbutton `Recreate Python Environment`
+
+    4.  Select `rmw_fastrtps_cpp` as ROS Middleware
+
+ROS Custom Messages
+-------------------
+
+-   Make custom ROS message types of MAD76 available in MATLAB/Simulink
+    (only needed for code generation)
+
+    1.  ROS2 Jazzy Jalisco and MAD76 must be installed on the MAD76
+        Linux PC running Ubuntu Noble Numbat 24.04 (see
+        <https://github.com/modbas/mad76/blob/main/doc/install/install.md#linux-pc-installation>)
+
+    2.  At the MATLAB prompt, change to the ROS workspace directory
+
+            cd ~/src/mad76/mad_ws
+
+    3.  Generate MATLAB/Simulink objects for the custom ROS message
+        types
+
+            ros2genmsg src
+
+    4.  Test if the message types are available in MATLAB/Simulink
+
+            ros2 msg list
+
+        This displayed list must contain message types `mbmadmsgs/*` and
+        `mbsafemsgs/*`
+
+Test Simulink MiL Simulation
+----------------------------
+
+-   The Simulink model `s06_sig_template.slx` is the template model for
+    vehicle dynamics modeling and controller design
+
+-   Test your new MATLAB/Simulink installation by simulating this model
+
+        cd ~/src/mad76/matlab/vertical
+        s06_sig_template
+
+-   The model should run without errors and display initial positions of
+    the vehicles in the MATLAB figure
+
+Test Simulink for Code Generation
+---------------------------------
+
+-   The Simulink model `c71_car0_template.slx` is the template model for
+    code generation
+
+-   Test your new MATLAB/Simulink installation by simulating this model
+    which communicates with the ROS environment
+
+-   Run the ROS environment in manual simulation model (without MAD76
+    driving state)
+
+        ros2 launch mbmad madpisimman.launch
+
+-   Start the simulation of `c71_car0_template.slx`
+
+        cd ~/src/mad76/matlab/vertical
+        c71_data
+        c71_car0_template
+
+-   Send a maneuver message to the Simulink model, so that the main
+    subsystem is enabled
+
+        ros2 run mbmadcar send_maneuver.py 0 0.2 0.5
+
+-   You can now manually control the orange car with id 0 by
+    manupalating the sliders in subsystem
+    `Motion Control and carinputs msg/Motion Control/Sliders or Joystick/Sliders`
 
 References [bibliography]
 ==========

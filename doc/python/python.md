@@ -12,7 +12,7 @@ Agenda
 -   What is Python? Why Python? (see
     Section <a href="#what-is-python" data-reference-type="ref" data-reference="what-is-python">2</a>)
 
--   Mathematics with Python (see
+-   Math with Python (see
     Section <a href="#math-with-python" data-reference-type="ref" data-reference="math-with-python">3</a>)
 
 -   Procedural programming with Python (see
@@ -84,7 +84,7 @@ What is Python
 Interpreter versus Compiler [interpreter-versus-compiler]
 ---------------------------
 
-<img src="interpreter.png" alt="image" />
+2 <img src="interpreter.png" alt="image" />
 <img src="compiler.png" alt="image" />
 
 Math with Python
@@ -220,6 +220,8 @@ Solve Quadratic Equations
 
 Solve Linear Equation Systems
 -----------------------------
+
+2
 
 -   Solve linear equation systems of order $n \ge 1$
    
