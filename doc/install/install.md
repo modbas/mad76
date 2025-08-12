@@ -649,7 +649,7 @@ Test Simulink for Code Generation
         ros2 run mbmadcar send_maneuver.py 0 0.2 0.5
 
 -   You can now manually control the orange car with id 0 by
-    manupalating the sliders in subsystem
+    manipulating the sliders in subsystem
     `Motion Control and carinputs msg/Motion Control/Sliders or Joystick/Sliders`
 
 References [bibliography]
