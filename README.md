@@ -73,13 +73,40 @@ MAD76 Kit
 
     -   [Installation](doc/install/install.md)
 
+    -   [Remote Control Cabling and
+        Calibration](doc/remotecontrol/remotecontrol.md)
+
     -   [Computer Vision Configuration](doc/vision/vision.md)
 
 MAD76 Academy
 =============
 
--   [Getting Started with Linux](doc/linux/linux.md)
+MAD76 Academy offers a variety of lessons to help you get started with
+your MAD76 kit
 
--   [Getting Started with Python](doc/python/python.md)
+-   [Linux Basics](doc/teachlinux/teachlinux.md)
+
+-   [Python Basics](doc/teachpython/teachpython.md)
+
+-   [MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
+
+You may further start a study program at the Hochschule Heilbronn to
+deepen your knowledge in
+
+-   autonomous car racing with MAD76
+
+-   autonomous systems, in general
+
+-   automotive systems engineering
+
+-   robotics
+
+-   control theory
+
+-   AI
+
+-   embedded SW engineering
+
+and get ready for a career in the automotive or robotics industry.
 
 [^1]: frank.traenkle@hs-heilbronn.de
