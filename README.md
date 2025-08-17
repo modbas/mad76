@@ -81,8 +81,8 @@ MAD76 Kit
 MAD76 Academy
 =============
 
-MAD76 Academy offers a variety of lessons to help you get started with
-your MAD76 kit
+MAD76 Academy offers a variety of teaching lessons to help you get
+started with your MAD76 kit
 
 -   [Linux Basics](doc/teachlinux/teachlinux.md)
 
@@ -103,9 +103,9 @@ deepen your knowledge in
 
 -   control theory
 
--   AI
+-   artificial intelligence
 
--   embedded SW engineering
+-   embedded software engineering
 
 and get ready for a career in the automotive or robotics industry.
 

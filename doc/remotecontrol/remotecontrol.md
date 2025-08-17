@@ -96,7 +96,8 @@ RC Calibration
 
     This command starts the I/O of MAT76 but not the driving stack. Omit
     this step if you want to use the Python program `rctest.py` from
-    teaching module “MAD76 I/O Programming”.
+    MAD76 Academy [MAD76 I/O
+    Programming](doc/teachmad76io/teachmad76io.md)
 
 7.  If the car has not been coupled to the RC, yet (the car’s headlights
     are flashing), the coupling must be done now
@@ -122,8 +123,8 @@ RC Calibration
 
             ros2 run mbmadcar send_maneuver.py 0 0.0 0.0
 
-        or by running the Python program `rctest.py` from teaching
-        module “MAD76 I/O Programming”
+        or by running the Python program `rctest.py` from MAD76 Academy
+        [MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
 
             python rctest.py 0 0.0 0.0
 
@@ -177,8 +178,8 @@ RC Calibration
 
         ros2 run mbmadcar send_maneuver.py 0 0.06 0.0
 
-    or by running the Python program `rctest.py` from teaching module
-    “MAD76 I/O Programming”
+    or by running the Python program `rctest.py` from [MAD76 I/O
+    Programming](doc/teachmad76io/teachmad76io.md)
 
         python rctest.py 0 0.06 0.0
 
