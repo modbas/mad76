@@ -453,8 +453,7 @@ Digital Potentiometers MCP42010 [mcp42010]
 
 $$
 u_v = \frac{R_{bw}}{R_{ba}} \cdot u_{ba} = \frac{R_{bw}}{10\mathrm{k\Omega}} \cdot 3.3\mathrm{V}
-          \in \left[ 0\texttt{V}, 3.3\texttt{V} \right]
-          \label{E-uv}
+          \in \left[ 0\texttt{V}, 3.3\texttt{V} \right] \label{E-uv}
 $$
 
 
@@ -468,8 +467,7 @@ $$
    
 
 $$
-R_{bw} = \frac{R_{ba}}{255} \cdot u_q \in \left[ 0\mathrm{k\Omega}, 10\mathrm{k\Omega} \right]
-          \label{E-rbw}
+R_{bw} = \frac{R_{ba}}{255} \cdot u_q \in \left[ 0\mathrm{k\Omega}, 10\mathrm{k\Omega} \right] \label{E-rbw}
 $$
 
 
@@ -481,8 +479,7 @@ $$
 
 $$
 u_v = \frac{u_{ba}}{255} \cdot u_q = \frac{3.3\mathrm{V}}{255} \cdot u_q
-          \in \left[ 0\texttt{V}, 3.3\texttt{V} \right]
-          \label{E-motor-voltage}
+          \in \left[ 0\texttt{V}, 3.3\texttt{V} \right] \label{E-motor-voltage}
 $$
 
 
@@ -754,10 +751,7 @@ Python Library to Control RC [python-rc]
        
 
 $$
-u_q = 255 \cdot (u_n + 1) / 2 \in [ 0, 255]
-                \label{E-normalized-motor-signal}
-$$
-
+u_q = 255 \cdot (u_n + 1) / 2 \in [ 0, 255]$$
 
     -   which yields the motor signal voltage for the RC considering
         equation
@@ -765,10 +759,7 @@ $$
        
 
 $$
-u_v = \frac{3.3\mathrm{V}}{255} \cdot u_q = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]
-                \label{E-resulting-motor-signal}
-$$
-
+u_v = \frac{3.3\mathrm{V}}{255} \cdot u_q = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]$$
 
 -   Function `write_steering` sets the steering signal voltages
     $\delta_v$ and is similar to `write_pedals`
