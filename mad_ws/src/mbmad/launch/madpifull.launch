@@ -1,7 +1,7 @@
 <!-- ros2 run camera_ros camera_node -ros-args -p FrameDurationLimits:="[20000,20000]" -p role:="viewfinder" -p width:=800 -p height:=600 -p format:="XBGR8888"  -p ExposureTime:=2000 -p AnalogueGain:=1.0 -->
 
 <launch>
-    <include file="$(find-pkg-share mbmad)/launch/madpicam.launch"/>
+    <include file="$(find-pkg-share mbmad)/launch/madpicamrc.launch"/>
     <include file="$(find-pkg-share mbmad)/launch/madpictrl.launch"/>
     <node pkg="mbmadmgmt" exec="MgmtServer.py" name="mgmtserver" output="screen"/>     
 </launch>
