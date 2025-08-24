@@ -44,7 +44,7 @@ Agenda
 What is Linux
 =============
 
--   Linux is a mutli-user, multi-tasking *operating system (OS)*
+-   Linux is a multi-user, multi-tasking *operating system (OS)*
     \[[1](#ref-linux-in-a-nutshell)\]
 
     -   Other OS are: Windows, macOS, iOS, Android (which includes
@@ -103,7 +103,7 @@ What is Linux
 
     -   Fedora (Red Hat-based, cutting-edge)
 
-    -   Android (mobile, based on Linux kernel)
+    -   Android (mobile, TV, cockpits, based on Linux kernel)
 
     -   Yocto (Embedded Linux)
 
@@ -172,6 +172,8 @@ Why Linux?
 Computer Architecture
 =====================
 
+2
+
 -   System on a Chip (SoC) Broadcom BCM2712
 
     -   Central Processing Unit (CPU): Quad-core ARM Cortex-A72, 2.4 GHz
@@ -231,6 +233,8 @@ Linux Users
 
 First Steps
 -----------
+
+2
 
 1.  At the console, enter your username and password
 
@@ -387,17 +391,19 @@ File Permissions
 -   Permissions, user, group, size, and modification date/time are
     displayed with `ls -al` command
 
-        lab01@madp02:~ $ ls -al
-        total 100
-        drwxr-xr-x 16 lab01 lab01 4096 Aug  5 15:01 .
-        drwxr-xr-x  5 root  root  4096 Aug  5 12:41 ..
-        -rw-------  1 lab01 lab01   30 Aug  5 12:47 .bash_history
-        -rw-r--r--  1 lab01 lab01  220 Mar 29  2024 .bash_logout
-        -rw-r--r--  1 lab01 lab01 3523 Jul  4  2024 .bashrc
-        drwx------  8 lab01 lab01 4096 Aug  5 12:58 .cache
-        drwx------  8 lab01 lab01 4096 Aug  5 14:25 .config
-        drwxr-xr-x  2 lab01 lab01 4096 Aug  5 12:46 Desktop
-        drwxr-xr-x  2 lab01 lab01 4096 Aug  5 12:46 Documents
+    ``` bash
+    lab01@madp02:~ $ ls -al
+    total 100
+    drwxr-xr-x 16 lab01 lab01 4096 Aug  5 15:01 .
+    drwxr-xr-x  5 root  root  4096 Aug  5 12:41 ..
+    -rw-------  1 lab01 lab01   30 Aug  5 12:47 .bash_history
+    -rw-r--r--  1 lab01 lab01  220 Mar 29  2024 .bash_logout
+    -rw-r--r--  1 lab01 lab01 3523 Jul  4  2024 .bashrc
+    drwx------  8 lab01 lab01 4096 Aug  5 12:58 .cache
+    drwx------  8 lab01 lab01 4096 Aug  5 14:25 .config
+    drwxr-xr-x  2 lab01 lab01 4096 Aug  5 12:46 Desktop
+    drwxr-xr-x  2 lab01 lab01 4096 Aug  5 12:46 Documents
+    ```
 
     |                   |       |       |        |
     |:------------------|:------|:------|:-------|
@@ -434,13 +440,16 @@ Networking Basics
 
 -   Networking is on different levels
 
-    -   inter-computer on the internet
+    -   *distributed computing*: inter-computer commmunication
 
-    -   inter-computer in the intranet / Local network (LAN)
+        -   on the internet
 
-    -   intra-computer between processes
+        -   in the intranet / Local network (LAN)
 
-    -   intra-computer between threads (sub-processes)
+    -   *multi-processing*: intra-computer between processes
+
+    -   *multi-threading*: intra-computer between threads
+        (sub-processes)
 
 -   Linux is a networking operating system
 

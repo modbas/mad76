@@ -25,13 +25,4 @@
         <param name="DisplayImage" value="true"/>
         <remap from="/diagnostics" to="diagnostics"/>
     </node>    
-    <node pkg="mbmadrcpi" exec="rcnode" name="rc" output="screen">
-        <!-- <param name="steeringoffsets" value="[-0.1, -0.1]" /> -->
-        <remap from="/diagnostics" to="diagnostics"/>
-    </node>
-    <!-- <node pkg="image_tools" exec="showimage" name="showimage" output="log">
-        <remap from="image" to="/mad/camera/image_raw"/>
-    </node>
-    -->
-    <include file="$(find-pkg-share mbmad)/launch/madpijoy.launch"/>
 </launch>

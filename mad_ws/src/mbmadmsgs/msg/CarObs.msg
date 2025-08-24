@@ -14,7 +14,7 @@
 # If not, see <https://www.gnu.org/licenses/>.
 #
 
-float32[2] s                # cartesian center position [ m ]
+float32[2] s                # cartesian rear axle center position [ m ]
 float32 psi                 # yaw angle [ rad ]
 float32 beta                # slip angle [ rad ]
 float32 v                   # speed [ m/s ]

@@ -33,7 +33,8 @@ MAD76 Features
 MAD76 Kit
 =========
 
-![image](mad76.png)
+´ <img src="mad76.png" alt="image" />
+<img src="madbuildclose.jpg" alt="image" />
 
 -   Turboracing 1:76 RC cars (<https://www.turboracing.net>)
 
@@ -81,7 +82,7 @@ MAD76 Kit
 MAD76 Academy
 =============
 
-MAD76 Academy offers a variety of teaching lessons to help you get
+MAD76 Academy offers a variety of learning lessons to help you get
 started with your MAD76 kit
 
 -   [Linux Basics](doc/teachlinux/teachlinux.md)

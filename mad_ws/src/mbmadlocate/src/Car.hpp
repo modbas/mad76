@@ -131,6 +131,7 @@ public:
   {
     if (newSeqctr > 0ULL && newSeqctr != seqctr) {
       degrade();
+      msgObs.prob = msgExt.prob;
     } 
   }
 

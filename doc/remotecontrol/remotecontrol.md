@@ -29,7 +29,7 @@ RC Cabling
 
 -   In
     Figure <a href="#f-rc-cabling" data-reference-type="ref" data-reference="f-rc-cabling">1</a>,
-    the noose of the black SV1 connector is facing upward
+    the nose of the black SV1 connector is facing upward
 
 -   Solder the 5V and GND wires (SV1 pins 1 and 2) to the RC power
     supply pads
@@ -83,9 +83,9 @@ RC Calibration
 3.  Move the button `reverse steering` to the `NOR` position, which
     typically is for right-handed drivers
 
-4.  Rotate the buttons `thrust level` and `steering level` all the way
-    to the limit `10` in counter-clockwise direction, so that the car
-    will show maximal performance
+4.  Adjust the knobs `thrust level` and `steering level` all the way to
+    the limit `10` in counter-clockwise direction, so that the car will
+    show maximal performance
 
 5.  Switch on the car
 
@@ -114,17 +114,17 @@ RC Calibration
 
 1.  Calibrate standing still
 
-    1.  Adjust RC buttons `thrust trim` and `steering trim` to the
-        neutral center positions, as depicted in
+    1.  Adjust RC knobs `thrust trim` and `steering trim` to the neutral
+        center positions, as depicted in
         Figure <a href="#f-rc-buttons" data-reference-type="ref" data-reference="f-rc-buttons">2</a>
 
     2.  Set the normalized motor signal to zero: $u_n = 0$ by running
         the ROS command
 
-            ros2 run mbmadcar send_maneuver.py 0 0.0 0.0
+            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.0, steering: 0.0}"
 
         or by running the Python program `rctest.py` from MAD76 Academy
-        [MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
+        [MAD76 I/O Programming](../teachmad76io/teachmad76io.md)
 
             python rctest.py 0 0.0 0.0
 
@@ -132,11 +132,11 @@ RC Calibration
 
         | argument   | description                                       |
         |:-----------|:--------------------------------------------------|
-        | `carid`    | ID of the RC and car (0-3)                        |
+        | `carid`    | ID of the RC and car (0, 1, 2 or 3)               |
         | `pedals`   | normalized motor signal $u_n \in [-1, 1]$         |
         | `steering` | normalized steering signal $\delta_n \in [-1, 1]$ |
 
-    3.  Adjust RC button `thrust trim` until the car stops and is in
+    3.  Adjust RC knob `thrust trim` until the car stops and is in
         standing still
 
 2.  Calibrate break-off-torques to overcome friction to identical values
@@ -144,21 +144,24 @@ RC Calibration
 
     1.  Increase $u_n$ in small steps from $0$ to $0.06$
 
-            ros2 run mbmadcar send_maneuver.py 0 0.01 0.0
-            ros2 run mbmadcar send_maneuver.py 0 0.02 0.0
+            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.01, steering: 0.0}"
+            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.02, steering: 0.0}"
+
             ...
 
-        The car should start moving forward at $u_n \approx 0.04$. If
-        not, adjust the RC button `thrust trim`.
+        or by running the Python program `rctest.py`. The car should
+        start moving forward at $u_n \approx 0.04$. If not, adjust the
+        RC knob `thrust trim`.
 
     2.  Decrease $u_n$ in small steps from $0$ to $-0.06$
 
-            ros2 run mbmadcar send_maneuver.py 0 -0.01 0.0
-            ros2 run mbmadcar send_maneuver.py 0 -0.02 0.0
+            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: -0.01, steering: 0.0}"
+            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: -0.02, steering: 0.0}"
             ...
 
-        The car should start moving backward at $u_n \approx -0.04$. If
-        not, adjust the RC button `thrust trim`.
+        or by running the Python program `rctest.py`. The car should
+        start moving backward at $u_n \approx -0.04$. If not, adjust the
+        RC knob `thrust trim`.
 
     3.  Repeat this calibration procedure until the car starts moving
         forward and backward at the same absolute level, e.g.,
@@ -176,10 +179,10 @@ RC Calibration
 
     by running the ROS command
 
-        ros2 run mbmadcar send_maneuver.py 0 0.06 0.0
+        ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.06, steering: 0.0}"
 
     or by running the Python program `rctest.py` from [MAD76 I/O
-    Programming](doc/teachmad76io/teachmad76io.md)
+    Programming](../teachmad76io/teachmad76io.md)
 
         python rctest.py 0 0.06 0.0
 
@@ -187,7 +190,7 @@ RC Calibration
     `steering trim`
 
 3.  Check if the steering is operating with no faults in the total range
-    $\delta_n = [-1,1]$ by running `send_maneuver.py` or `rctest.py`
-    with varying steering inputs
+    $\delta_n = [-1,1]$ by running `ros2 topic pub` or `rctest.py` with
+    varying steering inputs
 
 [^1]: frank.traenkle@hs-heilbronn.de

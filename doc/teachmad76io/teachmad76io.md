@@ -20,6 +20,8 @@ Agenda
 
 #### Teaching Objectives
 
+2
+
 -   Understand the function of remote controllers (RC) in MAD76
 
 -   Understand the General-Purpose-I/O (GPIO) of Raspberry Pi
@@ -40,6 +42,8 @@ Agenda
     -   for-loops
 
     -   SPI programming
+
+-   Measure voltages and resistances with a multimeter
 
 Functional Chain
 ================
@@ -73,7 +77,7 @@ IO):
     | 5V  | in     | 1       | 3Y     | 5V power supply for microcontroller ($\mu$C) and radio controller of RC (originally from battery) |
     | GND | in     | 2       | GND1-4 | ground                                                                                            |
 
--   Center connector for motor control (thrust and braking)
+-   Lower connector for motor control (thrust and braking)
 
     | pin                | in/out | SV1 pin | MCP42010 | function                                                               |
     |:-------------------|:-------|:--------|:---------|:-----------------------------------------------------------------------|
@@ -168,38 +172,44 @@ Digital I/O of Raspberry Pi [rpi-io]
 
         gpio readall
 
-         +-----+-----+---------+------+---+---Pi 5---+---+------+---------+-----+-----+
-         | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |
-         +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+
-         |     |     |    3.3v |      |   |  1 || 2  |   |      | 5v      |     |     |
-         |   2 |   8 |   SDA.1 |   -  | 0 |  3 || 4  |   |      | 5v      |     |     |
-         |   3 |   9 |   SCL.1 |   -  | 0 |  5 || 6  |   |      | 0v      |     |     |
-         |   4 |   7 | GPIO. 7 |   -  | 0 |  7 || 8  | 0 |  -   | TxD     | 15  | 14  |
-         |     |     |      0v |      |   |  9 || 10 | 0 |  -   | RxD     | 16  | 15  |
-         |  17 |   0 | GPIO. 0 |   -  | 0 | 11 || 12 | 0 | OUT  | GPIO. 1 | 1   | 18  |
-         |  27 |   2 | GPIO. 2 |   -  | 0 | 13 || 14 |   |      | 0v      |     |     |
-         |  22 |   3 | GPIO. 3 |   -  | 0 | 15 || 16 | 0 | OUT  | GPIO. 4 | 4   | 23  |
-         |     |     |    3.3v |      |   | 17 || 18 | 0 | OUT  | GPIO. 5 | 5   | 24  |
-         |  10 |  12 |    MOSI | ALT0 | 0 | 19 || 20 |   |      | 0v      |     |     |
-         |   9 |  13 |    MISO | ALT0 | 0 | 21 || 22 | 0 | OUT  | GPIO. 6 | 6   | 25  |
-         |  11 |  14 |    SCLK | ALT0 | 0 | 23 || 24 | 1 | OUT  | CE0     | 10  | 8   |
-         |     |     |      0v |      |   | 25 || 26 | 1 | OUT  | CE1     | 11  | 7   |
-         |   0 |  30 |   SDA.0 |   IN | 1 | 27 || 28 | 1 | IN   | SCL.0   | 31  | 1   |
-         |   5 |  21 | GPIO.21 |   -  | 0 | 29 || 30 |   |      | 0v      |     |     |
-         |   6 |  22 | GPIO.22 |   -  | 0 | 31 || 32 | 0 |  -   | GPIO.26 | 26  | 12  |
-         |  13 |  23 | GPIO.23 |   -  | 0 | 33 || 34 |   |      | 0v      |     |     |
-         |  19 |  24 | GPIO.24 |   -  | 0 | 35 || 36 | 0 |  -   | GPIO.27 | 27  | 16  |
-         |  26 |  25 | GPIO.25 |   -  | 0 | 37 || 38 | 0 |  -   | GPIO.28 | 28  | 20  |
-         |     |     |      0v |      |   | 39 || 40 | 0 |  -   | GPIO.29 | 29  | 21  |
-         +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+
-         | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |
-         +-----+-----+---------+------+---+---Pi 5---+---+------+---------+-----+-----+
+    ```
+    +-----+-----+---------+------+---+---Pi 5---+---+------+---------+-----+-----+
+     | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |
+     +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+
+     |     |     |    3.3v |      |   |  1 || 2  |   |      | 5v      |     |     |
+     |   2 |   8 |   SDA.1 |   -  | 0 |  3 || 4  |   |      | 5v      |     |     |
+     |   3 |   9 |   SCL.1 |   -  | 0 |  5 || 6  |   |      | 0v      |     |     |
+     |   4 |   7 | GPIO. 7 |   -  | 0 |  7 || 8  | 0 |  -   | TxD     | 15  | 14  |
+     |     |     |      0v |      |   |  9 || 10 | 0 |  -   | RxD     | 16  | 15  |
+     |  17 |   0 | GPIO. 0 |   -  | 0 | 11 || 12 | 0 | OUT  | GPIO. 1 | 1   | 18  |
+     |  27 |   2 | GPIO. 2 |   -  | 0 | 13 || 14 |   |      | 0v      |     |     |
+     |  22 |   3 | GPIO. 3 |   -  | 0 | 15 || 16 | 0 | OUT  | GPIO. 4 | 4   | 23  |
+     |     |     |    3.3v |      |   | 17 || 18 | 0 | OUT  | GPIO. 5 | 5   | 24  |
+     |  10 |  12 |    MOSI | ALT0 | 0 | 19 || 20 |   |      | 0v      |     |     |
+     |   9 |  13 |    MISO | ALT0 | 0 | 21 || 22 | 0 | OUT  | GPIO. 6 | 6   | 25  |
+     |  11 |  14 |    SCLK | ALT0 | 0 | 23 || 24 | 1 | OUT  | CE0     | 10  | 8   |
+     |     |     |      0v |      |   | 25 || 26 | 1 | OUT  | CE1     | 11  | 7   |
+     |   0 |  30 |   SDA.0 |   IN | 1 | 27 || 28 | 1 | IN   | SCL.0   | 31  | 1   |
+     |   5 |  21 | GPIO.21 |   -  | 0 | 29 || 30 |   |      | 0v      |     |     |
+     |   6 |  22 | GPIO.22 |   -  | 0 | 31 || 32 | 0 |  -   | GPIO.26 | 26  | 12  |
+     |  13 |  23 | GPIO.23 |   -  | 0 | 33 || 34 |   |      | 0v      |     |     |
+     |  19 |  24 | GPIO.24 |   -  | 0 | 35 || 36 | 0 |  -   | GPIO.27 | 27  | 16  |
+     |  26 |  25 | GPIO.25 |   -  | 0 | 37 || 38 | 0 |  -   | GPIO.28 | 28  | 20  |
+     |     |     |      0v |      |   | 39 || 40 | 0 |  -   | GPIO.29 | 29  | 21  |
+     +-----+-----+---------+------+---+----++----+---+------+---------+-----+-----+
+     | BCM | wPi |   Name  | Mode | V | Physical | V | Mode | Name    | wPi | BCM |
+     +-----+-----+---------+------+---+---Pi 5---+---+------+---------+-----+-----+
+    ```
 
 -   Many programming libraries and tools are available to do GPIO and
     SPI on RPi
 
--   We use the `RPi.GPIO` package (version `python3-rpi-lgpio` for RPi
-    Zero and RPi 5) and `spidev` for SPI in Python
+-   We use
+
+    -   Python package `RPi.GPIO` (version `python3-rpi-lgpio` for RPi
+        Zero and RPi 5)
+
+    -   Python package `spidev` for SPI
 
 Power Supply
 ============
@@ -258,6 +268,7 @@ Python Code to Power On RC 1 [python-test-rc1]
     off
 
 -   Create a new directory and a new Python module `rctestpower1.py`
+    with VS Code
 
         cd
         mkdir -p src/madpi_ws/src/rcpi/scripts
@@ -361,9 +372,9 @@ Python Code to Power On any RC [python-poweron]
 -   `rcpoweron.py` parses the command line and has the following command
     line argument
 
-    | argument | description                    |
-    |:---------|:-------------------------------|
-    | `carid`  | ID of the RC to power on (0-3) |
+    | argument | description                             |
+    |:---------|:----------------------------------------|
+    | `carid`  | ID of the RC to power on (0, 1, 2 or 3) |
 
 -   e.g., RC 1 is powered on by entering the following command in a
     terminal
@@ -374,6 +385,8 @@ Python Code to Power On any RC [python-poweron]
 
         python rcpoweron.py 1
 
+2
+
 #### Exercises
 
 1.  Program `rcpoweroff.py` to power off all 4 RCs at once.
@@ -381,13 +394,15 @@ Python Code to Power On any RC [python-poweron]
     -   You may use the Python command `for` and the Python function
         `range()` to program a for-loop.
 
-2.  Measure the voltage at the power supply of RC 1 with a multimeter.
+2.  Measure the voltage at the power supply of RC 1 with a multimeter
+    (see
+    Figure <a href="#F-measpowervolt" data-reference-type="ref" data-reference="F-measpowervolt">1</a>)
 
     -   Disconnect RC 1 from socket SV 1
 
     -   Run `rcpoweron.py 0`
 
-    -   Measurethe voltage between pins 13 and 11 of L293B
+    -   Measure the voltage between pins 13 and 11 of L293B
 
     -   Run `rcpoweroff.py`
 
@@ -396,6 +411,10 @@ Python Code to Power On any RC [python-poweron]
     -   Connect RC 1 to socket SV 1
 
     -   Check if blue LED is on when RC 1 is powered on
+
+<figure>
+<img src="measpowervolt.png" id="F-measpowervolt" alt="" /><figcaption>Exercise 2: Measure power supply voltage</figcaption>
+</figure>
 
 Digital Potentiometers [potis]
 ======================
@@ -412,13 +431,13 @@ Digital Potentiometers [potis]
     Section <a href="#spi-mcp42010" data-reference-type="ref" data-reference="spi-mcp42010">4.3</a>)
 
 -   Python library to control RC (see
-    Section <a href="#python-rc" data-reference-type="ref" data-reference="python-rc">[python-rc]</a>)
+    Section <a href="#python-rc" data-reference-type="ref" data-reference="python-rc">4.4</a>)
 
 Digital Potentiometers MCP42010 [mcp42010]
 -------------------------------
 
 <figure>
-<img src="mcp42010-schematics.png" id="f-mcp42010-schematics" alt="" /><figcaption>MAD76 IO schematics for digital poti MCP42010 <span class="citation" data-cites="mcp42010-datasheet">[<a href="#ref-mcp42010-datasheet" role="doc-biblioref">1</a>]</span></figcaption>
+<img src="mcp42010-schematics.png" id="F-mcp42010-schematics" alt="" /><figcaption>MAD76 IO schematics for digital poti MCP42010 <span class="citation" data-cites="mcp42010-datasheet">[<a href="#ref-mcp42010-datasheet" role="doc-biblioref">1</a>]</span></figcaption>
 </figure>
 
 -   MCP42010 emulates 2 potentiometers by resistor cascades
@@ -427,15 +446,15 @@ Digital Potentiometers MCP42010 [mcp42010]
 
 #### MCP42010 contains 2 voltage dividers
 
--   Input: power supply generated by RC $u_{ba} \approx 3.3\text{V}$
+-   Input: power supply generated by RC $u_{ba} \approx 3.3\mathrm{V}$
 
 -   Output: motor signal voltage
    
 
 $$
-u_v = \frac{R_{bw}}{R_{ba}} \cdot u_{ba} = \frac{R_{bw}}{10k\Omega} \cdot 3.3\text{V}
+u_v = \frac{R_{bw}}{R_{ba}} \cdot u_{ba} = \frac{R_{bw}}{10\mathrm{k\Omega}} \cdot 3.3\mathrm{V}
           \in \left[ 0\texttt{V}, 3.3\texttt{V} \right]
-          \label{e-uv}
+          \label{E-uv}
 $$
 
 
@@ -443,25 +462,27 @@ $$
    
 
 $$
-u_q = 0,1,...,255$$
+u_q \in \{0,1,...,255\}
+$$
+
    
 
 $$
-R_{bw} = \frac{R_{ba}}{255} \cdot u_q \in \left[ 0k\Omega, 10k\Omega \right]
-          \label{e-rbw}
+R_{bw} = \frac{R_{ba}}{255} \cdot u_q \in \left[ 0\mathrm{k\Omega}, 10\mathrm{k\Omega} \right]
+          \label{E-rbw}
 $$
 
 
 -   Resulting wiper voltage:
-    (<a href="#e-rbw" data-reference-type="ref" data-reference="e-rbw">[e-rbw]</a>)
+    (<a href="#E-rbw" data-reference-type="ref" data-reference="E-rbw">[E-rbw]</a>)
     in
-    (<a href="#e-uv" data-reference-type="ref" data-reference="e-uv">[e-uv]</a>)
+    (<a href="#E-uv" data-reference-type="ref" data-reference="E-uv">[E-uv]</a>)
    
 
 $$
-u_v = \frac{u_{ba}}{255} \cdot u_q = \frac{3.3\text{V}}{255} \cdot u_q
+u_v = \frac{u_{ba}}{255} \cdot u_q = \frac{3.3\mathrm{V}}{255} \cdot u_q
           \in \left[ 0\texttt{V}, 3.3\texttt{V} \right]
-          \label{e-motor-voltage}
+          \label{E-motor-voltage}
 $$
 
 
@@ -469,7 +490,7 @@ $$
    
 
 $$
-\delta_v = \frac{3.3\text{V}}{255} \cdot \delta_q \in \left[ 0\text{V}, 3.3\text{V} \right]$$
+\delta_v = \frac{3.3\mathrm{V}}{255} \cdot \delta_q \in \left[ 0\mathrm{V}, 3.3\mathrm{V} \right]$$
 
 <img src="voltagedivider.png" alt="image" />
 
@@ -501,7 +522,7 @@ Serial-Peripheral-Interface (SPI) [spi]
 -   SPI is a widely-used synchronous serial communication protocol
 
 -   SPI is used to control peripheral integrated circuits (ICs) like
-    MCP42010 dor for communication between CPUs and microcontrollers
+    MCP42010 or for communication between CPUs and microcontrollers
 
 -   SPI is a synchronous serial communication protocol
 
@@ -542,16 +563,16 @@ SPI for MCP42010 [spi-mcp42010]
 
 -   Commands used by MAD76 are
 
-    | command byte |  resistor data byte  |                                 |
-    |:------------:|:--------------------:|:--------------------------------|
-    |    `0x11`    |   $u_q=0,1,...,255$  | write data to poti 0 (motor)    |
-    |    `0x12`    | $\delta_q=0,...,255$ | write data to poti 1 (steering) |
+    | command byte |       resistor data byte       |                                 |
+    |:------------:|:------------------------------:|:--------------------------------|
+    |    `0x11`    |    $u_q \in \{0,1,...,255\}$   | write data to poti 0 (motor)    |
+    |    `0x12`    | $\delta_q \in \{0,1,...,255\}$ | write data to poti 1 (steering) |
 
 -   Example
 
-    | command byte | resistor data byte |                                                                                                                                                                                                         |
-    |:------------:|:------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-    |    `0x11`    |      $u_q=128$     | sets motor signal voltage $u_v = 3.3\text{V} \cdot 128/255 = 1656\text{mV}$, see equation (<a href="#e-motor-voltage" data-reference-type="ref" data-reference="e-motor-voltage">[e-motor-voltage]</a>) |
+    | command byte | resistor data byte |                                                                                                                                                                                                             |
+    |:------------:|:------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+    |    `0x11`    |      $u_q=128$     | sets motor signal voltage $u_v = 3.3\mathrm{V} \cdot 128/255 = 1656\mathrm{mV}$, see equation (<a href="#E-motor-voltage" data-reference-type="ref" data-reference="E-motor-voltage">[E-motor-voltage]</a>) |
 
 ```{=html}
 <!-- -->
@@ -566,12 +587,12 @@ SPI for MCP42010 [spi-mcp42010]
         -   Example: `0x11 0xFF 0x11 0x80 0x11 0x20 0x11 0x10` sets the
             following motor signal voltages
 
-            |      |        |                                             |
-            |:-----|:-------|:--------------------------------------------|
-            | RC 1 | `0x10` | $3.3\text{V} \cdot 16/255  = 207\text{mV}$  |
-            | RC 2 | `0x20` | $3.3\text{V} \cdot 32/255 = 414\text{mV}$   |
-            | RC 3 | `0x80` | $3.3\text{V} \cdot 128/255 = 1656\text{mV}$ |
-            | RC 4 | `0xFF` | $3.3\text{V} \cdot 255/255 = 3300\text{mV}$ |
+            |      |        |                                                 |
+            |:-----|:-------|:------------------------------------------------|
+            | RC 1 | `0x10` | $3.3\mathrm{V} \cdot 16/255  = 207\mathrm{mV}$  |
+            | RC 2 | `0x20` | $3.3\mathrm{V} \cdot 32/255 = 414\mathrm{mV}$   |
+            | RC 3 | `0x80` | $3.3\mathrm{V} \cdot 128/255 = 1656\mathrm{mV}$ |
+            | RC 4 | `0xFF` | $3.3\mathrm{V} \cdot 255/255 = 3300\mathrm{mV}$ |
 
     -   A further transmission sets the steering resistors of all 4
         MCP42010s
@@ -579,148 +600,141 @@ SPI for MCP42010 [spi-mcp42010]
         -   Example: `0x12 0x40 0x12 0x30 0x12 0x20 0x12 0x10` sets all
             4 steering signal voltages
 
-Python Library to Control RC
+Python Library to Control RC [python-rc]
 ----------------------------
 
--   Create a new Python module `mbmadrclib.py`
+-   Create a new Python module `mbmadrclib.py` in directory
+    `~/src/madpi_ws/src/rcpi/scripts` or you may copy existing code with
+    the following commands
 
-    ``` python
-    #!/usr/bin/env python3
+        cd ~/src/madpi_ws/src/rcpi/scripts
+        cp ~labor/src/mad76/madpi_ws/src/rcpi/scripts/mbmadrclib.py .
 
-    """
-    mbmadrclib.py
-    -------------
+        #!/usr/bin/env python3
 
-    MAD76 RCLib for Raspberry Pi GPIO and SPI
-
-    Copyright (C) 2025, Frank Traenkle, Hochschule Heilbronn
-     
-    This file is part of MAD.
-    MAD is free software: you can redistribute it and/or modify it under the terms 
-    of the GNU General Public License as published by the Free Software Foundation,
-    either version 3 of the License, or (at your option) any later version.
-    MAD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY 
-    without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License along with MAD.
-    If not, see <https://www.gnu.org/licenses/>.
-    """
-
-    import spidev
-    import RPi.GPIO as io
-
-    CAR_CNT = 4 # number of cars
-    POWER_PINS = [ 25, 23, 24, 18 ] # { GPIO25, pin22 ; GPIO23, pin16 ; GPIO24, pin18 ; GPIO18, pin12 }
-    PEDALS_MAX = 1.0 # maximum pedals value
-    STEERING_MAX = 1.0 # maximum steering value
-    SPI_CHANNEL = 0 # SPI channel for communication with the car
-    SPI_SPEED = 1000000 # SPI speed in Hz
-    SPI_CMD_PEDALS = 0x11 # command to write pedals
-    SPI_CMD_STEERING = 0x12 # command to write steering
-
-    pedals_data = [ 0x00 ] * CAR_CNT * 2
-    steering_data = [ 0x00 ] * CAR_CNT * 2
-
-    def signal_to_spi_value(value, max_value):
-        """Convert a signal value to an SPI value."""
-        if value < -max_value or value > max_value:
-            raise ValueError("Value must be between {} and {}".format(-max_value, max_value))
-        return int((value + max_value) / (2.0 * max_value) * 255.0)
-
-    def initialize_spi():
         """
-        Initialize the SPI interface.
+        mbmadrclib.py
+        -------------
 
-        Args:
-            device (int): SPI device number (default: 0).
-            speed (int): SPI speed in Hz (default: 1000000).
-        
-        Returns:
-            spidev.SpiDev: Configured SPI device.
+        MAD76 RCLib for Raspberry Pi GPIO and SPI
+
+        Copyright (C) 2025, Frank Traenkle, Hochschule Heilbronn
         """
-        spi = spidev.SpiDev()
-        spi.open(0, SPI_CHANNEL)
-        spi.max_speed_hz = SPI_SPEED
-        spi.mode = 0b00
-        spi.bits_per_word = 8
-        spi.lsbfirst = False
-        spi.cshigh = False
 
-        for i in range(CAR_CNT):
-            pedals_data[2*i] = SPI_CMD_PEDALS
-            pedals_data[2*i+1] = signal_to_spi_value(0.0, PEDALS_MAX)
-            steering_data[2*i] = SPI_CMD_STEERING
-            steering_data[2*i+1] = signal_to_spi_value(0.0, STEERING_MAX)
+        import spidev
+        import RPi.GPIO as io
+
+        CAR_CNT = 4 # number of cars
+        POWER_PINS = [ 25, 23, 24, 18 ] # { GPIO25, pin22 ; GPIO23, pin16 ; GPIO24, pin18 ; GPIO18, pin12 }
+        PEDALS_MAX = 1.0 # maximum pedals value
+        STEERING_MAX = 1.0 # maximum steering value
+        SPI_CHANNEL = 0 # SPI channel for communication with the car
+        SPI_SPEED = 1000000 # SPI speed in Hz
+        SPI_CMD_PEDALS = 0x11 # command to write pedals
+        SPI_CMD_STEERING = 0x12 # command to write steering
+
+        pedals_data = [ 0x00 ] * CAR_CNT * 2
+        steering_data = [ 0x00 ] * CAR_CNT * 2
+
+        def signal_to_spi_value(value, max_value):
+            """Convert a signal value to an SPI value."""
+            if value < -max_value or value > max_value:
+                raise ValueError("Value must be between {} and {}".format(-max_value, max_value))
+            return int((value + max_value) / (2.0 * max_value) * 255.0)
+
+        def initialize_spi():
+            """
+            Initialize the SPI interface.
+
+            Args:
+                device (int): SPI device number (default: 0).
+                speed (int): SPI speed in Hz (default: 1000000).
             
-        return spi
+            Returns:
+                spidev.SpiDev: Configured SPI device.
+            """
+            spi = spidev.SpiDev()
+            spi.open(0, SPI_CHANNEL)
+            spi.max_speed_hz = SPI_SPEED
+            spi.mode = 0b00
+            spi.bits_per_word = 8
+            spi.lsbfirst = False
+            spi.cshigh = False
 
-    def initialize_gpio():
-        """Initialize GPIO pins for power control.
-        """
-        io.setmode(io.BCM)
-        for pin in POWER_PINS:
-            io.setup(pin, io.OUT)
-            io.output(pin, io.LOW)  # Set all power pins to LOW initially
+            for i in range(CAR_CNT):
+                pedals_data[2*i] = SPI_CMD_PEDALS
+                pedals_data[2*i+1] = signal_to_spi_value(0.0, PEDALS_MAX)
+                steering_data[2*i] = SPI_CMD_STEERING
+                steering_data[2*i+1] = signal_to_spi_value(0.0, STEERING_MAX)
+                
+            return spi
 
-    def cleanup_gpio():
-        """Clean up GPIO pins.
-        """
-        io.cleanup()  # Reset all GPIO pins to their default state
-        
-    def switchon_rcpower(carid):
-        """Switch on the power for the specified car.
+        def initialize_gpio():
+            """Initialize GPIO pins for power control.
+            """
+            io.setmode(io.BCM)
+            for pin in POWER_PINS:
+                io.setup(pin, io.OUT)
+                io.output(pin, io.LOW)  # Set all power pins to LOW initially
 
-        Args:
-        \item to initialize SPI on RPi using the Python library \texttt{spidev} for SPI communication
-            carid (int): Car ID (0 to CAR_CNT-1).
-        """
-        if carid < 0 or carid >= CAR_CNT:
-            raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
+        def cleanup_gpio():
+            """Clean up GPIO pins.
+            """
+            io.cleanup()  # Reset all GPIO pins to their default state
+            
+        def switchon_rcpower(carid):
+            """Switch on the power for the specified car.
+
+            Args:
+            \item to initialize SPI on RPi using the Python library \texttt{spidev} for SPI communication
+                carid (int): Car ID (0 to CAR_CNT-1).
+            """
             if carid < 0 or carid >= CAR_CNT:
-        io.output(POWER_PINS[carid], io.HIGH)  # Set the specified power pin to HIGH
+                raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
+                if carid < 0 or carid >= CAR_CNT:
+            io.output(POWER_PINS[carid], io.HIGH)  # Set the specified power pin to HIGH
 
-    def switchoff_rcpower(carid):
-        """Switch off the power for the specified car.
-      
-        Args:
-            carid (int): Car ID (0 to CAR_CNT-1).
-        """
-        if carid < 0 or carid >= CAR_CNT:
+        def switchoff_rcpower(carid):
+            """Switch off the power for the specified car.
+          
+            Args:
+                carid (int): Car ID (0 to CAR_CNT-1).
+            """
+            if carid < 0 or carid >= CAR_CNT:
+                raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
+            io.output(POWER_PINS[carid], io.LOW)  # Set the specified power pin to LOW
+
+        def write_pedals(spi, carid, pedals):
+            """Write pedals value to the specified car.
+
+            Args:
+                spi (spidev.SpiDev): Configured SPI device.
+                carid (int): Car ID (0 to CAR_CNT-1).
+                pedals (float): Pedals value (-PEDALS_MAX to PEDALS_MAX).
+            """
+            if carid < 0 or carid >= CAR_CNT:
+                raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
+            id = CAR_CNT - carid - 1  # Reverse order for SPI communication
+            pedals_data[id * 2 + 1] = signal_to_spi_value(pedals, PEDALS_MAX)
+            spi.writebytes(pedals_data)
+
+        def write_steering(spi, carid, steering):
+            """Write steering value to the specified car.
+            
+            Args:
+                spi (spidev.SpiDev): Configured SPI device.
+                carid (int): Car ID (0 to CAR_CNT-1).
+                steering (float): Steering value (-STEERING_MAX to STEERING_MAX).
+            """
             raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
-        io.output(POWER_PINS[carid], io.LOW)  # Set the specified power pin to LOW
+            id = CAR_CNT - carid - 1  # Reverse order for SPI communication
+            steering_data[id * 2 + 1] = signal_to_spi_value(steering, STEERING_MAX)
+            spi.writebytes(steering_data)
 
-    def write_pedals(spi, carid, pedals):
-        """Write pedals value to the specified car.
-
-        Args:
-            spi (spidev.SpiDev): Configured SPI device.
-            carid (int): Car ID (0 to CAR_CNT-1).
-            pedals (float): Pedals value (-PEDALS_MAX to PEDALS_MAX).
-        """
-        if carid < 0 or carid >= CAR_CNT:
-            raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
-        id = CAR_CNT - carid - 1  # Reverse order for SPI communication
-        pedals_data[id * 2 + 1] = signal_to_spi_value(pedals, PEDALS_MAX)
-        spi.writebytes(pedals_data)
-
-    def write_steering(spi, carid, steering):
-        """Write steering value to the specified car.
-        
-        Args:
-            spi (spidev.SpiDev): Configured SPI device.
-            carid (int): Car ID (0 to CAR_CNT-1).
-            steering (float): Steering value (-STEERING_MAX to STEERING_MAX).
-        """
-        raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
-        id = CAR_CNT - carid - 1  # Reverse order for SPI communication
-        steering_data[id * 2 + 1] = signal_to_spi_value(steering, STEERING_MAX)
-        spi.writebytes(steering_data)
-    ```
-
--   The Python library `mbmadrclib.py` provides functions
+-   Python library `mbmadrclib.py` provides functions
 
     -   to power on / off the RCs via L293B (see
-        Section <a href="#l293b" data-reference-type="ref" data-reference="l293b">[l293b]</a>)
+        Section <a href="#power-supply" data-reference-type="ref" data-reference="power-supply">3</a>)
 
     -   to set the motor and steering signal voltages of the RCs by
         sending SPI commands to MCP42010s
@@ -741,18 +755,18 @@ Python Library to Control RC
 
 $$
 u_q = 255 \cdot (u_n + 1) / 2 \in [ 0, 255]
-                \label{e-normalized-motor-signal}
+                \label{E-normalized-motor-signal}
 $$
 
 
     -   which yields the motor signal voltage for the RC considering
         equation
-        (<a href="#e-motor-voltage" data-reference-type="ref" data-reference="e-motor-voltage">[e-motor-voltage]</a>)
+        (<a href="#E-motor-voltage" data-reference-type="ref" data-reference="E-motor-voltage">[E-motor-voltage]</a>)
        
 
 $$
-u_v = \frac{3.3\text{V}}{255} \cdot u_q = 3.3\text{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\text{V} ]
-                \label{e-resulting-motor-signal}
+u_v = \frac{3.3\mathrm{V}}{255} \cdot u_q = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]
+                \label{E-resulting-motor-signal}
 $$
 
 
@@ -766,16 +780,20 @@ $$
     | `pedals` | Normalized steering signal $u_n \in [-1, 1]$. -1 is full right, 1 is full left cornering. |
 
 -   The Python module `rctest.py` is an extension of `rconpower.py` from
-    Section <a href="#rc-power" data-reference-type="ref" data-reference="rc-power">[rc-power]</a>
+    Section <a href="#python-poweron" data-reference-type="ref" data-reference="python-poweron">3.3</a>
 
     -   It uses the new library `mbmadrclib.py` to power on the RCs and
         to set the motor and steering signals
 
     -   It provides a simple command line interface to control the RCs
 
-    ```{=html}
-    <!-- -->
-    ```
+-   Create Python module `rctest.py` in directory
+    `~/src/madpi_ws/src/rcpi/scripts` or copy existing `rctest.py` with
+    the following commands
+
+        cd ~/src/madpi_ws/src/rcpi/scripts
+        cp ~labor/src/mad76/madpi_ws/src/rcpi/scripts/rctest.py .
+
     ``` python
     #!/usr/bin/env python3
 
@@ -786,16 +804,6 @@ $$
     Script to test the GPIO pins on a Raspberry Pi.
 
     Copyright (C) 2025, Frank Traenkle, Hochschule Heilbronn
-     
-    This file is part of MAD.
-    MAD is free software: you can redistribute it and/or modify it under the terms 
-    of the GNU General Public License as published by the Free Software Foundation,
-    either version 3 of the License, or (at your option) any later version.
-    MAD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY 
-    without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU General Public License for more details.
-    You should have received a copy of the GNU General Public License along with MAD.
-    If not, see <https://www.gnu.org/licenses/>.
     """
 
     import time
@@ -881,21 +889,22 @@ $$
 
     | argument   | description                                       |
     |:-----------|:--------------------------------------------------|
-    | `carid`    | ID of the RC and car (0-3)                        |
+    | `carid`    | ID of the RC and car (0, 1, 2 or 3)               |
     | `pedals`   | normalized motor signal $u_n \in [-1, 1]$         |
     | `steering` | normalized steering signal $\delta_n \in [-1, 1]$ |
 
 #### Exercises
 
-1.  Measure the resistance values $R_{bw}$ of the digital potis for RC 1
-    with a multimeter.
+1.  Measure the resistance values $R_{bw}$ of the digital potis of RC 1
+    with a multimeter (see
+    Figure <a href="#F-measohm" data-reference-type="ref" data-reference="F-measohm">3</a>)
 
     -   Disconnect RC 1 from socket SV 1 (see
-        Figure <a href="#f-mcp42010-schematics" data-reference-type="ref" data-reference="f-mcp42010-schematics">1</a>)
+        Figure <a href="#F-mcp42010-schematics" data-reference-type="ref" data-reference="F-mcp42010-schematics">2</a>)
 
     -   Set $u_n=0$ and $\delta_n=0$ by running
 
-            rctest.py 0 0.0 0.0
+            python rctest.py 0 0.0 0.0
 
     -   Measure the resistance $R_{bw}$ for motor control between pins
         PB0 and PW0 of the first MCP42010 (Poti 1)
@@ -906,16 +915,17 @@ $$
     -   Re-run `rctest.py`, modify the pedal and steering values
         $u_n,\delta_n \in [-1, 1]$ and check the resistance values
         according to equations
-        (<a href="#e-rbw" data-reference-type="ref" data-reference="e-rbw">[e-rbw]</a>)
+        (<a href="#E-rbw" data-reference-type="ref" data-reference="E-rbw">[E-rbw]</a>)
         and
-        (<a href="#e-normalized-motor-signal" data-reference-type="ref" data-reference="e-normalized-motor-signal">[e-normalized-motor-signal]</a>)
+        (<a href="#E-normalized-motor-signal" data-reference-type="ref" data-reference="E-normalized-motor-signal">[E-normalized-motor-signal]</a>):
        
 
 $$
-R_{bw} = \frac{R_{ba}}{255} \cdot u_q = 10k\Omega \cdot (u_n + 1) / 2 \in \left[ 0k\Omega, 10k\Omega \right]$$
+R_{bw} = \frac{R_{ba}}{255} \cdot u_q = 10\mathrm{k\Omega} \cdot (u_n + 1) / 2 \in \left[ 0\mathrm{k\Omega}, 10\mathrm{k\Omega} \right]$$
 
 2.  Measure the motor and steering signal voltages of the digital potis
-    for RC 1 with a multimeter.
+    of RC 1 with a multimeter (see
+    Figure <a href="#F-measvolt" data-reference-type="ref" data-reference="F-measvolt">4</a>)
 
     -   Connect RC 1 to socket SV 1: now the RC supplies 3.3V to
         MCP42010 on PA0 and PA1
@@ -930,13 +940,24 @@ R_{bw} = \frac{R_{ba}}{255} \cdot u_q = 10k\Omega \cdot (u_n + 1) / 2 \in \left[
         control between pins PB1 and PW1
 
     -   Check the voltages according to equations
-        (<a href="#e-rbw" data-reference-type="ref" data-reference="e-rbw">[e-rbw]</a>)
+        (<a href="#E-rbw" data-reference-type="ref" data-reference="E-rbw">[E-rbw]</a>)
         and
-        (<a href="#e-resulting-motor-signal" data-reference-type="ref" data-reference="e-resulting-motor-signal">[e-resulting-motor-signal]</a>)
+        (<a href="#E-resulting-motor-signal" data-reference-type="ref" data-reference="E-resulting-motor-signal">[E-resulting-motor-signal]</a>):
+
        
 
 $$
-u_v = 3.3\text{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\text{V} ]$$
+u_v = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]$$
+
+2
+
+<figure>
+<img src="measohm.png" id="F-measohm" alt="" /><figcaption>Exercise 1: Measure <span class="math inline"><em>R</em><sub><em>b</em><em>w</em></sub></span> with a multimeter</figcaption>
+</figure>
+
+<figure>
+<img src="measvolt.png" id="F-measvolt" alt="" /><figcaption>Exercise 2: Measure <span class="math inline"><em>u</em><sub><em>v</em></sub></span> with a multimeter</figcaption>
+</figure>
 
 References [bibliography]
 ==========

@@ -170,10 +170,12 @@ Raspberry Pi OS
 
 -   Update Debian
 
-        sudo apt-get update
-        sudo apt-get dist-upgrade
-        # reboot in case of kernel/firmware updates
-        sudo shutdown -r 0 
+    ``` bash
+    sudo apt-get update
+    sudo apt-get dist-upgrade
+    # reboot in case of kernel/firmware updates
+    sudo shutdown -r 0 
+    ```
 
 Raspberry Pi Configuration
 --------------------------
@@ -194,16 +196,22 @@ development PC, either Linux, Windows or MacOS.
 
 -   Remove RealVNC
 
-        sudo apt-get purge realvnc-vnc-server
+    ``` bash
+    sudo apt-get purge realvnc-vnc-server
+    ```
 
 -   Install VNC server
 
-        sudo apt-get install tigervnc-standalone-server
-        sudo apt-get install tigervnc-xorg-extension
+    ``` bash
+    sudo apt-get install tigervnc-standalone-server
+    sudo apt-get install tigervnc-xorg-extension
+    ```
 
 -   Start VNC server
 
-        vncserver -localhost no -geometry 2550x1350 -depth 24
+    ``` bash
+    vncserver -localhost no -geometry 2550x1350 -depth 24
+    ```
 
 -   Connect to VNC server from your VNC client: `<hostname>:1`
 
@@ -212,10 +220,12 @@ development PC, either Linux, Windows or MacOS.
 Python Coding
 -------------
 
-    sudo apt-get purge python3-rpi.gpio      # remove GPIO library for RPi4
-    sudo apt-get install python3-rpi-lgpio   # install GPIO library for RPi5
-    sudo apt-get install python3-ipykernel   # install Jupyter kernel
-    sudo apt-get install python3-sphinx      # install Sphinx for code documentation
+``` bash
+sudo apt-get purge python3-rpi.gpio      # remove GPIO library for RPi4
+sudo apt-get install python3-rpi-lgpio   # install GPIO library for RPi5
+sudo apt-get install python3-ipykernel   # install Jupyter kernel
+sudo apt-get install python3-sphinx      # install Sphinx for code documentation
+```
 
 WiringPi
 --------
@@ -225,12 +235,14 @@ access the MAD76 IO board.
 
 -   Install WiringPi for MAD76 IO
 
-        cd
-        mkdir src
-        cd src
-        git clone https://github.com/WiringPi/WiringPi.git
-        cd WiringPi
-        ./build
+    ``` bash
+    cd
+    mkdir src
+    cd src
+    git clone https://github.com/WiringPi/WiringPi.git
+    cd WiringPi
+    ./build
+    ```
 
 ROS2
 ----
@@ -245,66 +257,70 @@ ROS2 is the middleware for the MAD76 software stack.
     \[[2](#ref-ros-buildonlinux)\],
     \[[3](#ref-ros-installubuntusource)\]
 
-        mkdir -p ~/src/ros2_jazzy/src
-        cd ~/src/ros2_jazzy
+    ``` bash
+    mkdir -p ~/src/ros2_jazzy/src
+    cd ~/src/ros2_jazzy
 
-        locale  # check for UTF-8
+    locale  # check for UTF-8
 
-        sudo apt-get install \
-          build-essential \
-          cmake \
-          git \
-          python3-colcon-bash \
-          python3-pip \
-          vcstool \
-          wget
+    sudo apt-get install \
+      build-essential \
+      cmake \
+      git \
+      python3-colcon-bash \
+      python3-pip \
+      vcstool \
+      wget
 
-        sudo apt-get install sqlite3
-        sudo apt-get install python3-lark python3-netifaces
-        sudo apt-get install python3-flake8-blind-except python3-flake8-builtins python3-flake8-class-newline python3-flake8-comprehensions    python3-flake8-deprecated    python3-flake8-import-order python3-flake8-quotes python3-pytest-repeat python3-pytest-rerunfailures
-        sudo apt-get install python3-rosdep2 python3-vcstools
-        sudo apt-get install python3-opencv python3-scipy python3-matplotlib
-        sudo apt-get install python3-flask python3-peewee
-        sudo apt-get install libbullet-dev libboost-dev
-        sudo apt-get install libasio-dev libtinyxml2-dev
-        sudo apt-get install qtbase5-dev qtbase5-dev-tools
-        sudo apt-get install libacl1-dev libcap-dev libssl-dev libxaw7-dev libogre-1.12-dev libeigen3-dev 
-        sudo apt-get install libopencv-dev
-        sudo apt-get install liblttng-ust-dev
-        sudo apt-get install libboost-python-dev libboost-system-dev libboost-log-dev libgtest-dev libjsoncpp-dev
-        sudo apt-get install netcat-openbsd netcat-openbsd
+    sudo apt-get install sqlite3
+    sudo apt-get install python3-lark python3-netifaces
+    sudo apt-get install python3-flake8-blind-except python3-flake8-builtins python3-flake8-class-newline python3-flake8-comprehensions    python3-flake8-deprecated    python3-flake8-import-order python3-flake8-quotes python3-pytest-repeat python3-pytest-rerunfailures
+    sudo apt-get install python3-rosdep2 python3-vcstools
+    sudo apt-get install python3-opencv python3-scipy python3-matplotlib
+    sudo apt-get install python3-flask python3-peewee
+    sudo apt-get install libbullet-dev libboost-dev
+    sudo apt-get install libasio-dev libtinyxml2-dev
+    sudo apt-get install qtbase5-dev qtbase5-dev-tools
+    sudo apt-get install libacl1-dev libcap-dev libssl-dev libxaw7-dev libogre-1.12-dev libeigen3-dev 
+    sudo apt-get install libopencv-dev
+    sudo apt-get install liblttng-ust-dev
+    sudo apt-get install libboost-python-dev libboost-system-dev libboost-log-dev libgtest-dev libjsoncpp-dev
+    sudo apt-get install netcat-openbsd netcat-openbsd
 
-        wget https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos
-        vcs import src < ros2.repos
+    wget https://raw.githubusercontent.com/ros2/ros2/jazzy/ros2.repos
+    vcs import src < ros2.repos
 
-        rosdep update
-        rosdep install --from-paths src --ignore-src --rosdistro jazzy -y --skip-keys "rti-connext-dds-6.0.1 python3-vcstool"
+    rosdep update
+    rosdep install --from-paths src --ignore-src --rosdistro jazzy -y --skip-keys "rti-connext-dds-6.0.1 python3-vcstool"
 
-        touch src/eclipse-cyclonedds/COLCON_IGNORE
-        touch src/eclipse-iceoryx/COLCON_IGNORE
-        touch src/gazebo-release/COLCON_IGNORE
-        touch src/ros2/rviz/COLCON_IGNORE
-        touch src/ros2/rmw_connextdds/COLCON_IGNORE
-        touch src/ros2/rmw_cyclonedds/COLCON_IGNORE
+    touch src/eclipse-cyclonedds/COLCON_IGNORE
+    touch src/eclipse-iceoryx/COLCON_IGNORE
+    touch src/gazebo-release/COLCON_IGNORE
+    touch src/ros2/rviz/COLCON_IGNORE
+    touch src/ros2/rmw_connextdds/COLCON_IGNORE
+    touch src/ros2/rmw_cyclonedds/COLCON_IGNORE
 
-        colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ```
 
 -   Install ROS2 packages for camera, diagnostics, and Xbox controller
 
-        sudo apt-get install libcamera-dev
-        source ~/src/ros2_jazzy/install/setup.bash
-        mkdir -p /src/ros_ws/src
-        cd ~/src/ros_ws/src
-        git clone https://github.com/ros/diagnostics.git -b ros2-jazzy  
-        git clone https://github.com/ros-perception/vision_opencv.git -b rolling
-        git clone https://github.com/christianrauch/camera_ros -b main
-        git clone https://github.com/ros-drivers/joystick_drivers -b ros2
-        touch joystick_drivers/ps3joy/COLCON_IGNORE
-        touch joystick_drivers/spacenav/COLCON_IGNORE
-        touch joystick_drivers/wiimote/COLCON_IGNORE
-        touch joystick_drivers/wiimote_msgs/COLCON_IGNORE
-        cd ..
-        colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release  
+    ``` bash
+    sudo apt-get install libcamera-dev
+    source ~/src/ros2_jazzy/install/setup.bash
+    mkdir -p /src/ros_ws/src
+    cd ~/src/ros_ws/src
+    git clone https://github.com/ros/diagnostics.git -b ros2-jazzy  
+    git clone https://github.com/ros-perception/vision_opencv.git -b rolling
+    git clone https://github.com/christianrauch/camera_ros -b main
+    git clone https://github.com/ros-drivers/joystick_drivers -b ros2
+    touch joystick_drivers/ps3joy/COLCON_IGNORE
+    touch joystick_drivers/spacenav/COLCON_IGNORE
+    touch joystick_drivers/wiimote/COLCON_IGNORE
+    touch joystick_drivers/wiimote_msgs/COLCON_IGNORE
+    cd ..
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release  
+    ```
 
 Update ROS2
 -----------
@@ -313,26 +329,30 @@ If you want to update ROS2 later on, you can do the following.
 
 -   Update ROS2 distribution
 
-        cd ~/src/ros2_jazzy
-        vcs custom --args remote update
-        vcs import src < ros2.repos
-        vcs pull src
-        colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ``` bash
+    cd ~/src/ros2_jazzy
+    vcs custom --args remote update
+    vcs import src < ros2.repos
+    vcs pull src
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ```
 
 -   Update ROS2 packages for camera and diagnostics
 
-        cd ~/src/ros_ws/src
-        cd diagnostics
-        git pull
-        cd ../vision_opencv
-        git pull
-        cd ../camera_ros
-        git pull
-        cd ../joystick_drivers
-        git pull
-        cd ../..
-        source ~/src/ros2_jazzy/install/setup.bash
-        colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ``` bash
+    cd ~/src/ros_ws/src
+    cd diagnostics
+    git pull
+    cd ../vision_opencv
+    git pull
+    cd ../camera_ros
+    git pull
+    cd ../joystick_drivers
+    git pull
+    cd ../..
+    source ~/src/ros2_jazzy/install/setup.bash
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ```
 
 Xbox One Controllers
 --------------------
@@ -376,7 +396,9 @@ and the Linux PC.
     \[[5](#ref-ros-installubuntudeb)\]. Make sure to install the
     following ROS2 packages:
 
-        sudo apt-get install ros-dev-tools ros-jazzy-desktop ros-jazzy-diagnostic-updater
+    ``` bash
+    sudo apt-get install ros-dev-tools ros-jazzy-desktop ros-jazzy-diagnostic-updater
+    ```
 
 MAD76 Driving Stack
 ===================
@@ -390,15 +412,15 @@ Software Architecture
 
 <div id="T-ros2nodes" markdown="1">
 
-| ROS2 Node      | Description                                                        |
-|:---------------|:-------------------------------------------------------------------|
-| `camera_node`  | Rasberry Pi camera driver                                          |
-| `vision_node`  | computer vision                                                    |
-| `locate_node`  | multi-object tracking                                              |
-| `carctrl_node` | motion planning and control for each individual car                |
-| `rc_node`      | remote control signals output to $2.4\mathrm{GHz}$ channel via SPI |
-| `track_node`   | track map                                                          |
-| `joy_node`     | optional node for manual control via joystick                      |
+| ROS2 Node     | Description                                                        |
+|:--------------|:-------------------------------------------------------------------|
+| `camera_node` | Rasberry Pi camera driver                                          |
+| `visionnode`  | computer vision                                                    |
+| `locatenode`  | multi-object tracking                                              |
+| `carctrlnode` | motion planning and control for each individual car                |
+| `rcnode`      | remote control signals output to $2.4\mathrm{GHz}$ channel via SPI |
+| `tracknode`   | track map                                                          |
+| `joy_node`    | optional node for manual control via joystick                      |
 
 </div>
 
@@ -422,7 +444,7 @@ Build MAD76
 -   MAD76 can be built and run on Raspberry Pi and on Ubuntu Linux
     computers
 
--   ROS2 nodes can run distributedly on multiple computers
+-   ROS2 nodes can run on distributed system with multiple computers
 
 -   ROS2 nodes `camera_node` and `rc_node` must run on the Raspberry Pi
     for interfacing with the camera and Turboracing remote controllers
@@ -440,35 +462,43 @@ Build MAD76
 
 -   Clone Git repository and build MAD76 workspace
 
-        export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-        export ROS_DOMAIN_ID=221
-        source ~/src/ros_ws/install/setup.bash # on Raspberry Pi
-        #source /opt/ros/iron/install/setup.bash # on Ubuntu Linux-PC
-        cd ~/src
-        git clone https://<token>@github.com/modbas/mad76
-        cd mad76/mad_ws
-        colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ``` bash
+    export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+    export ROS_DOMAIN_ID=221
+    source ~/src/ros_ws/install/setup.bash # on Raspberry Pi
+    #source /opt/ros/iron/install/setup.bash # on Ubuntu Linux-PC
+    cd ~/src
+    git clone https://github.com/modbas/mad76
+    cd mad76/mad_ws
+    colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ```
 
     For building on Raspberry Pi, the `colcon build` command must be
-    extended by `–parallel-workers 2` to avoid out-of-memory problems
+    extended by `–parallel-workers 1` to avoid out-of-memory problems
 
-        colcon build --parallel-workers 2 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ``` bash
+    colcon build --parallel-workers 1 --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release
+    ```
 
 -   Add security limits
 
-        sudo addgroup mad
-        sudo adduser <username> mad # where <username> is your username
-        sudo -i
-        echo "@mad		 -	 rtprio		 98" >> /etc/security/limits.conf
-        echo "@mad		 -	 memlock	 unlimited" >> /etc/security/limits.conf
-        shutdown -r 0 # reboot
+    ``` bash
+    sudo addgroup mad
+    sudo adduser <username> mad # where <username> is your username
+    sudo -i
+    echo "@mad		 -	 rtprio		 98" >> /etc/security/limits.conf
+    echo "@mad		 -	 memlock	 unlimited" >> /etc/security/limits.conf
+    shutdown -r 0 # reboot
+    ```
 
 -   Add the following lines to the end of `~/.bashrc` for automatic
     setup
 
-        export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-        export ROS_DOMAIN_ID=221
-        source ~/src/mad76/mad_ws/install/setup.bash
+    ``` bash
+    export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+    export ROS_DOMAIN_ID=221
+    source ~/src/mad76/mad_ws/install/setup.bash
+    ```
 
 Software-in-the-Loop Simulation
 -------------------------------
@@ -492,11 +522,15 @@ Software-in-the-Loop Simulation
 
 -   Open a new terminal and start MAD76 in SiL mode
 
-        ros2 launch mbmad madpisim.launch
+    ``` bash
+    ros2 launch mbmad madpisim.launch
+    ```
 
 -   Open a further terminal and send a maneuver to car 0 (orange car)
 
-        ros2 run mbmadcar send_maneuver.py 0 0.3 0.25
+    ``` bash
+    ros2 run mbmadcar send_maneuver.py 0 0.3 0.25
+    ```
 
     -   First argument is the car identifier (0 for orange car, 1 for
         yellow car)
@@ -523,7 +557,9 @@ Software-in-the-Loop Simulation
 -   Stop `send_maneuver.py` by hitting `Ctrl+c` and send maneuver to car
     1 (yellow car)
 
-        ros2 run mbmadcar send_maneuver.py 1 0.2 0.25
+    ``` bash
+    ros2 run mbmadcar send_maneuver.py 1 0.2 0.25
+    ```
 
 -   The maximum speed of each car is $0.5 \frac{m}{s}$
 
@@ -569,9 +605,11 @@ Python 3.10 Installation
 
 -   Install Python 3.10 on the MAD76 Linux PC from the PPA `Deadsnakes`
 
-        sudo add-apt-repository ppa:deadsnakes/ppa
-        sudo apt update
-        sudo apt install python3.10 python3.10-venv
+    ``` bash
+    sudo add-apt-repository ppa:deadsnakes/ppa
+    sudo apt update
+    sudo apt install python3.10 python3.10-venv
+    ```
 
 -   Activate Python 3.10 in MATLAB ROS-Toolbox
 
@@ -595,16 +633,22 @@ ROS Custom Messages
 
     2.  At the MATLAB prompt, change to the ROS workspace directory
 
-            cd ~/src/mad76/mad_ws
+        ``` matlab
+        cd ~/src/mad76/mad_ws
+        ```
 
     3.  Generate MATLAB/Simulink objects for the custom ROS message
         types
 
-            ros2genmsg src
+        ``` matlab
+        ros2genmsg src
+        ```
 
     4.  Test if the message types are available in MATLAB/Simulink
 
-            ros2 msg list
+        ``` bash
+        ros2 msg list
+        ```
 
         This displayed list must contain message types `mbmadmsgs/*` and
         `mbsafemsgs/*`
@@ -617,8 +661,10 @@ Test Simulink MiL Simulation
 
 -   Test your new MATLAB/Simulink installation by simulating this model
 
-        cd ~/src/mad76/matlab/vertical
-        s06_sig_template
+    ``` matlab
+    cd ~/src/mad76/matlab/vertical
+    s06_sig_template
+    ```
 
 -   The model should run without errors and display initial positions of
     the vehicles in the MATLAB figure
@@ -635,18 +681,24 @@ Test Simulink for Code Generation
 -   Run the ROS environment in manual simulation mode (without MAD76
     driving stack)
 
-        ros2 launch mbmad madpisimman.launch
+    ``` bash
+    ros2 launch mbmad madpisimman.launch
+    ```
 
 -   Start the simulation of `c71_car0_template.slx`
 
-        cd ~/src/mad76/matlab/vertical
-        c71_data
-        c71_car0_template
+    ``` matlab
+    cd ~/src/mad76/matlab/vertical
+    c71_data
+    c71_car0_template
+    ```
 
 -   Send a maneuver message to the Simulink model, so that the main
     subsystem is enabled
 
-        ros2 run mbmadcar send_maneuver.py 0 0.2 0.5
+    ``` bash
+    ros2 run mbmadcar send_maneuver.py 0 0.2 0.5
+    ```
 
 -   You can now manually control the orange car with id 0 by
     manipulating the sliders in subsystem
