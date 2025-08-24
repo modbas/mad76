@@ -82,7 +82,7 @@ MAD76 Kit
 MAD76 Academy
 =============
 
-MAD76 Academy offers a variety of learning lessons to help you get
+MAD76 Academy offers a variety of learning lessons to help you getting
 started with your MAD76 kit
 
 -   [Linux Basics](doc/teachlinux/teachlinux.md)
@@ -91,8 +91,10 @@ started with your MAD76 kit
 
 -   [MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
 
-You may further start a study program at the Hochschule Heilbronn to
-deepen your knowledge in
+-   [ROS2 Coding for MAD76](doc/teachmad76io/teachros.md)
+
+You may further start a bachelor- or master-degreestudy program at the
+Hochschule Heilbronn to deepen your knowledge in
 
 -   autonomous car racing with MAD76
 
