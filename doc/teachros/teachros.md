@@ -1053,25 +1053,28 @@ ROS2 Node for Safe Car Control
 1.  Extend the launch file `madjoy.launch` to run the computer vision in
     addition to the nodes `joy_node`, `ctrlnode`, and `rcnode`
 
-        {language=xml}
-        <launch>
-            <include file="$(find-pkg-share mbmad)/launch/madpicam.launch" />
-            <include file="$(find-pkg-share mbmad)/launch/madpitrack.launch" />
-            <node pkg="joy" exec="joy_node" name="joy_node" output="screen"/>
-            <node pkg="mbmadpi" exec="rcnode" name="rcnode" namespace="/mad/car0" output="screen"/>
-            <node pkg="mbmadpi" exec="ctrlnode" name="ctrlnode" namespace="/mad/car0" output="screen"/>
-        </launch>
+    ``` xml
+    <launch>
+        <include file="$(find-pkg-share mbmad)/launch/madpicam.launch" />
+        <include file="$(find-pkg-share mbmad)/launch/madpitrack.launch" />
+        <node pkg="joy" exec="joy_node" name="joy_node" output="screen"/>
+        <node pkg="mbmadpi" exec="rcnode" name="rcnode" namespace="/mad/car0" output="screen"/>
+        <node pkg="mbmadpi" exec="ctrlnode" name="ctrlnode" namespace="/mad/car0" output="screen"/>
+    </launch>
+    ```
 
 2.  Measure the car position signals $s_1(t), s_2(t)$ with `rqt_plot`
     (see
     Section <a href="#measure-ros2-joystick-messages" data-reference-type="ref" data-reference="measure-ros2-joystick-messages">4.2</a>)
     by running the following commands in different terminals
 
-        {language=bash}
-        ros2 launch mbmadpi madjoy.launch
+    ``` bash
+    ros2 launch mbmadpi madjoy.launch
+    ```
 
-        {language=bash}
-        ros2 run rqt_plot rqt_plot
+    ``` bash
+    ros2 run rqt_plot rqt_plot
+    ```
 
     and entering the following topics to the plot in `rqt_plot`
 
@@ -1098,10 +1101,10 @@ ROS2 Node for Safe Car Control
                 self.carmsg = msg.list[self.carid]
 
     3.  Extend method `joy_callback` that uses `self.carmsg` to check if
-        car is on track and the computer vision is reliable. If not
-        trigger a safety halt by setting `pedals` to `0.0`
+        car is on track and the computer vision is reliable. If not then
+        trigger a safety halt by setting `pedals` to `0.0`.
 
-    4.  Test your code
+    4.  Test your code.
 
 References [bibliography]
 ==========
