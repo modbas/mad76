@@ -683,22 +683,20 @@ Python Library to Control RC [python-rc]
             """Switch on the power for the specified car.
 
             Args:
-            \item to initialize SPI on RPi using the Python library \texttt{spidev} for SPI communication
                 carid (int): Car ID (0 to CAR_CNT-1).
             """
             if carid < 0 or carid >= CAR_CNT:
-                raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
-                if carid < 0 or carid >= CAR_CNT:
+                raise ValueError(f"carid must be between 0 and {CAR_CNT - 1}")
             io.output(POWER_PINS[carid], io.HIGH)  # Set the specified power pin to HIGH
 
         def switchoff_rcpower(carid):
             """Switch off the power for the specified car.
-          
+
             Args:
                 carid (int): Car ID (0 to CAR_CNT-1).
             """
             if carid < 0 or carid >= CAR_CNT:
-                raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
+                raise ValueError(f"carid must be between 0 and {CAR_CNT - 1}")
             io.output(POWER_PINS[carid], io.LOW)  # Set the specified power pin to LOW
 
         def write_pedals(spi, carid, pedals):
@@ -710,7 +708,7 @@ Python Library to Control RC [python-rc]
                 pedals (float): Pedals value (-PEDALS_MAX to PEDALS_MAX).
             """
             if carid < 0 or carid >= CAR_CNT:
-                raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
+                raise ValueError(f"carid must be between 0 and {CAR_CNT - 1}")
             id = CAR_CNT - carid - 1  # Reverse order for SPI communication
             pedals_data[id * 2 + 1] = signal_to_spi_value(pedals, PEDALS_MAX)
             spi.writebytes(pedals_data)
@@ -723,7 +721,8 @@ Python Library to Control RC [python-rc]
                 carid (int): Car ID (0 to CAR_CNT-1).
                 steering (float): Steering value (-STEERING_MAX to STEERING_MAX).
             """
-            raise ValueError("carid must be between 0 and {}".format(CAR_CNT - 1))
+            if carid < 0 or carid >= CAR_CNT:
+                raise ValueError(f"carid must be between 0 and {CAR_CNT - 1}")
             id = CAR_CNT - carid - 1  # Reverse order for SPI communication
             steering_data[id * 2 + 1] = signal_to_spi_value(steering, STEERING_MAX)
             spi.writebytes(steering_data)

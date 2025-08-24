@@ -42,6 +42,8 @@ Agenda
 What is ROS
 ===========
 
+2
+
 -   Robot Operating System (ROS) is a middleware (MW) and not an
     operating system (OS)
 
@@ -209,6 +211,11 @@ ROS2 Workspaces and Packages
 
 <img src="mad76workspaces.png" alt="image" />
 
+#### Exercises
+
+1.  Adjust the Raspberry Pi camera according to [Mounting Camera, Focus
+    and Aperture](../camera/camera.md).
+
 ROS2 Joystick Input
 ===================
 
@@ -222,6 +229,8 @@ ROS2 Joystick Input
 
 Start ROS2 Joystick Node
 ------------------------
+
+2
 
 -   ROS2 nodes are started using the command
 
@@ -352,9 +361,8 @@ Measure ROS2 Joystick Messages
     ros2 run rqt_plot rqt_plot
     ```
 
-```{=html}
-<!-- -->
-```
+2
+
 -   Enter `/joy/axes[1]` in the entry field `Topic` to plot $u_J(t)$
 
     |         |                                                    |
@@ -706,6 +714,8 @@ Functional Chain of Control Theory
 ----------------------------------
 
 <img src="functionalchain.png" alt="image" />
+
+2
 
 -   Input
 
