@@ -42,8 +42,6 @@ Agenda
 What is ROS
 ===========
 
-2
-
 -   Robot Operating System (ROS) is a middleware (MW) and not an
     operating system (OS)
 
@@ -225,8 +223,6 @@ ROS2 Joystick Input
 Start ROS2 Joystick Node
 ------------------------
 
-2
-
 -   ROS2 nodes are started using the command
 
     ``` bash
@@ -356,8 +352,9 @@ Measure ROS2 Joystick Messages
     ros2 run rqt_plot rqt_plot
     ```
 
-2
-
+```{=html}
+<!-- -->
+```
 -   Enter `/joy/axes[1]` in the entry field `Topic` to plot $u_J(t)$
 
     |         |                                                    |
@@ -461,10 +458,10 @@ Code and Run ROS2 Node
 -   The new ROS2 node `rcnode` will control the MAD76 IO by digital
     output and SPI in the same way as Python module `rctest.py` from
     learning session [MAD76 I/O
-    Programming](doc/teachmad76io/teachmad76io.md)
+    Programming](../teachmad76io/teachmad76io.md)
 
 -   It will re-use the Python library `mbmadrclib.py` from learning
-    session [MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
+    session [MAD76 I/O Programming](../teachmad76io/teachmad76io.md)
 
 -   Copy `mbmadrclib.py` to the new ROS2 package `mbmadpi`
 
@@ -686,6 +683,11 @@ Code and Run ROS2 Node
     ros2 run rqt_plot rqt_plot
     ```
 
+#### Exercises
+
+1.  Calibrate the remote control according to [Remote Control Cabling
+    and Calibration](../remotecontrol/remotecontrol.md).
+
 Joystick Control of MAD76
 =========================
 
@@ -704,8 +706,6 @@ Functional Chain of Control Theory
 ----------------------------------
 
 <img src="functionalchain.png" alt="image" />
-
-2
 
 -   Input
 
