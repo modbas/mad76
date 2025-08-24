@@ -91,9 +91,9 @@ started with your MAD76 kit
 
 -   [MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
 
--   [ROS2 Coding for MAD76](doc/teachmad76io/teachros.md)
+-   [ROS2 Coding for MAD76](doc/teachros/teachros.md)
 
-You may further start a bachelor- or master-degreestudy program at the
+You may further start a Bachelor- or Master-degree study program at the
 Hochschule Heilbronn to deepen your knowledge in
 
 -   autonomous car racing with MAD76
