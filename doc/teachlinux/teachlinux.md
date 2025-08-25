@@ -172,6 +172,8 @@ Why Linux?
 Computer Architecture
 =====================
 
+
+
 -   System on a Chip (SoC) Broadcom BCM2712
 
     -   Central Processing Unit (CPU): Quad-core ARM Cortex-A72, 2.4 GHz
@@ -231,6 +233,8 @@ Linux Users
 
 First Steps
 -----------
+
+
 
 1.  At the console, enter your username and password
 
