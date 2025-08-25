@@ -73,11 +73,14 @@ MAD76 Kit
 -   User Manuals
 
     -   [Installation](doc/install/install.md)
+        ([install.pdf](doc/install/install.pdf))
 
     -   [Remote Control Cabling and
         Calibration](doc/remotecontrol/remotecontrol.md)
+        ([remotecontrol.pdf](doc/remotecontrol/remotecontrol.pdf))
 
     -   [Computer Vision Configuration](doc/vision/vision.md)
+        ([vision.pdf](doc/vision/vision.pdf))
 
 MAD76 Academy
 =============
@@ -86,12 +89,16 @@ MAD76 Academy offers a variety of learning lessons to help you getting
 started with your MAD76 kit
 
 -   [Linux Basics](doc/teachlinux/teachlinux.md)
+    ([teachlinux.pdf](doc/teachlinux/teachlinux.pdf))
 
 -   [Python Basics](doc/teachpython/teachpython.md)
+    ([teachpython.pdf](doc/teachpython/teachpython.pdf))
 
 -   [MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
+    ([teachmad76io.pdf](doc/teachmad76io/teachmad76io.pdf))
 
 -   [ROS2 Coding for MAD76](doc/teachros/teachros.md)
+    ([teachros.pdf](doc/teachros/teachros.pdf))
 
 You may further start a Bachelor- or Master-degree study program at the
 Hochschule Heilbronn to deepen your knowledge in
