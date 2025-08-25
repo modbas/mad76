@@ -55,7 +55,8 @@ RC Calibration
 <img src="rcbuttons.png" id="f-rc-buttons" alt="" /><figcaption>RC Buttons</figcaption>
 </figure>
 
-#### Rationale
+Rationale [rationale]
+---------
 
 -   The cars have tolerances in steering, motor propulsion and friction
 
@@ -72,7 +73,8 @@ RC Calibration
     that all cars can be controlled by the same MAD76 driving stack with
     good performance
 
-#### Before you start
+Before you start [before-you-start]
+----------------
 
 1.  If MAD76 is running, switch off the RC by stopping ROS by hitting
     `Ctrl-C` in the terminal
@@ -110,7 +112,8 @@ RC Calibration
     3.  Wait for the car’s headlights to stop flashing, indicating a
         successful coupling
 
-#### Calibrate the motor
+Calibrate the motor [calibrate-the-motor]
+-------------------
 
 1.  Calibrate standing still
 
@@ -167,7 +170,8 @@ RC Calibration
         forward and backward at the same absolute level, e.g.,
         $|u_n| \approx 0.04$
 
-#### Calibrate the steering
+Calibrate the steering [calibrate-the-steering]
+----------------------
 
 1.  Set
 

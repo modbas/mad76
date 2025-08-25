@@ -20,7 +20,7 @@ Agenda
 
 #### Teaching Objectives
 
-2
+
 
 -   Understand the function of remote controllers (RC) in MAD76
 
@@ -123,7 +123,7 @@ Functional Chain from RPi over MAD76 IO to RCs [functional]
 
 <img src="rpi-io-power.png" alt="image" />
 
-2
+
 
 -   MAD76 IO can switch RCs on and off by power switch L293B
 
@@ -385,7 +385,7 @@ Python Code to Power On any RC [python-poweron]
 
         python rcpoweron.py 1
 
-2
+
 
 #### Exercises
 
@@ -410,7 +410,7 @@ Python Code to Power On any RC [python-poweron]
 
     -   Connect RC 1 to socket SV 1
 
-    -   Check if blue LED is on when RC 1 is powered on
+    -   Check if blue LED switches with power
 
 <figure>
 <img src="measpowervolt.png" id="F-measpowervolt" alt="" /><figcaption>Exercise 2: Measure power supply voltage</figcaption>
@@ -442,7 +442,7 @@ Digital Potentiometers MCP42010 [mcp42010]
 
 -   MCP42010 emulates 2 potentiometers by resistor cascades
 
-2
+
 
 #### MCP42010 contains 2 voltage dividers
 
@@ -604,8 +604,10 @@ Python Library to Control RC [python-rc]
     `~/src/madpi_ws/src/rcpi/scripts` or you may copy existing code with
     the following commands
 
-        cd ~/src/madpi_ws/src/rcpi/scripts
-        cp ~labor/src/mad76/madpi_ws/src/rcpi/scripts/mbmadrclib.py .
+    ``` bash
+    cd ~/src/madpi_ws/src/rcpi/scripts
+    cp ~labor/src/mad76/madpi_ws/src/rcpi/scripts/mbmadrclib.py .
+    ```
 
         #!/usr/bin/env python3
 
@@ -754,7 +756,6 @@ u_q = 255 \cdot (u_n + 1) / 2 \in [ 0, 255]$$
 
     -   which yields the motor signal voltage for the RC considering
         equation
-        (<a href="#E-motor-voltage" data-reference-type="ref" data-reference="E-motor-voltage">[E-motor-voltage]</a>)
        
 
 $$
@@ -939,7 +940,10 @@ R_{bw} = \frac{R_{ba}}{255} \cdot u_q = 10\mathrm{k\Omega} \cdot (u_n + 1) / 2 \
 $$
 u_v = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]$$
 
-2
+3.  Calibrate the remote control according to [Remote Control Cabling
+    and Calibration](../remotecontrol/remotecontrol.md).
+
+
 
 <figure>
 <img src="measohm.png" id="F-measohm" alt="" /><figcaption>Exercise 1: Measure <span class="math inline"><em>R</em><sub><em>b</em><em>w</em></sub></span> with a multimeter</figcaption>

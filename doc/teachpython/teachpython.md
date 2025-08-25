@@ -221,7 +221,7 @@ Solve Quadratic Equations
 Solve Linear Equation Systems
 -----------------------------
 
-2
+
 
 -   Solve linear equation systems of order $n \ge 1$
    

@@ -42,7 +42,7 @@ Agenda
 What is ROS
 ===========
 
-2
+
 
 -   Robot Operating System (ROS) is a middleware (MW) and not an
     operating system (OS)
@@ -230,7 +230,7 @@ ROS2 Joystick Input
 Start ROS2 Joystick Node
 ------------------------
 
-2
+
 
 -   ROS2 nodes are started using the command
 
@@ -361,7 +361,7 @@ Measure ROS2 Joystick Messages
     ros2 run rqt_plot rqt_plot
     ```
 
-2
+
 
 -   Enter `/joy/axes[1]` in the entry field `Topic` to plot $u_J(t)$
 
@@ -691,11 +691,6 @@ Code and Run ROS2 Node
     ros2 run rqt_plot rqt_plot
     ```
 
-#### Exercises
-
-1.  Calibrate the remote control according to [Remote Control Cabling
-    and Calibration](../remotecontrol/remotecontrol.md).
-
 Joystick Control of MAD76
 =========================
 
@@ -715,7 +710,7 @@ Functional Chain of Control Theory
 
 <img src="functionalchain.png" alt="image" />
 
-2
+
 
 -   Input
 
@@ -1095,9 +1090,7 @@ ROS2 Node for Safe Car Control
 3.  Identify boundaries for $s_1, s_2$ based on the plotted data, such
     that car is on the track
 
-#### Exercises
-
-1.  Extend the Python code of ROS2 node `ctrlnode` to include a safety
+4.  Extend the Python code of ROS2 node `ctrlnode` to include a safety
     halt logic
 
     1.  Extent method `init` to subscribe to the topic
