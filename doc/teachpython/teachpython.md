@@ -40,6 +40,8 @@ Agenda
 What is Python
 ==============
 
+
+
 -   Python is a high-level programming language
     \[[1](#ref-matthes-python)\]
 
@@ -47,11 +49,11 @@ What is Python
 
 -   Python is an *interpreter*
 
-    -   Python prompts for input
+    1.  Python prompts for input
 
-    -   User enters Python command
+    2.  User enters Python command
 
-    -   Python replies to command
+    3.  Python replies to command
 
 -   Python is the most popular programming language in the world
     (<https://www.tiobe.com/tiobe-index/>)
@@ -112,9 +114,9 @@ Python as Calculator
 
 -   Jupyter is an interactive user interface
 
--   Jupyter Notebooks are *living documents*
+-   Jupyter notebooks are *living documents*
 
--   Jupyter Notebooks contain both
+-   Jupyter notebooks contain both
 
     -   Python code
 
@@ -364,7 +366,8 @@ Function Plotting
 
 #### Exercises
 
-1.  Plot a cosine function with frequency 50 Hz and amplitude 230 V.
+1.  Plot a cosine function with frequency $50\mathrm{Hz}$ and amplitude
+    $230\mathrm{V}$.
 
 Python Data Types
 -----------------
@@ -387,7 +390,7 @@ Python Data Types
 
 #### Numeric Types
 
-|              |                                   |                           |
+| Data type    | Description                       | Example values            |
 |:-------------|:----------------------------------|:--------------------------|
 | `int`        | integer with no limits            | `1, -1`                   |
 | `float`      | 64bit floating point on most CPUs | `3.14, -0.001, .5, 10e-1` |
@@ -404,17 +407,20 @@ Python Data Types
 
 #### Aggregate Types
 
-|            |                                                              |                             |
-|:-----------|:-------------------------------------------------------------|:----------------------------|
-| `list`     | mutable list with different data types                       | `[ 1, -1, 3.14, "text" ]`   |
-| `list`     | empty list                                                   | `[]`                        |
-| `np.array` | mutable array with one data type                             | `np.array([ 1, -1, 3.14 ])` |
-| `tuple`    | immutable list with different data types                     | `( 1, -1, 3.14, "text" )`   |
-| `tuple`    | empty tuple                                                  | `()`                        |
-| `range`    | immutable sequence of numbers (9 integers from 1, 2, ..., 9) | `range(1, 10)`              |
-| `set`      | unordered collection of unique elements                      | `set( [ 1, 2, 3, 4, 5 ] )`  |
-| `dict`     | dictionary of key-value pairs                                | `{"lastname": "Mouse",`     |
-|            |                                                              | `"firstname": "Mickey"}`    |
+| Data type  | Description                                              | Example values              |
+|:-----------|:---------------------------------------------------------|:----------------------------|
+| `list`     | mutable list with different data types                   | `[ 1, -1, 3.14, "text" ]`   |
+| `list`     | empty list                                               | `[]`                        |
+| `np.array` | mutable array with one data type                         | `np.array([ 1, -1, 3.14 ])` |
+| `tuple`    | immutable list with different data types                 | `( 1, -1, 3.14, "text" )`   |
+| `tuple`    | empty tuple                                              | `()`                        |
+| `range`    | immutable sequence of numbers (10 integers 0, 1, ..., 9) | `range(10)`                 |
+|            | (9 integers 1, 2, ..., 9)                                | `range(1, 10)`              |
+| `set`      | unordered collection of unique elements                  | `set( [ 1, 2, 3, 4, 5 ] )`  |
+| `dict`     | dictionary of key-value pairs                            | `{"lastname": "Mouse",`     |
+|            |                                                          | `"firstname": "Mickey"}`    |
+
+
 
 #### Element Access
 
@@ -424,7 +430,7 @@ Python Data Types
         A = np.array([[11, 12, 13], [21, 22, 23], [31, 32, 33]])
         x = np.array([1, 2, 3, 4, 5])
 
--   Fist element (Python is zero-indexed)
+-   First element (Python has zero-based indexing)
 
         l[0]
         A[0, 0]
@@ -460,14 +466,14 @@ Procedural Programming
 
 -   Python is imperative: programs are sequences of statements
 
-    -   which are executed in order
+    -   which are executed in order, step-by-step
 
 -   Python is procedural
 
     -   Sequences of statements can be grouped into functions $\leadsto$
         *reusability*
 
-    -   Functions can be called with parameters
+    -   Functions can be called with parameters (arguments)
 
     -   Functions can return values
 
@@ -485,7 +491,7 @@ Procedural Programming
     Section <a href="#hello-world-functions" data-reference-type="ref" data-reference="hello-world-functions">4.2</a>)
 
 -   Function for solving quadratic equations (see
-    Section <a href="#solve-quadratic-equations" data-reference-type="ref" data-reference="solve-quadratic-equations">3.2</a>)
+    Section <a href="#function-for-solving-quadratic-equations" data-reference-type="ref" data-reference="function-for-solving-quadratic-equations">4.3</a>)
 
 Hello World
 -----------
@@ -504,8 +510,8 @@ Hello World
     print("Hello, World!")
     ```
 
-    -   `#!/usr/bin/env python3` is a *shebang* line that tells the
-        system to use the Python interpreter
+    -   `#!/usr/bin/env python3` is a *shebang* line that tells Linux to
+        use the Python interpreter
 
     -   `print` is a built-in function in Python to generate output in
         the terminal
@@ -550,6 +556,12 @@ Hello World
 
         import helloworld
 
+5.  Exit Python
+
+        quit()
+
+    or hit `Ctrl+D`
+
 #### Run program from Jupyter notebook
 
 1.  create and execute a new cell
@@ -589,14 +601,14 @@ Hello World with Functions [hello-world-functions]
         -   `<argument1>, <argument2>, ...` is a list of arguments
             passed to the function
 
-    -   The function body is indented by the `TAB` keyword
+    -   The function body is indented by the `TAB` key
 
     -   The function body contains the statements to be executed when
         the function is called
 
     -   `hello_world` is a function that prints a greeting message
 
-    -   `hello` is a function that takes a name as a parameter and
+    -   `hello` is a function that takes a name as an argument and
         prints a personalized greeting
 
     -   The `if __name__ == "__main__":` block ensures that the
@@ -617,7 +629,7 @@ Hello World with Functions [hello-world-functions]
     `"And how is Idefix?"` if the function argument `name` is equal to
     `"Obelix"`.
 
-Function for Solving Quadratic Equations [function-quadratic-equations]
+Function for Solving Quadratic Equations
 ----------------------------------------
 
 1.  Create a new Python program `quadratic.py` in VS Code

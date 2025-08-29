@@ -398,6 +398,8 @@ ROS2 Node for MAD76 IO
 ROS2 Workspace and Package for MAD76 IO
 ---------------------------------------
 
+
+
 -   Create
 
     -   a new ROS2 workspace `~/src/madpi_ws`
@@ -435,6 +437,9 @@ ROS2 Workspace and Package for MAD76 IO
         -   makes the ROS2 packages, nodes, etc. available in ROS2
             commands, e.g., `ros2 run`
 
+```{=html}
+<!-- -->
+```
 -   Edit the initialization Bash script `~/.bashrc` so that the ROS2
     environment is always available in all terminals
 

@@ -9,6 +9,8 @@ title: MAD76 Academy: Linux
 Agenda
 ======
 
+
+
 -   What is Linux? Why Linux? (see
     Section <a href="#what-is-linux" data-reference-type="ref" data-reference="what-is-linux">2</a>)
 
@@ -44,6 +46,8 @@ Agenda
 What is Linux
 =============
 
+
+
 -   Linux is a multi-user, multi-tasking *operating system (OS)*
     \[[1](#ref-linux-in-a-nutshell)\]
 
@@ -52,8 +56,8 @@ What is Linux
 
 -   Linux is a Unix-like OS
 
--   Other Unixes are: AT&T Unix, Sun/Oracle Solaries, IBM AIX, QNX,
-    FreeBSD (basis of macOS)
+-   Other Unixes are: FreeBSD (basis of macOS), AT&T Unix, IBM AIX,
+    Sun/Oracle Solaris, QNX
 
 -   An OS is an intermediate layer between hardware (HW) and software
     applications (SW apps, programs)
@@ -70,7 +74,7 @@ What is Linux
 
     -   File system management for data storage
 
-    -   Process/thread management for running apps
+    -   Process/thread management for running apps in parallel
 
     -   User management for multi-user systems
 
@@ -139,7 +143,7 @@ Why Linux?
 
 -   Linux apps can be programmed in many programming languages, e.g.
 
-    -   C, Rust, C++, Python, MATLAB/Simulink
+    -   C, Rust, C++, Python, MATLAB/Simulink, Java
 
 -   and a wide range of Integrated Development Environments (IDEs) /
     text editors, e.g.
@@ -156,7 +160,7 @@ Why Linux?
 
     -   MATLAB/Simulink from The Mathworks
 
--   Linux has been invented by Linus Torvalds in 1991, who is still the
+-   Linux has been invented by Linus Torvalds in 1991, who still is the
     main developer
 
 -   Linux is developed and maintained
@@ -242,7 +246,7 @@ First Steps
 
     -   password: ask your teacher
 
-2.  You are now logged in as user `lab01` and see the lightweight Linux
+2.  You are now logged in as user `lab01` and see the lightweight GUI
     desktop `LXDE`
 
 3.  You can now run apps, e.g., the Web browser `chromium`
@@ -256,7 +260,7 @@ First Steps
     |:---------|:---------------------------------------------------------------------------|
     | `whoami` | show current user                                                          |
     | `passwd` | change password                                                            |
-    | `groups` | show groups of current user                                                |
+    | `ls`     | list files in current directory                                            |
     | `htop`   | show running processes, CPU and memory usage (hit `q` or `Ctrl+C` to exit) |
 
 <img src="lxdescreenshot.png" alt="image" />
@@ -270,12 +274,13 @@ Bash
 
 -   Which is an enhanced version of the original Bourne shell
 
--   The shell interprets commands and executes them
+-   Bash is an interpreter similar to Python, but for shell commands
 
--   The shell provides a command line interface (CLI) for user
-    interaction
+-   Bash interprets commands and executes them right-away
 
--   The shell supports command history and tab completion
+-   Bash provides a command line interface (CLI) for user interaction
+
+-   Bash supports command history and tab completion
 
     |           |                                                |
     |:----------|:-----------------------------------------------|
@@ -283,14 +288,12 @@ Bash
     | `TAB` key | autocomplete commands, arguments and filenames |
     | `Ctrl+R`  | search and select previous commands in history |
 
--   The shell can run commands, scripts, and apps (programs)
+-   Bash can run commands, scripts, and apps (programs)
 
 -   Bash can be programmed with shell scripts
 
--   Bash is an interpreter similar to Python, but for shell commands
-
--   The shell can be customized by configuration files, e.g., `.bashrc`
-    in the home directory
+-   Bash can be customized by configuration files, e.g., `.bashrc` in
+    the home directory
 
 -   The prompt `lab01@madp02:~ $` shows the current user, hostname, and
     current directory
@@ -380,13 +383,15 @@ Important Commands
 | `cd .`                                 | change to current directory (does nothing)                 |
 | `rmdir src`                            | remove directory src in current directory (only if empty)  |
 | `rm -rf src`                           | remove directory src and all its contents (use with care!) |
+| `groups`                               | show groups of current user                                |
 
 File Permissions
 ----------------
 
 -   Every file and directory has permissions for user, group and others
 
--   Permissions are `r`ead, `w`rite and e`x`ecutable binary/script
+-   Permissions are read (`r`) write (`w`) and executable binary/script
+    (`x`)
 
 -   Permissions, user, group, size, and modification date/time are
     displayed with `ls -al` command
@@ -412,11 +417,12 @@ File Permissions
 
 -   Permissions can be changed with `chmod` command
 
-    |                    |                                     |
-    |:-------------------|:------------------------------------|
-    | `chmod u+x <file>` | adds executable permission for user |
-    | `chmod g-w <file>` | removes write permission for group  |
-    | `chmod o+r <file>` | adds read permission for others     |
+    |                     |                                                     |
+    |:--------------------|:----------------------------------------------------|
+    | `chmod u+x <file>`  | adds executable permission for user                 |
+    | `chmod g-w <file>`  | removes write permission for group                  |
+    | `chmod o+r <file>`  | adds read permission for others                     |
+    | `chmod a+rw <file>` | adds read/write permissions for user, group, others |
 
 -   Permissions can also be set with octal numbers
 
@@ -444,7 +450,8 @@ Networking Basics
 
         -   on the internet
 
-        -   in the intranet / Local network (LAN)
+        -   in the intranet / local area network (LAN): school, company,
+            home
 
     -   *multi-processing*: intra-computer between processes
 
