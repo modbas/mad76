@@ -4,7 +4,7 @@ bibliography: ../lib/bib.bib
 csl: ../lib/ieee.csl
 link-citations: true
 reference-section-title: References
-title: MAD76 Academy: MAD76 I/O Programming
+title: MAD76 Academy: C. MAD76 I/O Programming
 
 Agenda
 ======
@@ -385,14 +385,16 @@ Python Code to Power On any RC [python-poweron]
 
         python rcpoweron.py 1
 
-
-
-#### Exercises
+### Exercises
 
 1.  Program `rcpoweroff.py` to power off all 4 RCs at once.
 
     -   You may use the Python command `for` and the Python function
         `range()` to program a for-loop.
+
+    Required results are:
+
+    -   Python code `rcpoweroff.py`
 
 2.  Measure the voltage at the power supply of RC 1 with a multimeter
     (see
@@ -411,6 +413,8 @@ Python Code to Power On any RC [python-poweron]
     -   Connect RC 1 to socket SV 1
 
     -   Check if blue LED switches with power
+
+    No results need to be documented for this exercise.
 
 <figure>
 <img src="measpowervolt.png" id="F-measpowervolt" alt="" /><figcaption>Exercise 2: Measure power supply voltage</figcaption>
@@ -748,18 +752,25 @@ Python Library to Control RC [python-rc]
     -   `write_pedals` limits $u_n$ to the range $[-1, 1]$ which is an
         important *safety measure*
 
-    -   `write_pedals` computes the SPI resistor value $u_q$ from $u_n$
+    -   `write_pedals` computes the SPI value $u_q$ for the resistor
+        from $u_n$
+
+$$
+u_q = 255 \cdot (u_n + 1) / 2 \in [ 0, 255]
+                \label{E-resistor-spi-value}
+$$
+
+
+    -   Inserting this equation into
+        (<a href="#E-motor-voltage" data-reference-type="ref" data-reference="E-motor-voltage">[E-motor-voltage]</a>)
+        yields the motor signal voltage for the RC
        
 
 $$
-u_q = 255 \cdot (u_n + 1) / 2 \in [ 0, 255]$$
-
-    -   which yields the motor signal voltage for the RC considering
-        equation
-       
-
+u_v = \frac{3.3\mathrm{V}}{255} \cdot u_q = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]
+                \label{E-resulting-motor-signal}
 $$
-u_v = \frac{3.3\mathrm{V}}{255} \cdot u_q = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]$$
+
 
 -   Function `write_steering` sets the steering signal voltages
     $\delta_v$ and is similar to `write_pedals`
@@ -884,7 +895,7 @@ u_v = \frac{3.3\mathrm{V}}{255} \cdot u_q = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \i
     | `pedals`   | normalized motor signal $u_n \in [-1, 1]$         |
     | `steering` | normalized steering signal $\delta_n \in [-1, 1]$ |
 
-#### Exercises
+### Exercises
 
 1.  Measure the resistance values $R_{bw}$ of the digital potis of RC 1
     with a multimeter (see
@@ -904,15 +915,21 @@ u_v = \frac{3.3\mathrm{V}}{255} \cdot u_q = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \i
         pins PB1 and PW1
 
     -   Re-run `rctest.py`, modify the pedal and steering values
-        $u_n,\delta_n \in [-1, 1]$ and check the resistance values
-        according to equations
+        $u_n,\delta_n \in [-1, 1]$ and check if the resistance values
+        match to the expected values according to equations
         (<a href="#E-rbw" data-reference-type="ref" data-reference="E-rbw">[E-rbw]</a>)
         and
-        (<a href="#E-normalized-motor-signal" data-reference-type="ref" data-reference="E-normalized-motor-signal">[E-normalized-motor-signal]</a>):
+        (<a href="#E-resistor-spi-value" data-reference-type="ref" data-reference="E-resistor-spi-value">[E-resistor-spi-value]</a>):
        
 
 $$
 R_{bw} = \frac{R_{ba}}{255} \cdot u_q = 10\mathrm{k\Omega} \cdot (u_n + 1) / 2 \in \left[ 0\mathrm{k\Omega}, 10\mathrm{k\Omega} \right]$$
+
+    Required results are:
+
+    -   Table with columns for $u_n$, expected
+        $R_{bw} / \mathrm{\Omega}$, measured $R_{bw} / \mathrm{\Omega}$
+        and at least 3 rows for different $u_n$ values
 
 2.  Measure the motor and steering signal voltages of the digital potis
     of RC 1 with a multimeter (see
@@ -930,18 +947,26 @@ R_{bw} = \frac{R_{ba}}{255} \cdot u_q = 10\mathrm{k\Omega} \cdot (u_n + 1) / 2 \
     -   Measure the steering signal voltage $\delta_v$ for steering
         control between pins PB1 and PW1
 
-    -   Check the voltages according to equations
-        (<a href="#E-rbw" data-reference-type="ref" data-reference="E-rbw">[E-rbw]</a>)
-        and
+    -   Check the voltages match to the expected voltages according to
+        equation
         (<a href="#E-resulting-motor-signal" data-reference-type="ref" data-reference="E-resulting-motor-signal">[E-resulting-motor-signal]</a>):
-
        
 
 $$
 u_v = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]$$
 
+    Required results are:
+
+    -   Table with columns for motor signal $u_n$, expected
+        $u_v / \mathrm{V}$, measured $u_v / \mathrm{V}$ and at least 3
+        rows for different $u_n$ values
+
+    -   Optional: same table for steering signals $\delta_n$ and
+        $\delta_v$
+
 3.  Calibrate the remote control according to [Remote Control Cabling
-    and Calibration](../remotecontrol/remotecontrol.md).
+    and Calibration](../remotecontrol/remotecontrol.md). No results need
+    to be documented for this exercise.
 
 
 

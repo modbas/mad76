@@ -4,7 +4,7 @@ bibliography: ../lib/bib.bib
 csl: ../lib/ieee.csl
 link-citations: true
 reference-section-title: References
-title: MAD76 Academy: ROS2 Coding
+title: MAD76 Academy: D. ROS2 Coding
 
 Agenda
 ======
@@ -211,10 +211,23 @@ ROS2 Workspaces and Packages
 
 <img src="mad76workspaces.png" alt="image" />
 
-#### Exercises
+### Exercises
 
-1.  Adjust the Raspberry Pi camera according to [Mounting Camera, Focus
-    and Aperture](../camera/camera.md).
+1.  Start the MAD76 software stack and adjust the Raspberry Pi camera
+    according to Sections Mounting Camera, Focus and Aperture in the
+    user manual [Computer Vision Configuration](../vision/vision.md).
+    Required results are:
+
+    -   The computer vision of MAD76 shall detect all 4 frame markers
+        with high reliability and no interrupts
+
+    -   The computer vision shall detect the car markers at any position
+        on the track with high reliability and no interrupts
+
+    -   Smartphone or screencast video file which demonstrates this
+        reliability in computer vision
+
+    -   This video file shall be readable by the VLC media player
 
 ROS2 Joystick Input
 ===================
@@ -1058,7 +1071,7 @@ ROS2 Node for Safe Car Control
     </tbody>
     </table>
 
-#### Exercises
+### Exercises
 
 1.  Extend the launch file `madjoy.launch` to run the computer vision in
     addition to the nodes `joy_node`, `ctrlnode`, and `rcnode`
@@ -1092,8 +1105,20 @@ ROS2 Node for Safe Car Control
 
     -   `/mad/locate/caroutputsext/list[0]/s[1]`
 
+    Required results are:
+
+    -   Signal-time diagrams of $s_1(t), s_2(t)$ when driving car 0 with
+        joystick
+
 3.  Identify boundaries for $s_1, s_2$ based on the plotted data, such
-    that car is on the track
+    that car is on the track. Required results are:
+
+    -   Boundaries $s_{1,\min}, s_{1,\max}, s_{2,\min}, s_{2,\max}$ such
+        that car is on track if
+
+        -   $s_{1,\min} \leq s_1(t) \leq s_{1,\max}$
+
+        -   $s_{2,\min} \leq s_2(t) \leq s_{2,\max}$
 
 4.  Extend the Python code of ROS2 node `ctrlnode` to include a safety
     halt logic
@@ -1104,15 +1129,19 @@ ROS2 Node for Safe Car Control
     2.  Implement a callback function `caroutputsext_callback` that
         stores the received message for car 0
 
-            def caroutputsext_callback(self, msg):
-                """ Callback function for car position."""
-                self.carmsg = msg.list[self.carid]
+              def caroutputsext_callback(self, msg):
+                  """ Callback function for car position."""
+                  self.carmsg = msg.list[self.carid]
 
     3.  Extend method `joy_callback` that uses `self.carmsg` to check if
         car is on track and the computer vision is reliable. If not then
         trigger a safety halt by setting `pedals` to `0.0`.
 
     4.  Test your code.
+
+    Required results are:
+
+    -   Extended `carctrl.py`
 
 References [bibliography]
 ==========

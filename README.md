@@ -33,7 +33,7 @@ MAD76 Features
 MAD76 Kit
 =========
 
-´ <img src="mad76.png" alt="image" />
+<img src="mad76.png" alt="image" />
 <img src="madbuildclose.jpg" alt="image" />
 
 -   Turboracing 1:76 RC cars (<https://www.turboracing.net>)
@@ -88,16 +88,16 @@ MAD76 Academy
 MAD76 Academy offers a variety of learning lessons to help you getting
 started with your MAD76 kit
 
--   [Linux Basics](doc/teachlinux/teachlinux.md)
+-   [A. Linux Basics](doc/teachlinux/teachlinux.md)
     ([teachlinux.pdf](doc/teachlinux/teachlinux.pdf))
 
--   [Python Basics](doc/teachpython/teachpython.md)
+-   [B. Python Basics](doc/teachpython/teachpython.md)
     ([teachpython.pdf](doc/teachpython/teachpython.pdf))
 
--   [MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
+-   [C. MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
     ([teachmad76io.pdf](doc/teachmad76io/teachmad76io.pdf))
 
--   [ROS2 Coding for MAD76](doc/teachros/teachros.md)
+-   [D. ROS2 Coding for MAD76](doc/teachros/teachros.md)
     ([teachros.pdf](doc/teachros/teachros.pdf))
 
 You may further start a Bachelor- or Master-degree study program at the

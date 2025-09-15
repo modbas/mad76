@@ -4,7 +4,7 @@ bibliography: ../lib/bib.bib
 csl: ../lib/ieee.csl
 link-citations: true
 reference-section-title: References
-title: MAD76 Academy: Linux
+title: MAD76 Academy: A. Linux
 
 Agenda
 ======
@@ -56,8 +56,8 @@ What is Linux
 
 -   Linux is a Unix-like OS
 
--   Other Unixes are: FreeBSD (basis of macOS), AT&T Unix, IBM AIX,
-    Sun/Oracle Solaris, QNX
+-   Other Unixes are: FreeBSD (basis of Darwin, macOS, iOS), AT&T Unix,
+    IBM AIX, Sun/Oracle Solaris, QNX
 
 -   An OS is an intermediate layer between hardware (HW) and software
     applications (SW apps, programs)
@@ -69,8 +69,8 @@ What is Linux
 
 -   Main features of an OS
 
-    -   HW drivers for computer graphics, network, sound, micro, touch,
-        cameras, radars, robots etc.
+    -   HW drivers for computer graphics, network, sound, microphone,
+        touch, cameras, radars, robots etc.
 
     -   File system management for data storage
 
@@ -88,7 +88,7 @@ What is Linux
 
 -   Linux consists of
 
-    -   Linux Kernel (protected kernelland, main features)
+    -   Linux Kernel (protected kernel land, main features)
 
     -   GNU userland (utilities, libraries, C/C++ compilers)
 
@@ -107,8 +107,6 @@ What is Linux
 
     -   Fedora (Red Hat-based, cutting-edge)
 
-    -   Android (mobile, TV, cockpits, based on Linux kernel)
-
     -   Yocto (Embedded Linux)
 
 Why Linux?
@@ -120,10 +118,6 @@ Why Linux?
 
 -   Linux runs from tiny to huge computers
 
-    -   smartphones
-
-    -   TVs
-
     -   notebooks
 
     -   cloud servers
@@ -132,7 +126,11 @@ Why Linux?
 
     -   robots: e.g., Mars Rover and Drone
 
-    -   cars: cockpit, infotainment, navigation
+    -   Android
+
+        -   smartphones, TVs, watches
+
+        -   in cars: cockpit, infotainment, navigation
 
 -   Linux has a large community and extensive documentation
 
@@ -202,7 +200,7 @@ Computer Architecture
 
 -   Cooling system (fans, heat sinks)
 
--   Power Mangement Integrated Circuit (PMIC)
+-   Power Management Integrated Circuit (PMIC)
 
 <figure>
 <img src="rpiboard.png" id="F-rpiboard" alt="" /><figcaption><span>Raspberry Pi 5</span> board with components</figcaption>
@@ -260,7 +258,7 @@ First Steps
     |:---------|:---------------------------------------------------------------------------|
     | `whoami` | show current user                                                          |
     | `passwd` | change password                                                            |
-    | `ls`     | list files in current directory                                            |
+    | `ls`     | list files and directories                                                 |
     | `htop`   | show running processes, CPU and memory usage (hit `q` or `Ctrl+C` to exit) |
 
 <img src="lxdescreenshot.png" alt="image" />
@@ -276,9 +274,9 @@ Bash
 
 -   Bash is an interpreter similar to Python, but for shell commands
 
--   Bash interprets commands and executes them right-away
-
 -   Bash provides a command line interface (CLI) for user interaction
+
+-   Bash interprets commands and executes them right-away
 
 -   Bash supports command history and tab completion
 
@@ -304,12 +302,10 @@ Help
 -   Use the `man <command>` command to view the manual pages for
     commands, e.g., `man ls`
 
--   Use the `–help` or `-h` options to get help for a specific command,
-    e.g., `ls –help` or `ls -h`
+-   Use the `--help` option to get help for a specific command, e.g.,
+    `ls --help`
 
--   Search for commands or topics using `apropos <keyword>`
-
--   Or google for `man ls`
+-   Or google for `man ls` or `ubuntuusers ls`
 
 Linux File System
 =================
@@ -377,7 +373,7 @@ Important Commands
 | `echo Heilbronn > src/myaddress.txt`   | write to file                                              |
 | `cat src/myaddress.txt`                | display file content                                       |
 | `cd src`                               | change to directory `/home/lab01/src`                      |
-| `cd /home/lab01/src`                   | dito                                                       |
+| `cd /home/lab01/src`                   | dito (using absolute path)                                 |
 | `less myaddress.txt`                   | display file content with paging (hit `q` to exit)         |
 | `cd ..`                                | change to parent directory                                 |
 | `cd .`                                 | change to current directory (does nothing)                 |
@@ -390,7 +386,7 @@ File Permissions
 
 -   Every file and directory has permissions for user, group and others
 
--   Permissions are read (`r`) write (`w`) and executable binary/script
+-   Permissions are read (`r`), write (`w`) and executable binary/script
     (`x`)
 
 -   Permissions, user, group, size, and modification date/time are
@@ -419,6 +415,8 @@ File Permissions
 
     |                     |                                                     |
     |:--------------------|:----------------------------------------------------|
+    | `chmod u-w <file>`  | removes write permission for user                   |
+    | `chmod u+w <file>`  | adds write permission for user                      |
     | `chmod u+x <file>`  | adds executable permission for user                 |
     | `chmod g-w <file>`  | removes write permission for group                  |
     | `chmod o+r <file>`  | adds read permission for others                     |
@@ -429,8 +427,8 @@ File Permissions
     |                    |                                 |
     |:-------------------|:--------------------------------|
     | `chmod 755 <file>` | sets permissions to `rwxr-xr-x` |
-    | `chmod 644 <file>` | sets permissions to `rw-r–r–`   |
-    | `chmod 700 <file>` | sets permissions to `rwx——`     |
+    | `chmod 644 <file>` | sets permissions to `rw-r--r--` |
+    | `chmod 700 <file>` | sets permissions to `rwx------` |
 
 -   User and group can be set with `chown` command
 
@@ -467,7 +465,7 @@ Internet Communication
     intranet, processes, threads
 
 -   Internet communication is based on the TCP/IP and UDP/IP protocol
-    stacks
+    stacks (and more)
 
 -   TCP/IP and UDP/IP have always been supported by Unix OS, but not by
     Windows
@@ -479,7 +477,7 @@ Internet Communication
 
 -   Communication partner is identified by
 
-    -   IP address (IPv4 or IPv6)
+    -   IP address (32bit IPv4 or 128bit IPv6)
 
     -   and port number (e.g., 80 for HTTP, 443 for HTTPS, 22 for SSH)
 
@@ -532,10 +530,10 @@ Internet Communication
     -   DNS is a protocol for resolving domain names to IP addresses
         (IPV4 or IPV6)
 
--   Example 3: Hostname and IP address of your computer
+-   Example 3: Hostname and IP addresses of your computer
 
         hostname
-        ipconfig -a
+        ifconfig -a
 
 -   Example 4: Two students communicate by TCP/IP
 
@@ -561,7 +559,7 @@ Intra-Computer Communication
 
     |                              |                                                                                                |
     |:-----------------------------|:-----------------------------------------------------------------------------------------------|
-    | sockets                      | bidirectional communication using TCP/IP or UDP/IP protocols, similar to network sockets       |
+    | sockets                      | bidirectional communication using TCP/IP or UDP/IP protocols, similar to network ports         |
     | pipes                        | unidirectional communication using first-in-first-out (FIFO) queues, similar to files          |
     | message queues               | unidirectional communication using named queues                                                |
     | shared memory                | bidirectional communication between processes using shared memory regions (fast for huge data) |

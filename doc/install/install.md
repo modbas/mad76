@@ -466,7 +466,7 @@ Build MAD76
     export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
     export ROS_DOMAIN_ID=221
     source ~/src/ros_ws/install/setup.bash # on Raspberry Pi
-    #source /opt/ros/iron/install/setup.bash # on Ubuntu Linux-PC
+    #source /opt/ros/jazzy/install/setup.bash # on Ubuntu Linux-PC
     cd ~/src
     git clone https://github.com/modbas/mad76
     cd mad76/mad_ws

@@ -4,7 +4,7 @@ bibliography: ../lib/bib.bib
 csl: ../lib/ieee.csl
 link-citations: true
 reference-section-title: References
-title: MAD76 Academy: Python
+title: MAD76 Academy: B. Python
 
 Agenda
 ======
@@ -31,9 +31,9 @@ Agenda
 
 -   Learn how to use Jupyter Notebooks for Python
 
--   Learn procedural programming with Python
+-   Learn procedural programming basics with Python
 
--   Learn object-oriented programming with Python
+-   Learn object-oriented programming basics with Python
 
 -   Learn how to use VS Code as an IDE for Python
 
@@ -53,7 +53,7 @@ What is Python
 
     2.  User enters Python command
 
-    3.  Python replies to command
+    3.  Python replies to command right away
 
 -   Python is the most popular programming language in the world
     (<https://www.tiobe.com/tiobe-index/>)
@@ -129,15 +129,18 @@ Python as Calculator
 -   Jupyter is available both locally in VS Code and online (see
     <https://jupyter.org/>)
 
-1.  Start VS Code and create a new Jupyter notebook `math.ipynb`
+1.  Create a new directory and start VS Code
 
         cd
         mkdir -p src/pythonmath
         cd src/pythonmath
-        touch math.ipynb
-        code math.ipynb
+        code .
 
-2.  Create new cell by hitting `Alt+Enter` button
+    1.  by hitting `File - New File...`
+
+    2.  selecting `Jupyter Notebook` in the dropdown menu
+
+2.  Save the notebook as file `math.ipynb` by hitting `Ctrl+S`
 
 3.  Enter the following code in the cell:
 
@@ -152,7 +155,8 @@ Python as Calculator
 
 6.  Jupyter then displays the result of the calculation
 
-7.  Try some more calculations by hitting `Alt+Enter` and `Ctrl+Enter`
+7.  Try some more calculations by hitting `Alt+Enter` for adding new
+    cells and `Ctrl+Enter` for executing cells
 
         3 * 4 / 2 * 3
         3 * 4 / (2 * 3)
@@ -198,6 +202,8 @@ Solve Quadratic Equations
         * equation: $a x^2 + b x + c = 0$
         * solutions: $x_{1,2} = \frac{-b \pm \sqrt{b^2 - 4 a c}}{2 a}$
 
+    Note: \$ is used to define inline math formulas using LaTeX
+
 2.  Create a new Code cell
 
         a = 4
@@ -214,11 +220,21 @@ Solve Quadratic Equations
 
         np.roots([a, b, c])
 
-#### Exercises
+### Exercises
 
-1.  Solve the quadratic equation $x^2 + 2 x + 1 = 0$
+1.  Solve the quadratic equation $x^2 + 2 x + 1 = 0$. Required results
+    are:
 
-2.  Solve the cubic equation $x^3 + 3 x^2 + 3 x + 1 = 0$
+    -   Python code
+
+    -   Results $x_1$ and $x_2$
+
+2.  Solve the cubic equation $x^3 + 3 x^2 + 3 x + 1 = 0$. Required
+    results are:
+
+    -   Python code
+
+    -   Results $x_1$, $x_2$ and $x_3$
 
 Solve Linear Equation Systems
 -----------------------------
@@ -255,12 +271,14 @@ $$
           \vdots & \vdots & \ddots & \vdots \\
           a_{m1} & a_{m2} & ... & a_{mn}
         \end{pmatrix}
+        ,
         \mathbf{x} = \begin{pmatrix}
           x_1 \\
           x_2 \\
           \vdots \\
           x_n
         \end{pmatrix}
+        ,
         \mathbf{b} = \begin{pmatrix}
           b_1 \\
           b_2 \\
@@ -285,10 +303,12 @@ $$
         1 & 2 \\
         3 & 4 
       \end{pmatrix}
+      ,
       \mathbf{x} = \begin{pmatrix}
         x_1 \\
         x_2
       \end{pmatrix}
+      ,
       \mathbf{b} = \begin{pmatrix}
         5 \\
         6
@@ -309,7 +329,7 @@ $$
         x = np.linalg.solve(A, b)
         x
 
-#### Exercises
+### Exercises
 
 1.  Solve the linear equation system of order $n = 2$
    
@@ -320,7 +340,11 @@ $$
         x_1 + 2 x_2 &=& 1
       \end{array}
 $$
+ Required results are:
 
+    -   Python code
+
+    -   Results $x_1$ and $x_2$
 
 2.  Solve the linear equation system of order $n = 3$
    
@@ -332,7 +356,11 @@ $$
         7 x_1 + 8 x_2 + 9 x_3  &=& 12
       \end{array}
 $$
+ Required results are:
 
+    -   Python code
+
+    -   Results $x_1$, $x_2$ and $x_3$
 
 Function Plotting
 -----------------
@@ -358,21 +386,26 @@ Function Plotting
 5.  Plot the function using `matplotlib`
 
         plt.plot(x, y)
-        plt.title('Sinc Function')
-        plt.xlabel('x')
-        plt.ylabel('f(x)')
+        plt.title("Sinc Function")
+        plt.xlabel("x")
+        plt.ylabel("f(x)")
         plt.grid()
         plt.show()
 
-#### Exercises
+### Exercises
 
 1.  Plot a cosine function with frequency $50\mathrm{Hz}$ and amplitude
-    $230\mathrm{V}$.
+    $230\mathrm{V}$. Required results are:
+
+    -   Python code
+
+    -   Function plot of $y$ over $x=t$ with time $t$ in the range
+        $[0, 0.1\mathrm{s}]$
 
 Python Data Types
 -----------------
 
--   Python variables are dynamically typed
+-   Python variables are *dynamically typed*
 
     -   The data type is determined at runtime
 
@@ -525,9 +558,10 @@ Hello World
 
 4.  Run the program by hitting `F5`
 
-5.  Select `Python File` from the dropdown menu
+5.  Select `Python Debugger` and then `Python File` from the dropdown
+    menu
 
-6.  In the `terminal` window, the output should be displayed as
+6.  In the `Terminal` window, the output should be displayed as
     `Hello, World!`
 
 #### Run program from terminal
@@ -539,6 +573,11 @@ Hello World
 3.  run the Python interpreter and start the program
 
         python helloworld.py
+
+4.  Or make the file `helloworld.by` executable and run it directly
+
+        chmod +x helloworld.py
+        ./helloworld.py
 
 #### Run program from Python prompt
 
@@ -623,11 +662,13 @@ Hello World with Functions [hello-world-functions]
         -   but not when the program is imported with the `import`
             statement
 
-#### Exercises
+### Exercises
 
 1.  Extend the function `hello` by adding the additional message
     `"And how is Idefix?"` if the function argument `name` is equal to
-    `"Obelix"`.
+    `"Obelix"`. Required results are:
+
+    -   Extended `helloworld_function.py`
 
 Function for Solving Quadratic Equations
 ----------------------------------------
@@ -670,10 +711,12 @@ Function for Solving Quadratic Equations
 
 4.  Change `b` to `1.0` and rerun the code
 
-#### Exercises
+### Exercises
 
 1.  Modify the code to check for a negative discriminant and return an
-    empty tuple in that case.
+    empty tuple in that case. Required results are:
+
+    -   Extended `quadratic.py`
 
 Object-Oriented Programming
 ===========================
