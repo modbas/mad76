@@ -574,7 +574,7 @@ Hello World
 
         python helloworld.py
 
-4.  Or make the file `helloworld.by` executable and run it directly
+4.  Or make the file `helloworld.py` executable and run it directly
 
         chmod +x helloworld.py
         ./helloworld.py

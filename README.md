@@ -33,8 +33,8 @@ MAD76 Features
 MAD76 Kit
 =========
 
-<img src="mad76.png" alt="image" />
-<img src="madbuildclose.jpg" alt="image" />
+<img src="mad76.png" style="width:70.0%" alt="image" />
+<img src="madbuildclose.jpg" style="width:27.0%" alt="image" />
 
 -   Turboracing 1:76 RC cars (<https://www.turboracing.net>)
 
