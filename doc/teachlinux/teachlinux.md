@@ -467,6 +467,12 @@ Internet Communication
 -   Internet communication is based on the TCP/IP and UDP/IP protocol
     stacks (and more)
 
+    -   Transmission Control Protocol (TCP)
+
+    -   User Datagram Protocol (UDP)
+
+    -   Internet Protocol (IP)
+
 -   TCP/IP and UDP/IP have always been supported by Unix OS, but not by
     Windows
 
@@ -516,7 +522,7 @@ Internet Communication
 
     -   `https` is the protocol
 
-    -   `www.hs-heilbronn.de` is the domain name
+    -   `www.hs-heilbronn.de` is the host and domain name
 
     -   HTML is the format of the data being communicated
 
@@ -535,7 +541,7 @@ Internet Communication
         hostname
         ifconfig -a
 
--   Example 4: Two students communicate by TCP/IP
+-   Example 4: Two students communicate by TCP/IP (primitive chat)
 
     -   Student 1 runs a server on computer `madp03`
 

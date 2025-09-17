@@ -9,6 +9,8 @@ title: MAD76 Academy: D. ROS2 Coding
 Agenda
 ======
 
+
+
 -   What is ROS? Why ROS? (see
     Section <a href="#what-is-ros" data-reference-type="ref" data-reference="what-is-ros">2</a>)
 
@@ -36,8 +38,14 @@ Agenda
 
 -   Learn how to code for ROS2 in Python
 
--   Learn functional chain in Control Theory / Embedded Systems with
+-   Learn functional chain in Control Theory / Embedded Systems and
     message-based-communication of signals
+
+-   Run MAD76
+
+-   Configure MAD76 computer vision
+
+-   Program joystick control
 
 What is ROS
 ===========
@@ -108,7 +116,7 @@ Why ROS?
 -   ROS is easy to configure and program, compared to other middlewares
     (e.g., AUTOSAR, Robert Bosch AOS)
 
--   But: standard ROS is not as safe and secure
+    -   But: standard ROS is not as safe and secure
 
 MAD76 and ROS
 =============
@@ -117,11 +125,11 @@ MAD76 and ROS
 <img src="ros2nodes.png" id="F-swarch" alt="" /><figcaption>ROS2 nodes and topics of MAD76 Driving Stack</figcaption>
 </figure>
 
--   The MAD76 driving stack is a ROS2 application
+-   The MAD76 driving stack = ROS2 nodes
 
 -   *ROS2 Node*
 
-    -   software component
+    -   application software component
 
     -   typically one Linux process
 
@@ -145,7 +153,7 @@ MAD76 and ROS
         -   multiple nodes can subscribe to the same topic and receive
             the same messages
 
-    -   internally ROS2 communication is implemented using Data
+    -   internally, ROS2 communication is implemented using Data
         Distribution Service (DDS) with TCP/IP, UDP/IP, or shared memory
 
 -   The rectangles are *ROS2 nodes*
@@ -215,7 +223,8 @@ ROS2 Workspaces and Packages
 
 1.  Start the MAD76 software stack and adjust the Raspberry Pi camera
     according to Sections Mounting Camera, Focus and Aperture in the
-    user manual [Computer Vision Configuration](../vision/vision.md).
+    user manual [Computer Vision
+    Configuration](https://github.com/modbas/mad76/blob/main/doc/vision/vision.md).
     Required results are:
 
     -   The computer vision of MAD76 shall detect all 4 frame markers
@@ -361,7 +370,7 @@ Measure ROS2 Joystick Messages
 
     -   we will us $u_J(t)$ to control the car via MAD76 IO
 
--   Signals can be depicted in signal-time-diagrams
+-   Signals can be graphically displayed in signal-time-diagrams
 
 -   Signals may be encoded in messages
 
@@ -410,8 +419,6 @@ ROS2 Node for MAD76 IO
 
 ROS2 Workspace and Package for MAD76 IO
 ---------------------------------------
-
-
 
 -   Create
 
@@ -492,21 +499,24 @@ Code and Run ROS2 Node
 -   Copy `mbmadrclib.py` to the new ROS2 package `mbmadpi`
 
     ``` bash
-    cd ~/src/madpi_ws/src/mbmadpi/mbmadpi
-    cp ~/src/madpi_ws/src/rcpi/scripts/mbmadrclib.py .
+    cd ~/src/madpi_ws
+    cp ~labor/src/mad76/madpi_ws/src/rcpi/scripts/mbmadrclib.py src/mbmadpi/mbmadpi
     ```
 
 -   Open ROS2 workspace `~/src/madpi_ws` in VS Code
 
     ``` bash
-    cd ~/src/madpi_ws
     code .
     ```
 
--   Open file `rcnode.py` in VS Code
+-   Open file `src/mbmadpi/mbmadpi/rcnode.py` in VS Code
 
--   Modify file `rcnode.py` as follows (or copy it from
-    `~labor/src/mad76/madpi_ws/src/mbmadpi/mbmadpi/rcnode.py`)
+-   Modify file `rcnode.py` as follows or copy an already existing
+    version with the following command
+
+    ``` bash
+    cp ~labor/src/mad76/madpi_ws/src/mbmadpi/mbmadpi/rcnode.py src/mbmadpi/mbmadpi
+    ```
 
         #!/usr/bin/env python3
 
@@ -693,7 +703,7 @@ Code and Run ROS2 Node
     `/mad/car0/carinputs` with the following command
 
     ``` bash
-    ros2 topic pub /mad/car0/carinputs mbmadmsgs.msg.CarInputs "{carid: 0, pedals: 0.1, steering: 1.0}"
+    ros2 topic pub /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.1, steering: 1.0}"
     ```
 
 -   You may display the current messages on ROS2 topic
@@ -708,6 +718,10 @@ Code and Run ROS2 Node
     ``` bash
     ros2 run rqt_plot rqt_plot
     ```
+
+-   You may now control car 0 by sending different messages to ROS2
+    topic `/mad/car0/carinputs` with different values for `pedals` and
+    `steering`
 
 Joystick Control of MAD76
 =========================
@@ -740,7 +754,7 @@ Functional Chain of Control Theory
 
     -   Algorithms or AI agents compute control signals
 
-    -   such that, robot / car moves in a pre-defined or optimal way
+    -   such that robot / car moves in a pre-defined or optimal way
 
 -   Output
 
@@ -784,7 +798,13 @@ ROS2 Node for Joystick Control
 -   Create `ctrlnode.py` in directory
     `~/src/madpi_ws/src/mbmadpi/mbmadpi` with VS Code
 
--   Enter the following code
+-   Enter the following code or copy an already existing version with
+    the following command
+
+    ``` bash
+    cd ~/src/madpi_ws
+    cp ~labor/src/mad76/madpi_ws/src/mbmadpi/mbmadpi/ctrlnode.py src/mbmadpi/mbmadpi
+    ```
 
         #!/usr/bin/env python3
 
@@ -895,7 +915,13 @@ ROS2 Node for Joystick Control
             main()  
 
 -   Register the new ROS2 node `ctrlnode` in ROS2 package `mbmadpi` by
-    editing `~/src/madpi_ws/src/mbmadpi/setup.py`
+    editing `~/src/madpi_ws/src/mbmadpi/setup.py` or copy an already
+    existing version with the following command
+
+    ``` bash
+    cd ~/src/madpi_ws
+    cp ~labor/src/mad76/madpi_ws/src/mbmadpi/setup.py src/mbmadpi
+    ```
 
         from setuptools import find_packages, setup
         import os
@@ -976,6 +1002,9 @@ ROS2 Node for Joystick Control
 
 -   We use Extended Markup Language (XML)
 
+-   Create new subdirectory `launch` in directory
+    `~/src/madpi_ws/src/mbmadpi`
+
 -   Create an XML launch file `madjoy.launch` in directory
     `~/src/madpi_ws/src/mbmadpi/launch`
 
@@ -1054,11 +1083,11 @@ ROS2 Node for Safe Car Control
     <tr class="even">
     <td style="text-align: left;"><code>prob</code></td>
     <td style="text-align: left;"><code>float32</code></td>
-    <td style="text-align: left;"><p>probability (reliability) <span class="math inline"><em>P</em>(<em>t</em>) ∈ [0%, 100%] = [0, 1]</span> of valid measurement:</p>
+    <td style="text-align: left;"><p>probability (reliability) <span class="math inline"><em>p</em>(<em>t</em>) ∈ [0%, 100%] = [0, 1]</span> of valid measurement:</p>
     <ul>
-    <li><p>If <span class="math inline"><em>P</em> = 1</span> then computer vision has detected car with full reliability.</p></li>
-    <li><p>If <span class="math inline"><em>P</em> = 0</span> then computer vision has not detected car (car is not on track or computer vision has failed).</p></li>
-    <li><p>If <span class="math inline"><em>P</em> &lt; 1</span> then computer vision has errors and is unreliable.</p></li>
+    <li><p>If <span class="math inline"><em>p</em> = 1</span> then computer vision has detected car with full reliability.</p></li>
+    <li><p>If <span class="math inline"><em>p</em> = 0</span> then computer vision has not detected car (car is not on track or computer vision has failed).</p></li>
+    <li><p>If <span class="math inline"><em>p</em> &lt; 1</span> then computer vision has errors and is unreliable.</p></li>
     </ul></td>
     <td style="text-align: left;"><span class="math inline">[0, 1]</span></td>
     </tr>
@@ -1084,6 +1113,13 @@ ROS2 Node for Safe Car Control
         <node pkg="mbmadpi" exec="rcnode" name="rcnode" namespace="/mad/car0" output="screen"/>
         <node pkg="mbmadpi" exec="ctrlnode" name="ctrlnode" namespace="/mad/car0" output="screen"/>
     </launch>
+    ```
+
+    Rebuild the ROS2 workspace
+
+    ``` bash
+    cd ~/src/madpi_ws
+    colcon build --symlink-install
     ```
 
 2.  Measure the car position signals $s_1(t), s_2(t)$ with `rqt_plot`
