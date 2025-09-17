@@ -132,6 +132,30 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /mad/car1/markers
       Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: car2
+      Namespaces:
+        {}
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /mad/car2/markers
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: car3
+      Namespaces:
+        {}
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /mad/car3/markers
+      Value: true
     - Class: rviz_default_plugins/Marker
       Enabled: true
       Name: smcparticles

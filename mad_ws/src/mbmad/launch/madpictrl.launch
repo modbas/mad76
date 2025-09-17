@@ -7,6 +7,12 @@
     <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car1" output="screen">
         <remap from="/diagnostics" to="diagnostics"/>        
     </node>
+    <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car2" output="screen">
+        <remap from="/diagnostics" to="diagnostics"/>        
+    </node>
+    <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car3" output="screen">
+        <remap from="/diagnostics" to="diagnostics"/>        
+    </node>
     <!--
     <node pkg="c41_race" exec="c41_race" name="carctrl" namespace="/mad/car1" output="screen">
         <param name="carid" value="1"/>

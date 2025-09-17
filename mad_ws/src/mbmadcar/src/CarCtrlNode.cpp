@@ -64,8 +64,8 @@ public:
   /**
    * @brief The only constructor
    */
-  CarCtrlNode()
-    : Node { "carctrlnode", "/mad/car0" }, speedController { *this }, pathController { *this }
+  CarCtrlNode() 
+  : Node { "carctrlnode", "/mad/car0" }, speedController { *this }, pathController { *this }, acc {*this}
   {
     cpSeq.registerMonitor(cpJitterMonReceive);
     cpSeq.registerMonitor(cpDeadlineMonPublish);
@@ -77,6 +77,7 @@ public:
 
   bool init()
   {
+
     boost::log::core::get()->set_filter(
             boost::log::trivial::severity >= boost::log::trivial::error
             );
@@ -93,7 +94,7 @@ public:
       "/mad/locate/caroutputsext", qos, std::bind(&CarCtrlNode::outputsExtListCallback, this, std::placeholders::_1));
     subJoy = create_subscription<sensor_msgs::msg::Joy>(
       "joy", qosReliable, std::bind(&CarCtrlNode::joyCallback, this, std::placeholders::_1));
-    pubInputs = create_publisher<mbmadmsgs::msg::CarInputs>("carinputs", qos);
+    pubInputs = create_publisher<mbmadmsgs::msg::CarInputs>("carinputs", qos); // 
     pubCtrlReference = create_publisher<mbmadmsgs::msg::CtrlReference>("ctrlreference", qos);   
     srvResetLapcounter = create_service<mbmadmsgs::srv::ResetLapcounter>("reset_lapcounter", std::bind(&CarCtrlNode::resetLapcounter, this, _1, _2, _3));
     task.start();
@@ -243,24 +244,29 @@ private:
   /**
    * @brief step function to execute one sampling step
    */
-  void step()
-  {
+  void step(){
+
     std::unique_lock<std::mutex> lock(mutexStep);
     float pedals { 0.0F };
     float steering { 0.0F };
+
     if (prob >= 1.0F) {
       opModeFsm.dispatch<EventLocationGained>(EventLocationGained{});
-    } else if (prob <= 0.0F) {
+    } 
+    else if (prob <= 0.0F) {
       opModeFsm.dispatch<EventLocationLost>(EventLocationLost{});
-    } else {
+    }
+    else {
       opModeFsm.dispatch<EventLocationDegraded>(EventLocationDegraded{});
     }
+
     mbmadmsgs::msg::CarInputs carInputsMsg;
     carInputsMsg.cmd = carInputsMsg.CMD_HALT;
     float ey { 0.0F };
     float wkappa { 0.0F };
     steering = pathController.step(splines.at(acc.getLane()), opModeFsm, s, psi, v, ey, wkappa);
-    // subtract joystrick timestamp to from current timestamp
+
+    // subtract joystick timestamp to from current timestamp
     rclcpp::Duration joyTimeDiff = this->now() - rclcpp::Time(joyMsg.header.stamp);
     if (joyTimeDiff <= joyTimeout  && joyMsg.axes.size() > joySteeringAxis && joyMsg.axes.size() > joySpeedAxis) {
       if (joyMsg.axes.at(joySpeedAxis) < joySpeedPassive) { // if player is passive, only thrusts and does not need to steer
@@ -274,24 +280,28 @@ private:
         steering = -1.0F;
       }
     }
+
     if (maneuverType == mbmadmsgs::msg::DriveManeuver::TYPE_PATHFOLLOW) {
 #ifdef MAD24
       vref = vmax;
 #else
       if (joyTimeDiff <= joyTimeout && joyMsg.axes.size() > joySpeedAxis) {
         vref = joyMsg.axes.at(joySpeedAxis) * joySpeedMax;
-      } else {
-        float leadDist { 0.0F };
-        float leadV { 0.0F };
-        float otherDist { 0.0F };
-        bool faultLateral { false };
-        acc.step(vmax, splines, carOutputsExtList, v, pathController.wx, ey, wkappa, vref, leadDist, leadV, otherDist, faultLateral);
+      } 
+      else {
+        // float leadDist { 0.0F };
+        // float leadV { 0.0F };
+        // float otherDist { 0.0F };
+        // bool faultLateral { false };
+        // bool leadFaultLateral { false };
+        acc.step(vmax, splines, carOutputsExtList, v, pathController.wx, ey, wkappa, vref);
       }
 #endif
       pedals = speedController.step(opModeFsm, vref, v);
       if (vref >= 0.0F) {
         carInputsMsg.cmd = carInputsMsg.CMD_FORWARD;
-      } else {
+      } 
+      else {
         carInputsMsg.cmd = carInputsMsg.CMD_REVERSE;
       }
       lapCounter.step(splines.at(acc.getLane()), acc.getLane(), pathController.wx, opModeFsm);

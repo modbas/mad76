@@ -42,12 +42,17 @@ class TrackNode(Node):
         self.declare_parameter('sl2', rclpy.Parameter.Type.DOUBLE_ARRAY)
         self.declare_parameter('sr1', rclpy.Parameter.Type.DOUBLE_ARRAY)
         self.declare_parameter('sr2', rclpy.Parameter.Type.DOUBLE_ARRAY)
+        self.declare_parameter('sopt1', rclpy.Parameter.Type.DOUBLE_ARRAY)
+        self.declare_parameter('sopt2', rclpy.Parameter.Type.DOUBLE_ARRAY)
 
         self.curbs_available = False
         sl1 = self.get_parameter_or('sl1', rclpy.Parameter('sl1', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
         sl2 = self.get_parameter_or('sl2', rclpy.Parameter('sl2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
         sr1 = self.get_parameter_or('sr1', rclpy.Parameter('sr1', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
         sr2 = self.get_parameter_or('sr2', rclpy.Parameter('sr2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+        sopt1 = self.get_parameter_or('sopt1', rclpy.Parameter('sopt1', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+        sopt2 = self.get_parameter_or('sopt2', rclpy.Parameter('sopt2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])).value
+
         if not sl1 or not sl2 or not sr1 or not sr2:
             self.get_logger().info('no curb parameters found, waiting for image')
             # transform pointts client
@@ -111,8 +116,12 @@ class TrackNode(Node):
         self.get_logger().info('getWaypoints service called')
         sl = np.array([ self.get_parameter('sl1').value, self.get_parameter('sl2').value ]).T 
         sr = np.array([ self.get_parameter('sr1').value, self.get_parameter('sr2').value ]).T
-        if len(sl) > 1 and len(sr) > 1:
-            s = np.add(sr * (1.0 - request.alpha), sl * request.alpha)
+        sopt = np.array([ self.get_parameter('sopt1').value, self.get_parameter('sopt2').value ]).T
+        if len(sl) > 1 and len(sr) > 1 and len(sopt) > 1:
+            if request.alpha < 0.0: # alpha < 0 retrieves ideal line
+                s = sopt
+            else:
+                s = np.add(sr * (1.0 - request.alpha), sl * request.alpha)
             x = [ 0.0 ]
             for i in range(len(s)-1):
                 x.append(np.sqrt((s[i+1,0] - s[i,0])**2 + (s[i+1,1] - s[i,1])**2) + x[i])

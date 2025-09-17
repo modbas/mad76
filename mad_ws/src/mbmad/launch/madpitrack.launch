@@ -12,4 +12,10 @@
     <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car1" output="screen">
         <param name="colorRGB" value="[ 0.8, 1.0, 0.0 ]"/>
     </node>
+     <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car2" output="screen">
+        <param name="colorRGB" value="[ 0.0, 1.0, 0.0 ]"/>
+    </node>
+    <node pkg="mbmadcar" exec="cardisplaynode" name="cardisplay" namespace="/mad/car3" output="screen">
+        <param name="colorRGB" value="[ 0.0, 0.0, 1.0 ]"/>
+    </node>
 </launch>

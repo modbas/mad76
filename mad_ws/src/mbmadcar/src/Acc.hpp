@@ -1,13 +1,13 @@
 /**
   * @brief C++ class Acc for adaptive cruise control and passing maneuvers
-  *    
+  *
   * Copyright (C) 2024, Frank Traenkle, Hochschule Heilbronn
-  * 
+  *
   * This file is part of MAD.
-  * MAD is free software: you can redistribute it and/or modify it under the terms 
+  * MAD is free software: you can redistribute it and/or modify it under the terms
   * of the GNU General Public License as published by the Free Software Foundation,
   * either version 3 of the License, or (at your option) any later version.
-  * MAD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY 
+  * MAD is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY
   * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   * See the GNU General Public License for more details.
   * You should have received a copy of the GNU General Public License along with MAD.
@@ -28,155 +28,168 @@
 #include "mbmad/Spline.hpp"
 #include "mbmadmsgs/msg/car_outputs_ext_list.hpp"
 
+///
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/float32_multi_array.hpp>
+///
+
+//#define _MAD_DEBUG
 
 namespace mbmad {
+
+struct DetectedCar {
+  float dist = std::numeric_limits<float>::infinity();
+  float v = 0.0F;
+  bool sameLane = true;
+};
 
 class Acc
 {
   public:
-    Acc() noexcept
-    {
-    }
+    Acc(rclcpp::Node& node) noexcept
+    : node(node){}
 
     Acc(const Acc& that) = delete;
 
-    /**
-     * @brief init initializes the ACC
-     */
     void init()
     {
+      if (!initialized) {
+        rclcpp::QoS qos { rclcpp::KeepLast(1) };
+        qos.best_effort().durability_volatile();
+        pubDebugAcc = node.create_publisher<std_msgs::msg::Float32MultiArray>("accdebug", qos);
+        RCLCPP_INFO(node.get_logger(), "ACC logger initialized");
+      }
       initialized = true;
     }
 
-    /**
-     * @brief ACC step
-     * @param vmax maximum speed
-     * @param spline reference path
-     * @param carOutputsExtList car outputs
-     * @param selfV own speed
-     * @param selfX own x position
-     * @param selfEy own lateral deviation
-     * @param selfKappa own curvature
-     * @param leadDist distance to leading car
-     * @param leadV speed of leading car
-     * @param otherDist distance to other car
-     * @param faultLateral lateral fault detected
-     * @return manipulation signal pedals
-     */
     void step(const float vmax, std::array<Spline, 2>& splines, const mbmadmsgs::msg::CarOutputsExtList& carOutputsExtList,
-      const float selfV, const float selfX, const float selfEy, const float selfKappa, 
-      float& vref, float& leadDist, float& leadV,
-      float& otherDist, bool& faultLateral)
+      const float selfV, const float selfX, const float selfEy, const float selfKappa, float& vref)
     {
       // return variables
       vref = 0.0F;
-      leadDist = 0.0F;
-      leadV = 0.0F;
-      otherDist = 0.0F;
-      faultLateral = false;
+      bool selfFaultLateral = false;
 
       if (initialized) {
-        detectLeadingCar(vmax, splines.at(lane), carOutputsExtList, selfX, selfEy, selfKappa, leadDist, leadV, otherDist, faultLateral);
+        detectCars(vmax, splines.at(lane), carOutputsExtList, selfX, selfEy, selfKappa, selfFaultLateral);
 
         // required distance to leading car
-        float dmin = dminAnyCase + std::fabs(selfV) * Tt;
-        dmin += (selfV - leadV) / amaxBrake;     
-        // if (v > 0.0F && leadV > 0.0F) { // forward drive
-        //   if (leadV < selfV) { // lead car is slower than ego car
-        //     dmin += (selfV - leadV) / amaxBrake;     
-        //   }
-        // } else if (selfV < 0.0F && leadV < 0.0F) { // reverse drive
-        //   if (leadV > selfV) { // lead car is slower than ego car
-        //     dmin += (leadV - selfV) / amaxBrake;     
-        //   }
-        // } else { // collosion drive
-        //   dmin += std::fabs(leadV + selfV) / amaxBrake;
-        // }
+        float dmin = dminAnyCase + std::fabs(selfV) * (Tt + reactTimeBuffer);   // distance car travels during deadtime and timebuffer
+        dmin += std::pow(selfV - leadCar.v, 2) / (2.0F * amaxBrake);            // distance car travels during maximal deceleration
 
         // FSM Lane Switching
-        if (fsmLaneSwitchingState) {
+        if (fsmLaneSwitchingState) { // lane switching state or lead car is too close
           if (std::fabs(selfEy) < selfEyMax) { // ego car has reached new lane
             fsmLaneSwitchingState = false; // --> re-enable lane switching
           }
         }
 
+        bool canSwitchLane =  !fsmLaneSwitchingState &&
+                              !splines.at(1).breaks.empty() &&
+                              !selfFaultLateral;
 
         // FSM ACC
         if (fsmAccState) { // ACC active
-          if (leadV > 0.0F) {
-            vref = leadVScale * leadV;
-          } else {
-            vref = 0.1F;
+          vref = leadVScale * leadCar.v;
+
+          // crawl speed
+          if (leadCar.v <= 0.0F) {
+            vref = crawlSpeed; // if lead car is not moving, then crawl speed
           }
+
+          // saturation
           if (vref > vmax) {
             vref = vmax;
           }
-          if (leadDist < dminAnyCase) {
-            vref = 0.0F; // safety halt
+
+          // safety halt
+          if (leadCar.dist < dminAnyCase) {
+            vref = 0.0F;
           }
+
           // switch lane
-          if (!fsmLaneSwitchingState && !splines.at(1).breaks.empty() && !faultLateral
-              && (otherDist > dminAnyCase || otherDist < passingMinDist)) {
-            if (lane == 0U) {
-              lane = 1U;
-            } else {
-              lane = 0U;
-            }
+
+          bool shouldOvertake = lane == 0U && 
+                                leadCar.dist > dminAnyCase && 
+                                !(rearCar.v > vref && rearCar.dist > passingMinDist); // rearcar is not disturbing
+
+          if (canSwitchLane && shouldOvertake) {
+            lane = 1U;
             fsmLaneSwitchingState = true;
           }
-          if (leadDist > acc2ccScale * p->size.at(0) + dmin) {
+
+          float accDeactivateDist = acc2ccScale * p->size.at(0) + dmin;
+
+          if (leadCar.dist > accDeactivateDist || !leadCar.sameLane) {
             fsmAccState = false;
           }
-        } else { // ACC inactive (cruise control)
-          vref = vmax;          
-          if (!fsmLaneSwitchingState && !splines.at(1).breaks.empty() && !faultLateral) {
-            if (lane == 1U && otherDist < passingMinDist) { // switch back lane after passing
-              lane = 0U;
-            } else if (lane == 0U && leadDist <= dmin + 0.5F * p->size.at(0) && leadDist > 0.0F && selfV > leadV) { // switch lane before ACC
-              lane = 1U;
-            }
-            fsmLaneSwitchingState = true;
-          }          
-          if (selfV > leadV && leadDist <= dmin && leadDist >= cc2accScale * p->size.at(0)) {
-            fsmAccState = true;
-          }
         }
-        
+        else { // ACC inactive (cruise control)
+          vref = vmax;
 
-#ifdef _MAD_DEBUG
-        if (p->carid == 0U) { 
-          std::cout << "accState=" << fsmAccState << " laneSwitch=" << fsmLaneSwitchingState << " lane=" << static_cast<int>(lane) << " leadV=" << leadV << " vref=" << vref << std::endl;
+          // Determine if lane switching is allowed
+          bool canSwitchBack= lane == 1U &&
+                              (rearCar.dist < passingMinDist || rearCar.sameLane) &&
+                              leadCar.dist > 2.0F*dmin;
+
+          bool prepareAccActivation =  lane == 0U &&
+                                      leadCar.dist <= (dmin + 1.0F * p->size.at(0)) &&
+                                      selfV > leadCar.v &&
+                                      !(rearCar.v > selfV && rearCar.dist > passingMinDist); // rearcar is not disturbing
+
+
+          // lane switch
+          if (canSwitchLane) {
+            if (canSwitchBack) {
+              lane = 0U;
+              fsmLaneSwitchingState = true;
+            } else if (prepareAccActivation) {
+              lane = 1U;
+              fsmLaneSwitchingState = true;
+            }
+          }
+          bool shouldTurnAccOn =  selfV > leadCar.v &&
+                                  leadCar.sameLane &&
+                                  leadCar.dist <= dmin;
+
+          if (shouldTurnAccOn) fsmAccState = true;
         }
-#endif
+
+        publishDebugInfo();
       }
     }
 
-    /**
-     * @brief getLane returns the lane
-     * @return lane
-     */ 
-    uint8_t getLane() const noexcept
-    {
+    uint8_t getLane() const noexcept {
       return lane;
     }
 
-  private:
+ private:
     CarParameters const * const p = CarParameters::p();
-    const float leadEyMax = p->size.at(1) + 10e-3;
+    const float sameLaneEyMax = p->size.at(1) + 5e-3F;            // variable for maximum lateral offset for other car to be considered as being in the same lane // before: p->size.at(1) + 15e-3
     const float selfKappaMax = 12.0F;
     const float selfEyMax = 0.5F * p->size.at(1);
-    const float dminAnyCase = p->size.at(0) + 10e-3F;
+    const float dminAnyCase = p->size.at(0) + 10e-3F;            // 50 mm
     const float acc2ccScale = 2.0F;
     const float cc2accScale = -0.2F;
     const float Tt = 2.0F * p->Tt;
+    const float reactTimeBuffer = 0.5F * Tt;                     // variable for more safety, to increase dmin
     const float amaxBrake = 0.3F * p->k / p->T;
-    const float leadVScale = 0.98F;
+    const float leadVScale = 0.98F;                               // before: 0.98F
     const float passingMinDist = -3.0F * p->size.at(0);
+    const float crawlSpeed = 0.05F;                              // crawl speed for ACC // before: 0.1F
     bool initialized { false };
-    bool fsmAccState { false }; // if true then ACC is active, if false then CC is active
-    bool fsmLaneSwitchingState { false }; // if true then lane switching is active, if false then car is in lane
+    bool fsmAccState { false };                                  // if true then ACC is active, if false then CC is inactive
+    bool fsmLaneSwitchingState { false };                        // if true then lane switching is active, if false then car is in lane
     uint8_t lane { 0U };
-    
+
+    // car detection variables
+    DetectedCar leadCar {std::numeric_limits<float>::infinity(), 0.0F, true}; // leading car
+    DetectedCar rearCar {-std::numeric_limits<float>::infinity(), 0.0F, true}; // car behind ego car
+
+    ///
+    rclcpp::Node& node;
+    rclcpp::Publisher<std_msgs::msg::Float32MultiArray>::SharedPtr pubDebugAcc;
+    ///
+
     /**
      * @brief ACC detect leading car
      * @param vmax maximum speed
@@ -185,57 +198,107 @@ class Acc
      * @param selfX own x position
      * @param selfEy own lateral deviation
      * @param selfKappa own curvature
-     * @param leadDist distance to leading car
-     * @param leadV speed of leading car
-     * @param otherDist distance to other car
-     * @param faultLateral lateral fault detected
+     * @param selfFaultLateral lateral fault detected
      * @return manipulation signal pedals
-     */  
-    void detectLeadingCar(const float vmax, Spline& spline, const mbmadmsgs::msg::CarOutputsExtList& carOutputsExtList,
-      const float selfX, const float selfEy, const float selfKappa, float& leadDist, float& leadV,
-      float& otherDist, bool& faultLateral)
+     */
+
+    void detectCars(const float vmax, Spline& spline, const mbmadmsgs::msg::CarOutputsExtList& carOutputsExtList,
+      const float selfX, const float selfEy, const float selfKappa, bool& selfFaultLateral)
     {
-      leadDist = std::numeric_limits<float>::infinity();
-      leadV = 0.0F;
-      otherDist = std::numeric_limits<float>::infinity();
-      
-      faultLateral = (std::fabs(selfKappa) > selfKappaMax || (std::fabs(selfEy) > selfEyMax && !fsmLaneSwitchingState));
-      for (auto& car : carOutputsExtList.list) {
-        if (car.carid != p->carid && car.prob > 0.0F) {
-          std::array<float,2> s;
-          std::array<float,2> sd;
-          std::array<float,2> sdd;
-          float dist { 0.0F };
-          float x { 0.0F };
-          int idx = spline.getNearest(car.s, x, dist);
-          spline.interpolate(x, s, sd, sdd, idx);
-          otherDist = x - selfX;
-          if (otherDist < -0.5F * spline.breaks.back()) {
-            otherDist += spline.breaks.back();
-          } else if (otherDist > 0.5F * spline.breaks.back()) {
-            otherDist -= spline.breaks.back();
-          }
-          if (vmax < 0.0F) { // ego car is in reverse drive
-            otherDist = -otherDist;
-          }
-          const float psi = std::atan2(sd.at(1), sd.at(0));
-          const float ey = -(car.s.at(0) - s.at(0)) * std::sin(psi) + (car.s.at(1) - s.at(1)) * std::cos(psi);
-          const float eydiff = ey - selfEy;
-#ifdef _MAD_DEBUG
-          if (p->carid == 0U) {
-            std::cout << "eydiff=" << eydiff << " ey=" << ey << " selfEy=" << selfEy << " selfKappa" << selfKappa << " otherDist=" 
-              << otherDist << " faultLateral="  << faultLateral << std::endl;
-          }
-#endif
-          if (std::fabs(eydiff) < leadEyMax || faultLateral) {
-            if (otherDist >= -p->size.at(0) && otherDist < leadDist) {
-              leadDist = otherDist;
-              leadV = car.v;
+      // Initialize output values
+      float carDist = std::numeric_limits<float>::infinity();
+
+      leadCar.dist = std::numeric_limits<float>::infinity();
+      rearCar.dist = -std::numeric_limits<float>::infinity();
+
+      std::vector<DetectedCar> leadCars;
+
+      // Determine if there's a lateral driving fault
+      selfFaultLateral = (std::fabs(selfKappa) > selfKappaMax) || (std::fabs(selfEy) > selfEyMax);
+
+      for (const auto& car : carOutputsExtList.list) {
+        // Skip self and invalid detections
+        if (car.carid == p->carid || car.prob <= 0.0F) continue;
+
+        // Find nearest point on spline to the other car
+        float splineX = 0.0F, distance = 0.0F;
+        int splineIdx = spline.getNearest(car.s, splineX, distance);
+
+        std::array<float, 2> s, sd, sdd;
+        spline.interpolate(splineX, s, sd, sdd, splineIdx);
+
+        // Compute longitudinal distance along track
+        carDist = splineX - selfX;
+        const float trackLength = spline.breaks.back();
+
+        // Handle wrap-around if track is circular
+        if (carDist < -0.5F * trackLength) {
+          carDist += trackLength;
+        } else if (carDist > 0.5F * trackLength) {
+          carDist -= trackLength;
+        }
+
+        // Reverse drive correction
+        if (vmax < 0.0F) {
+          carDist = -carDist;
+        }
+
+        // Compute lateral offset (ey) and  of other car relative to spline
+        float psi = std::atan2(sd.at(1), sd.at(0));
+        float ey = -(car.s.at(0) - s.at(0)) * std::sin(psi) +
+                    (car.s.at(1) - s.at(1)) * std::cos(psi);
+
+        float eyDiff = ey - selfEy; // lateral offset difference to ego car
+        bool isInSameLane = (std::fabs(eyDiff) < sameLaneEyMax) || selfFaultLateral;
+
+        bool isAhead = (carDist > 0.0F);
+        bool isBehind = (carDist < 0.0F) && (carDist > rearCar.dist);
+
+        if(isAhead){
+          leadCars.push_back(DetectedCar{carDist, car.v, isInSameLane});
+        }
+
+        if (isBehind) {
+          rearCar = {carDist, car.v, isInSameLane};
+        }
+      }
+
+      if (!leadCars.empty()) {
+        // --- Sort leadCars by distance (ascending) ---
+        std::sort(leadCars.begin(), leadCars.end(),[](const DetectedCar& a, const DetectedCar& b) {return a.dist < b.dist;});
+        
+        leadCar = leadCars[0]; // default: pick closest
+
+        if (leadCars.size() >= 2) {
+          const float closeDistanceThreshhold = 2.0F * p->size.at(0);
+          bool closePair = std::fabs(leadCars[0].dist - leadCars[1].dist) < closeDistanceThreshhold;
+          bool differentLanes = (leadCars[0].sameLane != leadCars[1].sameLane);
+
+          if (closePair && differentLanes) {
+            // Pick the one in the egos lane
+            if (leadCars[0].sameLane) {
+              leadCar = leadCars[0];
+            } else if (leadCars[1].sameLane) {
+              leadCar = leadCars[1];
             }
-          }          
+          }
         }
       }
     }
-};
 
+    void publishDebugInfo(void)
+    {
+      std_msgs::msg::Float32MultiArray msg;
+      msg.data = {
+        static_cast<float>(fsmAccState),
+        static_cast<float>(fsmLaneSwitchingState),
+        static_cast<float>(lane),
+        static_cast<float>(leadCar.sameLane),
+        leadCar.v,
+        leadCar.dist
+      };
+      pubDebugAcc->publish(msg);
+    }
+
+};
 }
