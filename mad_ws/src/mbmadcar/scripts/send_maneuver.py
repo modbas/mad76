@@ -28,14 +28,14 @@ from mbmadmsgs.msg import DriveManeuver
 class SendManeuverNode(Node):
   def __init__(self):
     super().__init__('send_maneuver')
-    carid = 0
+    self.carid = -1
     vmax = 0.5
     xref = 0.0
     type = DriveManeuver.TYPE_PATHFOLLOW
-    alpha = 0.5
+    alpha = -1.0
     
     if len(sys.argv) > 1:
-      carid = int(sys.argv[1])
+      self.carid = int(sys.argv[1])
 
     if len(sys.argv) > 2:
       vmax = float(sys.argv[2])
@@ -44,7 +44,7 @@ class SendManeuverNode(Node):
       alpha = float(sys.argv[3])
     
     if len(sys.argv) > 4:
-      xref = float(sys.argv[4])
+      xref = float(sys.argv[4]) 
       type = DriveManeuver.TYPE_PARK
 
     # register DriveManeuver publisher
@@ -53,16 +53,23 @@ class SendManeuverNode(Node):
       #durability = QoSDurabilityPolicy.TRANSIENT_LOCAL,
       history = QoSHistoryPolicy.KEEP_LAST,
       depth=1)
-    self.maneuverPub = self.create_publisher(DriveManeuver, "/mad/car" + str(carid) + "/maneuver", qos)
-    self.maneuverpassPub = self.create_publisher(DriveManeuver, "/mad/car" + str(carid) + "/maneuverpass", qos)
+    self.maneuverPubs = []
+    self.maneuverpassPubs = []
+    for carid in range(4):
+      self.maneuverPubs.append(
+        self.create_publisher(DriveManeuver, f"/mad/car{carid}/maneuver", qos)
+      )
+      self.maneuverpassPubs.append(
+        self.create_publisher(DriveManeuver, f"/mad/car{carid}/maneuverpass", qos)
+      )
     client = self.create_client(TrackGetWaypoints, '/mad/get_waypoints')
     while not client.wait_for_service(timeout_sec = 1.0):
       self.get_logger().info('service /mad/get_waypoints is not available, waiting again ...')
-    self.maneuver = self.computer_maneuver(client, carid, vmax, alpha, type, xref)
-    self.maneuverpass = self.computer_maneuver(client, carid, vmax, 0.75, type, xref)
+    self.maneuver = self.compute_maneuver(client, self.carid, vmax, alpha, type, xref)
+    self.maneuverpass = self.compute_maneuver(client, self.carid, vmax, 0.75, type, xref)
     self.timer = self.create_timer(1.0, self.step)
-  
-  def computer_maneuver(self, client, carid, vmax, alpha, type, xref):
+
+  def compute_maneuver(self, client, carid, vmax, alpha, type, xref):
     request = TrackGetWaypoints.Request(
       dx = 0.01,
       alpha = alpha,
@@ -95,8 +102,15 @@ class SendManeuverNode(Node):
       
 
   def step(self):
-      self.maneuverPub.publish(self.maneuver)
-      self.maneuverpassPub.publish(self.maneuverpass)
+      if self.carid < 0:
+        for carid in range(0,4):
+          self.maneuver.carid = carid
+          self.maneuverpass.carid = carid
+          self.maneuverPubs[carid].publish(self.maneuver)
+          self.maneuverpassPubs[carid].publish(self.maneuverpass)
+      else:
+        self.maneuverPubs[self.carid].publish(self.maneuver)
+        self.maneuverpassPubs[self.carid].publish(self.maneuverpass)
       #self.timer.cancel() # stop timer
 
 
