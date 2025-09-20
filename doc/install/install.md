@@ -466,7 +466,7 @@ Build MAD76
     export RMW_IMPLEMENTATION=rmw_fastrtps_cpp
     export ROS_DOMAIN_ID=221
     source ~/src/ros_ws/install/setup.bash # on Raspberry Pi
-    #source /opt/ros/jazzy/install/setup.bash # on Ubuntu Linux-PC
+    #source /opt/ros/jazzy/setup.bash # on Ubuntu Linux-PC
     cd ~/src
     git clone https://github.com/modbas/mad76
     cd mad76/mad_ws
@@ -526,47 +526,11 @@ Software-in-the-Loop Simulation
     ros2 launch mbmad madpisim.launch
     ```
 
--   Open a further terminal and send a maneuver to car 0 (orange car)
+-   Open a further terminal and start all cars in a driverless race
 
     ``` bash
-    ros2 run mbmadcar send_maneuver.py 0 0.3 0.25
+    ros2 run mbmadcar send_maneuver.py
     ```
-
-    -   First argument is the car identifier (0 for orange car, 1 for
-        yellow car)
-
-        |     |            |
-        |:----|:-----------|
-        | 0   | orange car |
-        | 1   | yellow car |
-        | 2   | blue car   |
-        | 3   | white car  |
-
-    -   Second argument is the car reference speed in $\frac{m}{s}$
-
-    -   Third argument is the lateral reference position
-
-        |      |             |
-        |:-----|:------------|
-        | 0    | right curb  |
-        | 0.25 | right lane  |
-        | 0.5  | center line |
-        | 0.75 | left lane   |
-        | 1    | left curb   |
-
--   Stop `send_maneuver.py` by hitting `Ctrl+c` and send maneuver to car
-    1 (yellow car)
-
-    ``` bash
-    ros2 run mbmadcar send_maneuver.py 1 0.2 0.25
-    ```
-
--   The maximum speed of each car is $0.5 \frac{m}{s}$
-
--   You may stop the individual car by sending a maneuver with reference
-    speed $0 \frac{m}{s}$
-
--   Reverse driving is possible by setting a negative reference speed
 
 MATLAB/Simulink Installation [matlab-installation]
 ============================

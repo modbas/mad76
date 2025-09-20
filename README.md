@@ -82,6 +82,8 @@ MAD76 Kit
     -   [Computer Vision Configuration](doc/vision/vision.md)
         ([vision.pdf](doc/vision/vision.pdf))
 
+    -   [Car Race](doc/race/race.md) ([race.pdf](doc/race/race.pdf))
+
 MAD76 Academy
 =============
 

@@ -107,6 +107,10 @@ What is Linux
 
     -   Fedora (Red Hat-based, cutting-edge)
 
+    -   SteamOS (Gaming platform)
+
+    -   Windows Subsystem for Linux (WSL)
+
     -   Yocto (Embedded Linux)
 
 Why Linux?
@@ -359,27 +363,27 @@ Important Directories in Linux
 Important Commands
 ------------------
 
-|                                        |                                                            |
-|:---------------------------------------|:-----------------------------------------------------------|
-| `pwd`                                  | show current directory                                     |
-| `ls -al /home/lab01`                   | list files in home directory of user `lab01`               |
-| `cd /home/lab01`                       | change to home directory of user `lab01`                   |
-| `cd`                                   | dito                                                       |
-|                                        | dito (                                                     |
-| `mkdir src`                            | create directory src in current directory                  |
-| `touch src/myaddress.txt`              | create empty file in directory `src`                       |
-| `cp src/myaddress.txt youraddress.txt` | copy file                                                  |
-| `rm youraddress.txt`                   | remove file                                                |
-| `echo Heilbronn > src/myaddress.txt`   | write to file                                              |
-| `cat src/myaddress.txt`                | display file content                                       |
-| `cd src`                               | change to directory `/home/lab01/src`                      |
-| `cd /home/lab01/src`                   | dito (using absolute path)                                 |
-| `less myaddress.txt`                   | display file content with paging (hit `q` to exit)         |
-| `cd ..`                                | change to parent directory                                 |
-| `cd .`                                 | change to current directory (does nothing)                 |
-| `rmdir src`                            | remove directory src in current directory (only if empty)  |
-| `rm -rf src`                           | remove directory src and all its contents (use with care!) |
-| `groups`                               | show groups of current user                                |
+|                                        |                                                                      |
+|:---------------------------------------|:---------------------------------------------------------------------|
+| `pwd`                                  | show current directory                                               |
+| `ls -al /home/lab01`                   | list files in home directory of user `lab01`                         |
+| `cd /home/lab01`                       | change to home directory of user `lab01`                             |
+| `cd`                                   | dito                                                                 |
+|                                        | dito (                                                               |
+| `mkdir src`                            | create directory src in current directory                            |
+| `touch src/myaddress.txt`              | create empty file in directory `src`                                 |
+| `cp src/myaddress.txt youraddress.txt` | copy existing file `src/myaddress.txt` to new file `youraddress.txt` |
+| `rm youraddress.txt`                   | remove file                                                          |
+| `echo Heilbronn > src/myaddress.txt`   | write to file                                                        |
+| `cat src/myaddress.txt`                | display file content                                                 |
+| `cd src`                               | change to directory `/home/lab01/src`                                |
+| `cd /home/lab01/src`                   | dito (using absolute path)                                           |
+| `less myaddress.txt`                   | display file content with paging (hit `q` to exit)                   |
+| `cd ..`                                | change to parent directory                                           |
+| `cd .`                                 | change to current directory (does nothing)                           |
+| `rmdir src`                            | remove directory src in current directory (only if empty)            |
+| `rm -rf src`                           | remove directory src and all its contents (use with care!)           |
+| `groups`                               | show groups of current user                                          |
 
 File Permissions
 ----------------

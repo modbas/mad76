@@ -188,6 +188,11 @@ Python as Calculator
         y = 3
         z = x + y
 
+12. Loops
+
+        for i in range(5):
+            print(i, i**2)
+
 Solve Quadratic Equations
 -------------------------
 
