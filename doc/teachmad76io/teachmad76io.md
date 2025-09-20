@@ -16,7 +16,7 @@ Agenda
     Section <a href="#power-supply" data-reference-type="ref" data-reference="power-supply">3</a>)
 
 -   Potentiometer emulation for RCs (see
-    Section <a href="#potis" data-reference-type="ref" data-reference="potis">4</a>)
+    Section <a href="#digital-potentiometers" data-reference-type="ref" data-reference="digital-potentiometers">4</a>)
 
 #### Teaching Objectives
 
@@ -215,10 +215,10 @@ Power Supply
     Section <a href="#driver-l293b" data-reference-type="ref" data-reference="driver-l293b">3.1</a>)
 
 -   Python code to power RC 1 (see
-    Section <a href="#python-test-rc1" data-reference-type="ref" data-reference="python-test-rc1">3.2</a>)
+    Section <a href="#python-code-to-power-on-rc-1" data-reference-type="ref" data-reference="python-code-to-power-on-rc-1">3.2</a>)
 
 -   Python code to switch on / off any RC (see
-    Section <a href="#python-poweron" data-reference-type="ref" data-reference="python-poweron">3.3</a>)
+    Section <a href="#python-code-to-power-on-any-rc" data-reference-type="ref" data-reference="python-code-to-power-on-any-rc">3.3</a>)
 
 Driver L293B
 ------------
@@ -253,7 +253,7 @@ Driver L293B
 -   RPi sets digital outputs GPIO25, GPIO23, GPIO24, GPIO18 to high or
     low to switch RC 1, 2, 3, 4 on/off
 
-Python Code to Power On RC 1 [python-test-rc1]
+Python Code to Power On RC 1
 ----------------------------
 
 -   Python package `RPi.GPIO` provides functions to control GPIO pins of
@@ -304,7 +304,7 @@ Python Code to Power On RC 1 [python-test-rc1]
         sys.exit(0)
     ```
 
-Python Code to Power On any RC [python-poweron]
+Python Code to Power On any RC
 ------------------------------
 
 -   The following code may power on any of the RCs
@@ -415,24 +415,24 @@ Python Code to Power On any RC [python-poweron]
 <img src="measpowervolt.png" id="F-measpowervolt" alt="" /><figcaption>Exercise 2: Measure power supply voltage</figcaption>
 </figure>
 
-Digital Potentiometers [potis]
+Digital Potentiometers
 ======================
 
 #### Agenda
 
 -   Digital Potentiometers MCP42010 (see
-    Section <a href="#mcp42010" data-reference-type="ref" data-reference="mcp42010">4.1</a>)
+    Section <a href="#digital-potentiometers-mcp42010" data-reference-type="ref" data-reference="digital-potentiometers-mcp42010">4.1</a>)
 
 -   Serial-Peripheral-Interface (SPI) (see
-    Section <a href="#spi" data-reference-type="ref" data-reference="spi">4.2</a>)
+    Section <a href="#serial-peripheral-interface-spi" data-reference-type="ref" data-reference="serial-peripheral-interface-spi">4.2</a>)
 
 -   SPI for MCP42010 (see
-    Section <a href="#spi-mcp42010" data-reference-type="ref" data-reference="spi-mcp42010">4.3</a>)
+    Section <a href="#spi-for-mcp42010" data-reference-type="ref" data-reference="spi-for-mcp42010">4.3</a>)
 
 -   Python library to control RC (see
-    Section <a href="#python-rc" data-reference-type="ref" data-reference="python-rc">4.4</a>)
+    Section <a href="#python-library-to-control-rc" data-reference-type="ref" data-reference="python-library-to-control-rc">4.4</a>)
 
-Digital Potentiometers MCP42010 [mcp42010]
+Digital Potentiometers MCP42010
 -------------------------------
 
 <figure>
@@ -511,7 +511,7 @@ $$
 
 <img src="voltagedivider.png" alt="image" />
 
-Serial-Peripheral-Interface (SPI) [spi]
+Serial-Peripheral-Interface (SPI)
 ---------------------------------
 
 -   SPI is a widely-used synchronous serial communication protocol
@@ -547,7 +547,7 @@ Serial-Peripheral-Interface (SPI) [spi]
 <img src="mcp42010-timing.png" alt="" /><figcaption>MCP42010 SPI timing diagram. Copied from MCP42010 data sheet <span class="citation" data-cites="mcp42010-datasheet">[<a href="#ref-mcp42010-datasheet" role="doc-biblioref">1</a>]</span> Figure 5.1.</figcaption>
 </figure>
 
-SPI for MCP42010 [spi-mcp42010]
+SPI for MCP42010
 ----------------
 
 -   MCP42010 reads in 16-bit data words consisting of two 8-bit bytes
@@ -595,7 +595,7 @@ SPI for MCP42010 [spi-mcp42010]
         -   Example: `0x12 0x40 0x12 0x30 0x12 0x20 0x12 0x10` sets all
             4 steering signal voltages
 
-Python Library to Control RC [python-rc]
+Python Library to Control RC
 ----------------------------
 
 -   Create a new Python module `mbmadrclib.py` in directory
@@ -776,7 +776,7 @@ $$
     | `pedals` | Normalized steering signal $u_n \in [-1, 1]$. -1 is full right, 1 is full left cornering. |
 
 -   The Python module `rctest.py` is an extension of `rcpoweron.py` from
-    Section <a href="#python-poweron" data-reference-type="ref" data-reference="python-poweron">3.3</a>
+    Section <a href="#python-poweron" data-reference-type="ref" data-reference="python-poweron">[python-poweron]</a>
 
     -   It uses the new library `mbmadrclib.py` to power on the RCs and
         to set the motor and steering signals

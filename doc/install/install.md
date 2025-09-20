@@ -30,7 +30,7 @@ The installation steps are:
 
 -   Optionally install MATLAB/Simulink for model-based software
     engineering (see
-    Section <a href="#matlab-installation" data-reference-type="ref" data-reference="matlab-installation">6</a>)
+    Section <a href="#matlab-simulink-installation" data-reference-type="ref" data-reference="matlab-simulink-installation">6</a>)
 
 MAD76 Box
 =========
@@ -532,7 +532,7 @@ Software-in-the-Loop Simulation
     ros2 run mbmadcar send_maneuver.py
     ```
 
-MATLAB/Simulink Installation [matlab-installation]
+MATLAB/Simulink Installation [matlab-simulink-installation]
 ============================
 
 -   The following MATLAB release and toolboxes are required

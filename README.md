@@ -43,7 +43,7 @@ MAD76 Kit
 -   Raspberry Pi 5 runs Raspberry Pi OS (Debian Linux)
 
 -   MAD76 Driving Stack is implemented as software components in
-    middleware ROS2 (<https://docs.ros.org/en/iron/index.html>)
+    middleware ROS2 (<https://docs.ros.org/en/jazzy/index.html>)
 
 -   MAD76 Driving Stack consists of the following software components:
 
@@ -103,7 +103,9 @@ started with your MAD76 kit
     ([teachros.pdf](doc/teachros/teachros.pdf))
 
 You may further start a Bachelor- or Master-degree study program at the
-Hochschule Heilbronn to deepen your knowledge in
+[Hochschule
+Heilbronn](https://www.hs-heilbronn.de/en/automotive-systems-engineering)
+to deepen your knowledge in
 
 -   autonomous car racing with MAD76
 

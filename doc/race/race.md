@@ -112,7 +112,7 @@ Human Player
 -   In slow driving, MAD76 supports the human player by stabilizing the
     car in the lane.
 
--   For lab statistics and ranking, open a web browser on the Raspberry
+-   For lap statistics and ranking, open a web browser on the Raspberry
     Pi 5 and navigate to <http://localhost:8082>.
 
 -   You may pass the control of car 0 back to autonomous driving by
