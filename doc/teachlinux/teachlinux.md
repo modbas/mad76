@@ -9,8 +9,6 @@ title: MAD76 Academy: A. Linux
 Agenda
 ======
 
-
-
 -   What is Linux? Why Linux? (see
     Section <a href="#what-is-linux" data-reference-type="ref" data-reference="what-is-linux">2</a>)
 
@@ -45,8 +43,6 @@ Agenda
 
 What is Linux
 =============
-
-
 
 -   Linux is a multi-user, multi-tasking *operating system (OS)*
     \[[1](#ref-linux-in-a-nutshell)\]
@@ -178,8 +174,6 @@ Why Linux?
 Computer Architecture
 =====================
 
-
-
 -   System on a Chip (SoC) Broadcom BCM2712
 
     -   Central Processing Unit (CPU): Quad-core ARM Cortex-A72, 2.4 GHz
@@ -239,8 +233,6 @@ Linux Users
 
 First Steps
 -----------
-
-
 
 1.  At the console, enter your username and password
 

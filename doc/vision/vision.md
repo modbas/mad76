@@ -144,8 +144,6 @@ This section explains
 Mounting Camera
 ---------------
 
-
-
 -   The camera must be mounted above the MAD76 track for bird’s eye
     view.
 

@@ -20,8 +20,6 @@ Agenda
 
 #### Teaching Objectives
 
-
-
 -   Understand the function of remote controllers (RC) in MAD76
 
 -   Understand the General-Purpose-I/O (GPIO) of Raspberry Pi
@@ -122,8 +120,6 @@ Functional Chain from RPi over MAD76 IO to RCs [functional]
     -   manipulating steering signal
 
 <img src="rpi-io-power.png" alt="image" />
-
-
 
 -   MAD76 IO can switch RCs on and off by power switch L293B
 
@@ -466,8 +462,6 @@ Digital Potentiometers MCP42010 [mcp42010]
 
 -   RPi sets poti resistor values by SPI communication (pins
     $\overline{\text{CS}}$, SCK, MOSI)
-
-
 
 #### MCP42010 contains 2 voltage dividers
 
@@ -968,8 +962,6 @@ u_v = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]$$
     and
     Calibration](https://github.com/modbas/mad76/blob/main/doc/remotecontrol/remotecontrol.md).
     No results need to be documented for this exercise.
-
-
 
 <figure>
 <img src="measohm.png" id="F-measohm" alt="" /><figcaption>Exercise 1: Measure <span class="math inline"><em>R</em><sub><em>b</em><em>w</em></sub></span> with a multimeter</figcaption>

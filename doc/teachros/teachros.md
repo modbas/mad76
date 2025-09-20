@@ -9,8 +9,6 @@ title: MAD76 Academy: D. ROS2 Coding
 Agenda
 ======
 
-
-
 -   What is ROS? Why ROS? (see
     Section <a href="#what-is-ros" data-reference-type="ref" data-reference="what-is-ros">2</a>)
 
@@ -49,8 +47,6 @@ Agenda
 
 What is ROS
 ===========
-
-
 
 -   Robot Operating System (ROS) is a middleware (MW) and not an
     operating system (OS)
@@ -222,7 +218,7 @@ ROS2 Workspaces and Packages
 ### Exercises
 
 1.  Start the MAD76 software stack and adjust the Raspberry Pi camera
-    according to Sections Mounting Camera, Focus and Aperture in the
+    according to Sections *Mounting Camera* and *Focus and Aperture* in
     user manual [Computer Vision
     Configuration](https://github.com/modbas/mad76/blob/main/doc/vision/vision.md).
     Required results are:
@@ -238,6 +234,9 @@ ROS2 Workspaces and Packages
 
     -   This video file shall be readable by the VLC media player
 
+2.  Start MAD76 car race according to user manual [Car
+    Race](https://github.com/modbas/mad76/blob/main/doc/race/race.md).
+
 ROS2 Joystick Input
 ===================
 
@@ -251,8 +250,6 @@ ROS2 Joystick Input
 
 Start ROS2 Joystick Node
 ------------------------
-
-
 
 -   ROS2 nodes are started using the command
 
@@ -383,8 +380,9 @@ Measure ROS2 Joystick Messages
     ros2 run rqt_plot rqt_plot
     ```
 
-
-
+```{=html}
+<!-- -->
+```
 -   Enter `/joy/axes[1]` in the entry field `Topic` to plot $u_J(t)$
 
     |         |                                                    |
@@ -741,8 +739,6 @@ Functional Chain of Control Theory
 ----------------------------------
 
 <img src="functionalchain.png" alt="image" />
-
-
 
 -   Input
 

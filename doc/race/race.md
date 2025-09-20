@@ -49,8 +49,8 @@ Driverless Race
 
 -   The driverless cars will race against each other.
 
-Adapt Behavior of Individal Car
--------------------------------
+Adapt Behavior of Individual Cars
+---------------------------------
 
 -   The behavior of an individual car can be adapted by sending
     individual maneuver messages.
@@ -80,14 +80,14 @@ Adapt Behavior of Individal Car
 
     -   Third argument is the lateral reference position
 
-        |      |             |
-        |:-----|:------------|
-        | 0    | right curb  |
-        | 0.25 | right lane  |
-        | 0.5  | center line |
-        | 0.75 | left lane   |
-        | 1    | left curb   |
-        | -1   | ideal line  |
+        |      |                             |
+        |:-----|:----------------------------|
+        | 0    | right curb                  |
+        | 0.25 | right lane                  |
+        | 0.5  | center line                 |
+        | 0.75 | left lane                   |
+        | 1    | left curb                   |
+        | -1   | ideal line for low laptimes |
 
 -   The maximum speed of each car is $0.5 \mathrm{m \over s}$
 

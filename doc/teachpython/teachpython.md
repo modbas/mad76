@@ -40,8 +40,6 @@ Agenda
 What is Python
 ==============
 
-
-
 -   Python is a high-level programming language
     \[[1](#ref-matthes-python)\]
 
@@ -86,7 +84,7 @@ What is Python
 Interpreter versus Compiler [interpreter-versus-compiler]
 ---------------------------
 
-2 <img src="interpreter.png" alt="image" />
+<img src="interpreter.png" alt="image" />
 <img src="compiler.png" alt="image" />
 
 Math with Python
@@ -243,8 +241,6 @@ Solve Quadratic Equations
 
 Solve Linear Equation Systems
 -----------------------------
-
-
 
 -   Solve linear equation systems of order $n \ge 1$
    
@@ -457,8 +453,6 @@ Python Data Types
 | `set`      | unordered collection of unique elements                  | `set( [ 1, 2, 3, 4, 5 ] )`  |
 | `dict`     | dictionary of key-value pairs                            | `{"lastname": "Mouse",`     |
 |            |                                                          | `"firstname": "Mickey"}`    |
-
-
 
 #### Element Access
 
