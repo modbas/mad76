@@ -532,7 +532,7 @@ Software-in-the-Loop Simulation
     ros2 run mbmadcar send_maneuver.py
     ```
 
-MATLAB/Simulink Installation [matlab-simulink-installation]
+MATLAB-Simulink Installation
 ============================
 
 -   The following MATLAB release and toolboxes are required
