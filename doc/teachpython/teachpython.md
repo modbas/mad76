@@ -341,7 +341,9 @@ $$
         x_1 + 2 x_2 &=& 1
       \end{array}
 $$
- Required results are:
+
+
+    Required results are:
 
     -   Python code
 
@@ -357,7 +359,9 @@ $$
         7 x_1 + 8 x_2 + 9 x_3  &=& 12
       \end{array}
 $$
- Required results are:
+
+
+    Required results are:
 
     -   Python code
 

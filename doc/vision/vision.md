@@ -203,7 +203,7 @@ Focus and Aperture
 
     1.  Fasten the screw for aperture adjustment (`OPEN<>CLOSE`).
 
-    2.  Losten the screw for focus adjustment (`NEAR<>FAR`).
+    2.  Loosen the screw for focus adjustment (`NEAR<>FAR`).
 
     3.  Adjust the focus by turning the focus ring until the entiretrack
         area is in sharp focus.
@@ -218,7 +218,7 @@ Focus and Aperture
 
     1.  Fasten the screw for focus adjustment.
 
-    2.  Losten the screw for aperture adjustment.
+    2.  Loosen the screw for aperture adjustment.
 
     3.  Adjust the aperture by turning the aperture ring, such that all
         4 frame markers are reliably detected.

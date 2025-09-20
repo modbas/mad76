@@ -100,7 +100,7 @@ Human Player
 ------------
 
 -   One human player may assume manual control of car 0 by powering up
-    the XBox controller.
+    the Xbox controller.
 
 -   Car 0 now stops automatically and waits for manual control.
 
@@ -116,6 +116,6 @@ Human Player
     Pi 5 and navigate to <http://localhost:8082>.
 
 -   You may pass the control of car 0 back to autonomous driving by
-    switching off the XBox controller.
+    switching off the Xbox controller.
 
 [^1]: frank.traenkle@hs-heilbronn.de
