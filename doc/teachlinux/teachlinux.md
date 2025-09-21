@@ -180,7 +180,7 @@ Computer Architecture
 
     -   Graphics Processing Unit (GPU)
 
--   Random Access Nemory (RAM) 16 GB
+-   Random Access Memory (RAM) 16 GB
 
     -   is lost when app stops or device is powered off
 
