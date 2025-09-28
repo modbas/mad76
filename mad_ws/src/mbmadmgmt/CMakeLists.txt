@@ -21,6 +21,10 @@ install(DIRECTORY
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY
+  static
+  DESTINATION lib/${PROJECT_NAME})
+
+install(DIRECTORY
    data
    DESTINATION share/${PROJECT_NAME})
 

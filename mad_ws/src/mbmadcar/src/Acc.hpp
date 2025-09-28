@@ -40,7 +40,7 @@ namespace mbmad {
 struct DetectedCar {
   float dist = std::numeric_limits<float>::infinity();
   float v = 0.0F;
-  bool sameLane = true;
+  bool sameLane = false;
 };
 
 class Acc
@@ -74,7 +74,7 @@ class Acc
 
         // required distance to leading car
         float dmin = dminAnyCase + std::fabs(selfV) * (Tt + reactTimeBuffer);   // distance car travels during deadtime and timebuffer
-        dmin += std::pow(selfV - leadCar.v, 2) / (2.0F * amaxBrake);            // distance car travels during maximal deceleration
+        dmin += std::pow(selfV - leadCar.v, 2) / (2.0F * amaxBrake);            // distance car travels during maximal deceleration // before: dmin += (selfV-leadCar.v) / amaxBreak
 
         // FSM Lane Switching
         if (fsmLaneSwitchingState) { // lane switching state or lead car is too close
@@ -132,7 +132,7 @@ class Acc
                               leadCar.dist > 2.0F*dmin;
 
           bool prepareAccActivation =  lane == 0U &&
-                                      leadCar.dist <= (dmin + 1.0F * p->size.at(0)) &&
+	                              leadCar.dist <= (dmin + 2.0F * p->size.at(0)) &&
                                       selfV > leadCar.v &&
                                       !(rearCar.v > selfV && rearCar.dist > passingMinDist); // rearcar is not disturbing
 
@@ -154,7 +154,7 @@ class Acc
           if (shouldTurnAccOn) fsmAccState = true;
         }
 
-        publishDebugInfo();
+        publishDebugInfo(selfFaultLateral);
       }
     }
 
@@ -164,10 +164,10 @@ class Acc
 
  private:
     CarParameters const * const p = CarParameters::p();
-    const float sameLaneEyMax = p->size.at(1) + 5e-3F;            // variable for maximum lateral offset for other car to be considered as being in the same lane // before: p->size.at(1) + 15e-3
+    const float sameLaneEyMax = p->size.at(1) + 10e-3F;            // variable for maximum lateral offset for other car to be considered as being in the same lane // before: p->size.at(1) + 15e-3
     const float selfKappaMax = 12.0F;
     const float selfEyMax = 0.5F * p->size.at(1);
-    const float dminAnyCase = p->size.at(0) + 10e-3F;            // 50 mm
+    const float dminAnyCase = p->size.at(0) + 30e-3F;            // 50 mm
     const float acc2ccScale = 2.0F;
     const float cc2accScale = -0.2F;
     const float Tt = 2.0F * p->Tt;
@@ -249,7 +249,7 @@ class Acc
                     (car.s.at(1) - s.at(1)) * std::cos(psi);
 
         float eyDiff = ey - selfEy; // lateral offset difference to ego car
-        bool isInSameLane = (std::fabs(eyDiff) < sameLaneEyMax) || selfFaultLateral;
+        bool isInSameLane = (std::fabs(eyDiff) < sameLaneEyMax); // || selfFaultLateral;
 
         bool isAhead = (carDist > 0.0F);
         bool isBehind = (carDist < 0.0F) && (carDist > rearCar.dist);
@@ -286,7 +286,7 @@ class Acc
       }
     }
 
-    void publishDebugInfo(void)
+    void publishDebugInfo(bool faultLateral)
     {
       std_msgs::msg::Float32MultiArray msg;
       msg.data = {
@@ -295,7 +295,8 @@ class Acc
         static_cast<float>(lane),
         static_cast<float>(leadCar.sameLane),
         leadCar.v,
-        leadCar.dist
+        leadCar.dist,
+	static_cast<float>(faultLateral)
       };
       pubDebugAcc->publish(msg);
     }

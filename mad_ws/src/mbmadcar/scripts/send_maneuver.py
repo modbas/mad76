@@ -66,7 +66,7 @@ class SendManeuverNode(Node):
     while not client.wait_for_service(timeout_sec = 1.0):
       self.get_logger().info('service /mad/get_waypoints is not available, waiting again ...')
     self.maneuver = self.compute_maneuver(client, self.carid, vmax, alpha, type, xref)
-    self.maneuverpass = self.compute_maneuver(client, self.carid, vmax, 0.75, type, xref)
+    self.maneuverpass = self.compute_maneuver(client, self.carid, vmax, 0.8, type, xref)
     self.timer = self.create_timer(1.0, self.step)
 
   def compute_maneuver(self, client, carid, vmax, alpha, type, xref):

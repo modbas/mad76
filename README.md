@@ -102,6 +102,9 @@ started with your MAD76 kit
 -   [D. ROS2 Coding for MAD76](doc/teachros/teachros.md)
     ([teachros.pdf](doc/teachros/teachros.pdf))
 
+-   [E. MAD76 SQL Database](doc/teachsql/teachsql.md)
+    ([teachsql.pdf](doc/teachsql/teachsql.pdf))
+
 You may further start a Bachelor- or Master-degree study program at
 [Hochschule
 Heilbronn](https://www.hs-heilbronn.de/en/automotive-systems-engineering)

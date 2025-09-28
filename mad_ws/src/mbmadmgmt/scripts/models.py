@@ -29,9 +29,8 @@ db = SqliteDatabase(dbpath)
 class Driver(Model):
     id = IntegerField(primary_key=True)  # Primary key
     name = CharField(max_length=64)  # Driver name
-    team = CharField(max_length=64)  # Team name
     robot = BooleanField(default=False)  # Is the driver a robot?
-    
+
     class Meta:
         database = db  # Link the model to the database
 
@@ -41,6 +40,13 @@ class Race(Model):
     name = CharField(max_length=64, default="MAD76")
     timestamp = DateTimeField()
     
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'timestamp': self.timestamp.isoformat() if self.timestamp else None
+        }
+
     class Meta:
         database = db  # Link the model to the database
 
@@ -69,7 +75,8 @@ class Car(Model):
             'maxavgspeed': self.maxavgspeed,
             'currentlaptime': self.currentlaptime,
             'lapctr': self.lapctr,
-            'crashctr': self.crashctr
+            'crashctr': self.crashctr,
+            'drivername': self.driver.name if self.driver else None,
         }
 
     class Meta:

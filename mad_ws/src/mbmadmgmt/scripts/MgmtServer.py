@@ -19,6 +19,8 @@ import sys
 import threading
 import flask
 from datetime import datetime
+
+from flask import app
 import rclpy
 from rclpy.node import Node
 import rclpy.parameter
@@ -67,6 +69,19 @@ class MgmtServerNode(Node):
         def index():
             return flask.render_template('index.html')
 
+
+        @app.route('/mad.css')
+        def mad_css():
+            return flask.send_from_directory('static', 'mad.css')
+
+        # get race data
+        @app.route('/getracedata', methods=['GET'])
+        def getracedata():
+            if self.race is None:
+                return flask.jsonify({"error": "No race data available"}), 404
+            else:
+                return flask.jsonify(self.race.to_dict()), 200
+
         # get car lap data
         @app.route('/getlapdata', methods=['GET'])
         def getlapdata():
@@ -90,9 +105,8 @@ class MgmtServerNode(Node):
         # create new driver
         @app.route('/createdriver', methods=['POST'])
         def createdriver():
-            # get driver name and team from form data
+            # get driver name from form data
             driver_name = flask.request.json.get('name')
-            driver_team = flask.request.json.get('team')
             if not driver_name:
                 return flask.jsonify({"error": "Missing driver name"}), 400
             else:
@@ -104,7 +118,7 @@ class MgmtServerNode(Node):
                     rclpy.spin_until_future_complete(self, future)
                     try:
                         result = future.result()
-                        self.driver = Driver.create(name=driver_name, team=driver_team, robot=False)
+                        self.driver = Driver.create(name=driver_name, robot=False)
                         self.car = Car.create(race=self.race.id, driver=self.driver.id, carid=0)                
                         return flask.jsonify({}), 200
                     except Exception as e:
@@ -119,7 +133,7 @@ class MgmtServerNode(Node):
                 selfcarid = self.car.id
             # sort cars by lap time
             cars = Car.select().where(Car.race == self.race.id).order_by(Car.minlaptime.asc())
-            ranking = [{"active": (car.id == selfcarid), "driver": car.driver.name, "team": car.driver.team, "laptime": car.minlaptime, "avgspeed": car.maxavgspeed } for car in cars]
+            ranking = [{"active": (car.id == selfcarid), "driver": car.driver.name, "laptime": car.minlaptime, "avgspeed": car.maxavgspeed } for car in cars]
             return flask.jsonify(ranking), 200
 
         return app

@@ -105,7 +105,7 @@ class LapCounter
 
   private:
     rclcpp::Node& node;
-    const float maxDeltaX { 0.2F }; // maximum distance between 2 sampling points
+    const float maxDeltaX { 0.3F }; // maximum distance between 2 sampling points
     bool lost { true };
     uint32_t lapctr { 0U };
     uint32_t crashctr { 0U };

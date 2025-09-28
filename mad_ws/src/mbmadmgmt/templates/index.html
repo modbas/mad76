@@ -1,15 +1,33 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rev="made" href="mailto:frank.traenkle@hs-heilbronn.de">
+    <link rel="stylesheet" type="text/css" href="/mad.css">
     <title>MAD76</title>
     <script>
-        const prec = 1e3;
+        const prec = 3;
         const maxpos = 20;
         const maxposscore = 10;
         lapctr = 0;
+
+        async function fetchData() {
+            await fetchRaceData();
+            await fetchRanking();
+        }
+
+        async function fetchRaceData() {
+            try {
+                const response = await fetch('/getracedata');
+                if (!response.ok) { 
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                displayRaceData(data);            
+            } catch (error) {
+            }            
+        }
 
         async function fetchLapData() {
             try {
@@ -40,14 +58,18 @@
             }
         } 
 
+        function displayRaceData(data) {
+            document.getElementById('racename').value = data.name;
+        }
+
         function displayLapData(data) {
             document.getElementById('lapctr').textContent = data.lapctr;
             document.getElementById('trackcrashctr').textContent = data.crashctr;
-            document.getElementById('minlaptime').textContent = Math.round(data.minlaptime * prec) / prec;
-            document.getElementById('laptime').textContent = Math.round(data.laptime * prec) / prec;
-            document.getElementById('currentlaptime').textContent = Math.round(data.currentlaptime * prec) / prec;
-            document.getElementById('maxavgspeed').textContent =  Math.round(data.maxavgspeed * prec) / prec;
-            document.getElementById('avgspeed').textContent = Math.round(data.avgspeed * prec) / prec;
+            document.getElementById('minlaptime').textContent = data.minlaptime.toFixed(prec);
+            document.getElementById('laptime').textContent = data.laptime.toFixed(prec);
+            document.getElementById('currentlaptime').textContent = data.currentlaptime.toFixed(prec);
+            document.getElementById('maxavgspeed').textContent = data.maxavgspeed.toFixed(prec);
+            document.getElementById('avgspeed').textContent = data.avgspeed.toFixed(prec);
         }
 
         function displayRanking(data) {
@@ -60,9 +82,8 @@
                     document.getElementById('active' + istr).textContent = data[i].active ? "*" : "";
                     document.getElementById('pos' + istr).textContent = istr;
                     document.getElementById('driver' + istr).textContent = data[i].driver;
-                    document.getElementById('team' + istr).textContent = data[i].team;
-                    document.getElementById('laptime' + istr).textContent = Math.round(data[i].laptime * prec) / prec;
-                    document.getElementById('avgspeed' + istr).textContent = Math.round(data[i].avgspeed * prec) / prec;
+                    document.getElementById('laptime' + istr).textContent = data[i].laptime.toFixed(prec);
+                    document.getElementById('avgspeed' + istr).textContent = data[i].avgspeed.toFixed(prec);
                     score = 0;
                     if (i < maxposscore) {
                         score = maxposscore - i;
@@ -75,7 +96,6 @@
                 document.getElementById('active' + istr).textContent = "";
                 document.getElementById('pos' + istr).textContent = "";
                 document.getElementById('driver' + istr).textContent = "";
-                document.getElementById('team' + istr).textContent = "";
                 document.getElementById('laptime' + istr).textContent = "";
                 document.getElementById('avgspeed' + istr).textContent = "";
                 document.getElementById('score' + istr).textContent = "";
@@ -106,7 +126,6 @@
 
         function createDriver() {
             const driverName = document.getElementById('drivername').value;
-            const driverTeam = document.getElementById('driverteam').value;
             
             if (driverName) {
                 fetch('/createdriver', {
@@ -114,18 +133,18 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ name: driverName, team: driverTeam })
+                    body: JSON.stringify({ name: driverName })
                 })
                 .then(response => response.json())              
                 .catch(error => console.error('Error:', error));
             } else {
-                alert("Please enter a valid driver name and team.");
+                alert("Please enter a valid driver name.");
             }
 
             lapctr = 0;
         }
 
-        window.onload = fetchRanking;
+        window.onload = fetchData;
         window.setInterval(fetchLapData, 1000);
     </script>
 </head>
@@ -135,7 +154,7 @@
         <table>
             <tr>
                 <td>Race</td>
-                <td><input id="racename" type="text" placeholder="Enter race name"></td>
+                <td><input id="racename" type="text" placeholder="Enter new race name"></td>
                 <td><button id="racecreate" type="submit">New race</button></td>
             </tr>
         </table>
@@ -144,9 +163,7 @@
         <table>
             <tr>
                 <td>Driver</td>
-                <td><input id="drivername" type="text" placeholder="Enter driver name"></td>
-                <td>Team</td>
-                <td><input id="driverteam" type="text" placeholder="Enter team name"></td>
+                <td><input id="drivername" type="text" placeholder="Enter new driver name"></td>
                 <td><button id="drivercreate" type="submit">Start</button></td>
             </tr>
         </table>
@@ -154,51 +171,59 @@
     <table>
         <tr>
             <td>Lap</td>
-            <td id="lapctr"></td>
+            <td id="lapctr" class="value"></td>
         </tr>
         <tr>
             <td>Position</td>
-            <td id="rank"></td>
+            <td id="rank" class="value"></td>
         </tr>
         <tr>
             <td>Crash</td>
-            <td id="trackcrashctr"></td>
+            <td id="trackcrashctr" class="value"></td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <td></td>            
+            <th class="value">Best</th>
+            <th class="value">Last</th>
+            <th class="value">Current</th>
         </tr>
         <tr>
             <td>Time [s]</td>            
-            <td id="minlaptime"></td>
-            <td id="laptime"></td>
-            <td id="currentlaptime"></td>
+            <td id="minlaptime" class="value"></td>
+            <td id="laptime" class="value"></td>
+            <td id="currentlaptime" class="value"></td>
         </tr>    
         <tr>
             <td>Speed [m/s]</td>
-            <td id="maxavgspeed"></td>
-            <td id="avgspeed"></td>
+            <td id="maxavgspeed" class="value"></td>
+            <td id="avgspeed" class="value"></td>
         </tr>    
     </table>
     <p></p>
     <table>
-        <tr><th></th><th>Pos</th><th>Driver</th><th>Team</th><th>Time [s]</th><th>Speed [m/s]</th><th>Score</th></tr>
-        <tr><td id="active01"></td><td id="pos01"></td> <td id="driver01"></td> <td id="team01"></td> <td id="laptime01"></td> <td id="avgspeed01"><td id="score01"></td> </tr>
-        <tr><td id="active02"></td><td id="pos02"></td> <td id="driver02"></td> <td id="team02"></td> <td id="laptime02"></td> <td id="avgspeed02"><td id="score02"></td> </tr>
-        <tr><td id="active03"></td><td id="pos03"></td> <td id="driver03"></td> <td id="team03"></td> <td id="laptime03"></td> <td id="avgspeed03"><td id="score03"></td> </tr>
-        <tr><td id="active04"></td><td id="pos04"></td> <td id="driver04"></td> <td id="team04"></td> <td id="laptime04"></td> <td id="avgspeed04"><td id="score04"></td> </tr>
-        <tr><td id="active05"></td><td id="pos05"></td> <td id="driver05"></td> <td id="team05"></td> <td id="laptime05"></td> <td id="avgspeed05"><td id="score05"></td> </tr>
-        <tr><td id="active06"></td><td id="pos06"></td> <td id="driver06"></td> <td id="team06"></td> <td id="laptime06"></td> <td id="avgspeed06"><td id="score06"></td> </tr>
-        <tr><td id="active07"></td><td id="pos07"></td> <td id="driver07"></td> <td id="team07"></td> <td id="laptime07"></td> <td id="avgspeed07"><td id="score07"></td> </tr>
-        <tr><td id="active08"></td><td id="pos08"></td> <td id="driver08"></td> <td id="team08"></td> <td id="laptime08"></td> <td id="avgspeed08"><td id="score08"></td> </tr>
-        <tr><td id="active09"></td><td id="pos09"></td> <td id="driver09"></td> <td id="team09"></td> <td id="laptime09"></td> <td id="avgspeed09"><td id="score09"></td> </tr>
-        <tr><td id="active10"></td><td id="pos10"></td> <td id="driver10"></td> <td id="team10"></td> <td id="laptime10"></td> <td id="avgspeed10"><td id="score10"></td> </tr>
-        <tr><td id="active11"></td><td id="pos11"></td> <td id="driver11"></td> <td id="team11"></td> <td id="laptime11"></td> <td id="avgspeed11"><td id="score11"></td> </tr>
-        <tr><td id="active12"></td><td id="pos12"></td> <td id="driver12"></td> <td id="team12"></td> <td id="laptime12"></td> <td id="avgspeed12"><td id="score12"></td> </tr>
-        <tr><td id="active13"></td><td id="pos13"></td> <td id="driver13"></td> <td id="team13"></td> <td id="laptime13"></td> <td id="avgspeed13"><td id="score13"></td> </tr>
-        <tr><td id="active14"></td><td id="pos14"></td> <td id="driver14"></td> <td id="team14"></td> <td id="laptime14"></td> <td id="avgspeed14"><td id="score14"></td> </tr>
-        <tr><td id="active15"></td><td id="pos15"></td> <td id="driver15"></td> <td id="team15"></td> <td id="laptime15"></td> <td id="avgspeed15"><td id="score15"></td> </tr>
-        <tr><td id="active16"></td><td id="pos16"></td> <td id="driver16"></td> <td id="team16"></td> <td id="laptime16"></td> <td id="avgspeed16"><td id="score16"></td> </tr>
-        <tr><td id="active17"></td><td id="pos17"></td> <td id="driver17"></td> <td id="team17"></td> <td id="laptime17"></td> <td id="avgspeed17"><td id="score17"></td> </tr>
-        <tr><td id="active18"></td><td id="pos18"></td> <td id="driver18"></td> <td id="team18"></td> <td id="laptime18"></td> <td id="avgspeed18"><td id="score18"></td> </tr>
-        <tr><td id="active19"></td><td id="pos19"></td> <td id="driver19"></td> <td id="team19"></td> <td id="laptime19"></td> <td id="avgspeed19"><td id="score19"></td> </tr>
-        <tr><td id="active20"></td><td id="pos20"></td> <td id="driver20"></td> <td id="team20"></td> <td id="laptime20"></td> <td id="avgspeed20"><td id="score20"></td> </tr>
+        <tr><th></th><th class="narrowvalue">Pos</th><th >Driver</th><th class="value">Time [s]</th><th class="value">Speed [m/s]</th><th class="value">Score</th></tr>
+        <tr><td id="active01"></td><td id="pos01" class="narrowvalue"></td> <td id="driver01"></td> <td id="laptime01" class="value"></td> <td id="avgspeed01" class="value"></td><td id="score01" class="value"></td> </tr>
+        <tr><td id="active02"></td><td id="pos02" class="narrowvalue"></td> <td id="driver02"></td> <td id="laptime02" class="value"></td> <td id="avgspeed02" class="value"></td><td id="score02" class="value"></td> </tr>
+        <tr><td id="active03"></td><td id="pos03" class="narrowvalue"></td> <td id="driver03"></td> <td id="laptime03" class="value"></td> <td id="avgspeed03" class="value"></td><td id="score03" class="value"></td> </tr>
+        <tr><td id="active04"></td><td id="pos04" class="narrowvalue"></td> <td id="driver04"></td> <td id="laptime04" class="value"></td> <td id="avgspeed04" class="value"></td><td id="score04" class="value"></td> </tr>
+        <tr><td id="active05"></td><td id="pos05" class="narrowvalue"></td> <td id="driver05"></td> <td id="laptime05" class="value"></td> <td id="avgspeed05" class="value"></td><td id="score05" class="value"></td> </tr>
+        <tr><td id="active06"></td><td id="pos06" class="narrowvalue"></td> <td id="driver06"></td> <td id="laptime06" class="value"></td> <td id="avgspeed06" class="value"></td><td id="score06" class="value"></td> </tr>
+        <tr><td id="active07"></td><td id="pos07" class="narrowvalue"></td> <td id="driver07"></td> <td id="laptime07" class="value"></td> <td id="avgspeed07" class="value"><td id="score07" class="value"></td> </tr>
+        <tr><td id="active08"></td><td id="pos08" class="narrowvalue"></td> <td id="driver08"></td> <td id="laptime08" class="value"></td> <td id="avgspeed08" class="value"><td id="score08" class="value"></td> </tr>
+        <tr><td id="active09"></td><td id="pos09" class="narrowvalue"></td> <td id="driver09"></td> <td id="laptime09" class="value"></td> <td id="avgspeed09" class="value"><td id="score09" class="value"></td> </tr>
+        <tr><td id="active10"></td><td id="pos10" class="narrowvalue"></td> <td id="driver10"></td> <td id="laptime10" class="value"></td> <td id="avgspeed10" class="value"><td id="score10" class="value"></td> </tr>
+        <tr><td id="active11"></td><td id="pos11" class="narrowvalue"></td> <td id="driver11"></td> <td id="laptime11" class="value"></td> <td id="avgspeed11" class="value"><td id="score11" class="value"></td> </tr>
+        <tr><td id="active12"></td><td id="pos12" class="narrowvalue"></td> <td id="driver12"></td> <td id="laptime12" class="value"></td> <td id="avgspeed12" class="value"><td id="score12" class="value"></td> </tr>
+        <tr><td id="active13"></td><td id="pos13" class="narrowvalue"></td> <td id="driver13"></td> <td id="laptime13" class="value"></td> <td id="avgspeed13" class="value"><td id="score13" class="value"></td> </tr>
+        <tr><td id="active14"></td><td id="pos14" class="narrowvalue"></td> <td id="driver14"></td> <td id="laptime14" class="value"></td> <td id="avgspeed14" class="value"><td id="score14" class="value"></td> </tr>
+        <tr><td id="active15"></td><td id="pos15" class="narrowvalue"></td> <td id="driver15"></td> <td id="laptime15" class="value"></td> <td id="avgspeed15" class="value"><td id="score15" class="value"></td> </tr>
+        <tr><td id="active16"></td><td id="pos16" class="narrowvalue"></td> <td id="driver16"></td> <td id="laptime16" class="value"></td> <td id="avgspeed16" class="value"><td id="score16" class="value"></td> </tr>
+        <tr><td id="active17"></td><td id="pos17" class="narrowvalue"></td> <td id="driver17"></td> <td id="laptime17" class="value"></td> <td id="avgspeed17" class="value"><td id="score17" class="value"></td> </tr>
+        <tr><td id="active18"></td><td id="pos18" class="narrowvalue"></td> <td id="driver18"></td> <td id="laptime18" class="value"></td> <td id="avgspeed18" class="value"><td id="score18" class="value"></td> </tr>
+        <tr><td id="active19"></td><td id="pos19" class="narrowvalue"></td> <td id="driver19"></td> <td id="laptime19" class="value"></td> <td id="avgspeed19" class="value"><td id="score19" class="value"></td> </tr>
+        <tr><td id="active20"></td><td id="pos20" class="narrowvalue"></td> <td id="driver20"></td> <td id="laptime20" class="value"></td> <td id="avgspeed20" class="value"><td id="score20" class="value"></td> </tr>
     </table>
     <div id="results"></div>
 </body>

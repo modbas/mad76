@@ -1,0 +1,20 @@
+p,h1,h2,h3,h4,ul,ol,li,div,td,th,address,blockquote,nobr,b,i,input
+     { font-family:Tahoma,sans-serif; color:#FFFFFF; }
+a:link { color:#FFFFFF; text-decoration:none; }
+a:visited { color:#FFFFFF; text-decoration:none; }
+a:active { color:#FFFFFF; text-decoration:none; }
+body { background:#003300; }
+td.rightalign { text-align:right; font-size:1em; }
+th.value { text-align:right; width:6em; }
+th.narrowvalue { text-align:right; width:3em; }
+td.value { text-align:right; width:6em; }
+td.narrowvalue { text-align:right; width:3em; }
+td.leftvalue { text-align:center; width:2em; }
+td.mode { text-align:center; width:4em; }
+td.bar { text-align:left; width:4em; background:#004400; }
+button.percent { background:#00FFFF; }
+.footer { font-size:0.5em; }
+input {
+    background: #003300; /* dark background */
+    color: #FFFFFF;      /* white text for contrast */
+}
