@@ -299,17 +299,17 @@ MAD76 Tables (Relations)
 
 #### Table `car`
 
-|             |                           |                          |                    |                |                 |
-|------------:|:--------------------------|:-------------------------|-------------------:|---------------:|----------------:|
-|         `id`| `minlaptime`              | `maxavgspeed`            |             `carid`|       `race_id`|      `driver_id`|
-|            1| 3.99969887733459          | 0.391122311353683        |                   0|               1|                1|
-|            2| 3.7996678352356           | 0.411522477865219        |                   0|               1|                2|
-|            3| 3.3248438835144           | 0.470151901245117        |                   0|               1|                3|
-|            4| 3.57491326332092          | 0.437629461288452        |                   0|               1|                4|
-|          ...| ...                       | ...                      |                 ...|             ...|              ...|
-|    `INTEGER`| `REAL`                    | `REAL`                   |           `INTEGER`|       `INTEGER`|        `INTEGER`|
-|  primary key| minimum lap time          | maximum speed            |         real car id|  foreign key to|   foreign key to|
-|             | of individual car in race | of individual car inrace |  0 = orange/red car|   in table race|  in table driver|
+|             |                           |                          |                    |                |                |
+|------------:|:--------------------------|:-------------------------|-------------------:|---------------:|---------------:|
+|         `id`| `minlaptime`              | `maxavgspeed`            |             `carid`|       `race_id`|     `driver_id`|
+|            1| 3.99969887733459          | 0.391122311353683        |                   0|               1|               1|
+|            2| 3.7996678352356           | 0.411522477865219        |                   0|               1|               2|
+|            3| 3.3248438835144           | 0.470151901245117        |                   0|               1|               3|
+|            4| 3.57491326332092          | 0.437629461288452        |                   0|               1|               4|
+|          ...| ...                       | ...                      |                 ...|             ...|             ...|
+|    `INTEGER`| `REAL`                    | `REAL`                   |           `INTEGER`|       `INTEGER`|       `INTEGER`|
+|  primary key| minimum lap time          | maximum speed            |         real car id|  foreign key to|  foreign key to|
+|             | of individual car in race | of individual car inrace |  0 = orange/red car|    table `race`|  table `driver`|
 
 -   Display all columns and rows of table `car`
 
