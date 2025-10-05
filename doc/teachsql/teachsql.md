@@ -44,9 +44,12 @@ What is SQL
 
 -   SQL was invented by IBM in the 1970s
 
--   SQL is used for querying, updating, and managing data in a database
+-   SQL is used for querying, updating, and managing data in databases
 
--   SQL can be used from command line, programming languages, and GUIs
+-   SQL can be used from command line, programming languages, and GUIs /
+    web frontends
+
+-   SQL has an interpreter
 
 Relational Database Systems
 ---------------------------
@@ -64,9 +67,9 @@ Relational Database Systems
 
 -   Each table consists of rows and columns
 
--   Mathematical concept: Relational Algebra
+-   Mathematical concept: *Relational Algebra*
 
--   Design concept: Entity-Relationship Model (E-R Model)
+-   Design concept: *Entity-Relationship Model (E-R Model)*
 
     -   entities (e.g, country)
 
@@ -132,7 +135,7 @@ Relational Database Systems
 Other Database Systems
 ----------------------
 
--   NoSQL databases
+-   NoSQL databases (Not-only SQL)
 
     -   Non-relational
 
@@ -393,8 +396,8 @@ So why do we split data into multiple tables?
     -   No data integrity: If a driver’s name or race name changes, it
         must be updated in multiple rows
 
-    -   Avoid redundancy by *normalization* (*normal forms* 1 to 5)
-        \[[1](#ref-schicker-datenbanken)\]
+-   Avoid redundancy by *normalization* (*normal forms* 1 to 5)
+    \[[1](#ref-schicker-datenbanken)\]
 
 SQL in Python
 =============
