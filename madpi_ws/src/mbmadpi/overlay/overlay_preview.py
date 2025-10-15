@@ -122,12 +122,7 @@ def main():
         print(f"'{img_path}' not found; creating a placeholder background.")
         frame = np.full((600, 800, 3), 110, dtype=np.uint8)
         cv2.putText(frame, 'Placeholder Track Preview', (50, 300), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (200,200,200), 2)
-    try:
-        frame = cv2.rotate(frame, cv2.ROTATE_180)
-        print('Rotated input image by 180 degrees for preview.')
-    except Exception:
-        frame = np.flipud(np.fliplr(frame))
-        print('Rotated input image by 180 degrees (fallback using numpy).')
+
 
     target_w, target_h = 800, 600
     h, w = frame.shape[:2]
