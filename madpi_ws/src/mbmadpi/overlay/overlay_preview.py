@@ -2,7 +2,8 @@ import os
 import cv2
 import numpy as np
 
-def get_mad76_data():
+def get_mad76_data(): # Mock function to simulate data retrieval
+    # In a real scenario, this function would fetch data from the MAD76 management interface
     return [
         {'car': 1, 'pos': 1, 'driver': 'name_1', 'lap': 12, 'time': 110.56, 'speed': 136.8, 'mode': 'User'},
         {'car': 2, 'pos': 2, 'driver': 'name_2', 'lap': 11, 'time': 112.34, 'speed': 0.5, 'mode': 'AI'},
