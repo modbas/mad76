@@ -175,6 +175,9 @@ def draw_bottom_status(frame):
 class OverlayNode(Node):
     def __init__(self):
         super().__init__('overlay_node')
+        # ROS parameter for mgmt server URL (GET /getranking)
+        self.declare_parameter('mgmt_url', 'http://localhost:8082/getranking')
+        self.mgmt_url = self.get_parameter('mgmt_url').get_parameter_value().string_value
         self.subscription = self.create_subscription(
             Image,
             '/mad/camera/image_raw',
@@ -192,7 +195,6 @@ class OverlayNode(Node):
             self.get_logger().warning('Could not create subscription to /mad/locate/caroutputsext (message types may not be built yet)')
 
         # periodic mgmt fetch (1 Hz) to retrieve driver names / ranking
-        self.mgmt_url = 'http://localhost:8082/getranking'
         self.create_timer(1.0, self._mgmt_fetch_timer)
         self.bridge = CvBridge()
         cv2.namedWindow("MAD76 - Camera Overlay", cv2.WINDOW_NORMAL)
