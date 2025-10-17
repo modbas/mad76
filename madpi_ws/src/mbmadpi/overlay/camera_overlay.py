@@ -187,11 +187,17 @@ class OverlayNode(Node):
             self.listener_callback,
             10)
         # subscribe to control reference messages
+        qosBestEffort = rclpy.qos.QoSProfile(
+            reliability=rclpy.qos.ReliabilityPolicy.BEST_EFFORT,
+            durability=rclpy.qos.DurabilityPolicy.VOLATILE,
+            history=rclpy.qos.HistoryPolicy.KEEP_LAST,
+            depth=1)
+        
         self.sub_ctrl_ref = self.create_subscription(
             CtrlReference,
             '/mad/car0/ctrlreference',
             self.ctrl_reference_callback,
-            10)
+            qosBestEffort)
 
         self.bridge = CvBridge()
         cv2.namedWindow("MAD76 - Camera Overlay", cv2.WINDOW_NORMAL)
