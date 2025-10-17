@@ -82,6 +82,7 @@ class CarState:
             return out
 
 CAR_STATE = CarState()
+
 def draw_text(img, text, org, font_scale=0.6, thickness=1, color=(255,255,255)):
     cv2.putText(img, text, org, cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, thickness, cv2.LINE_AA)
 
@@ -180,116 +181,50 @@ def draw_bottom_status(frame):
         draw_text(frame, mode_text, (car_name_x, mode_y), font_scale=mode_scale, thickness=1, color=(180,255,255))
         draw_text(frame, speed_text, (car_name_x, cmd_y), font_scale=cmd_scale, thickness=1, color=(255,255,200))
 
-
-
-if Node is not None:
-    class OverlayNode(Node):
-        def __init__(self):
-            super().__init__('overlay_node')
-            # ensure the attribute exists so callers that expect a management
-            # fetch timer won't get AttributeError. It will be set if/when
-            # a timer is created (e.g. via create_timer).
-            self._mgmt_fetch_timer = None
-
-            try:
-                self.sub_car_outputs_ext = self.create_subscription(
-                    CtrlReference,
-                    '/mad/locate/CtrlReference',
-                    self.car_outputs_ext_callback,
-                    10)
-            except Exception:
-                # if message types are not available in analysis environment this will fail here; node runtime will succeed when ROS is sourced
-                self.get_logger().warning('Could not create subscription to /mad/locate/CtrlReference (message types may not be built yet)')
-
-            # bridge and window setup
-            try:
+        class CameraOverlay(Node):
+            def __init__(self):
+                super().__init__('camera_overlay')
                 self.bridge = CvBridge()
-            except Exception:
-                self.bridge = None
-            cv2.namedWindow("MAD76 - Camera Overlay", cv2.WINDOW_NORMAL)
-            cv2.resizeWindow("MAD76 - Camera Overlay", 800, 600)
+                self.camera_subscription = self.create_subscription(
+                    Image,
+                    '/camera/image_raw',
+                    self.camera_callback,
+                    10)
+                self.ctrl_subscription = self.create_subscription(
+                    CtrlReference,
+                    '/control/reference',
+                    self.ctrl_callback,
+                    10)
+                self.publisher = self.create_publisher(Image, '/camera/overlay', 10)
 
-        def listener_callback(self, msg):
-            try:
-                frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8') if self.bridge is not None else None
-            except Exception as e:
-                self.get_logger().error(f"Failed to convert image: {e}")
-                return
-
-            if frame is None:
-                return
-
-            # target window size
-            target_w, target_h = 800, 600
-            h, w = frame.shape[:2]
-            if w == target_w and h == target_h:
-                canvas = frame
-            else:
-                scale = min(target_w / float(w), target_h / float(h))
-                new_w = max(1, int(round(w * scale)))
-                new_h = max(1, int(round(h * scale)))
-                resized = cv2.resize(frame, (new_w, new_h), interpolation=cv2.INTER_AREA)
-                canvas = np.full((target_h, target_w, 3), 110, dtype=np.uint8)
-                x_off = (target_w - new_w) // 2
-                y_off = (target_h - new_h) // 2
-                canvas[y_off:y_off+new_h, x_off:x_off+new_w] = resized
-
-            frame = canvas
-
-            # Draw overlays (using preview design)
-            draw_leaderboard(frame)
-            draw_bottom_status(frame)
-
-            cv2.imshow("MAD76 - Camera Overlay", frame)
-            cv2.waitKey(1)
-
-        def car_outputs_ext_callback(self, msg):
-            try:
+            def ctrl_callback(self, msg):
                 CAR_STATE.update_car_from_topic(msg)
-            except Exception as e:
-                self.get_logger().error(f'Error updating car state from outputs ext: {e}')
 
+            def camera_callback(self, msg):
+                try:
+                    frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+                    
+                    # Apply overlays
+                    draw_leaderboard(frame)
+                    draw_bottom_status(frame)
+                    
+                    # Publish the processed image
+                    overlay_msg = self.bridge.cv2_to_ros2(frame)
+                    self.publisher.publish(overlay_msg)
+                    
+                except Exception as e:
+                    self.get_logger().error(f'Error processing image: {str(e)}')
 
+        def main(args=None):
+            rclpy.init(args=args)
+            node = CameraOverlay()
+            try:
+                rclpy.spin(node)
+            except KeyboardInterrupt:
+                pass
+            finally:
+                node.destroy_node()
+                rclpy.shutdown()
 
-else:
-    # rclpy / ROS not available in this environment; leave OverlayNode undefined
-    OverlayNode = None
-
-
-def main(args=None):
-    # run as ROS node if rclpy is available
-    if rclpy is not None:
-        rclpy.init(args=args)
-        node = OverlayNode()
-        rclpy.spin(node)
-        node.destroy_node()
-        cv2.destroyAllWindows()
-        rclpy.shutdown()
-    else:
-        # Fallback when ROS is not available: write a single preview image to disk
-        # in the overlay folder so a destination PC can see the output without
-        # needing a live GUI session.
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        out_path = os.path.join(script_dir, 'camera_overlay_preview.jpg')
-
-        frame = np.full((600, 800, 3), 110, dtype=np.uint8)
-        # draw overlays on a static frame for preview
-        draw_leaderboard(frame)
-        draw_bottom_status(frame)
-
-        try:
-            ok = cv2.imwrite(out_path, frame)
-            if ok:
-                print(f"Preview image written to: {out_path}")
-            else:
-                print(f"Failed to write preview image to: {out_path}")
-        except Exception as e:
-            print(f"Error writing preview image: {e}")
-
-if __name__ == '__main__':
-    try:
-        main()
-    except Exception as e:
-        import traceback
-        print("Unhandled exception in main:", e)
-        traceback.print_exc()
+        if __name__ == '__main__':
+            main()
