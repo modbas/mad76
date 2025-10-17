@@ -62,7 +62,6 @@ class CarState:
                 rec['pos'] = item.get('pos')
                 rec['laptime'] = item.get('laptime')
                 rec['avgspeed'] = item.get('avgspeed')
-                rec['lapctr'] = item.get('lapctr')
 
     def snapshot_list(self):
         """
@@ -80,7 +79,7 @@ class CarState:
                     'car': rec.get('car', cid),
                     'pos': rec.get('pos', None),
                     'driver': rec.get('driver', '') or f'car_{cid}',
-                    'lap': rec.get('lapctr'),
+                    'lap': rec.get('lapctr', 0),
                     'time': rec.get('laptime', 0.0),
                     'speed': rec.get('avgspeed', 0.0),
                     'mode': 'On Track',
