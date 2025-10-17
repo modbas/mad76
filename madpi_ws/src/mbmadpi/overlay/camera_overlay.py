@@ -141,10 +141,10 @@ def draw_leaderboard(frame, x=10, y=10, width=300):
     draw_text(frame, 'MAD76', (x + 12, y + 26), font_scale=0.6, thickness=2)
 
     visible_entries = sorted([c for c in car_data if c['mode'].lower() != 'not on track'], key=lambda e: e['pos'])
-    for idx, entry in enumerate(visible_entries):
+    for idx, car in enumerate(visible_entries):
         line_y = y + header_h + padding + idx * entry_h
         color_map = {1: (0, 0, 255), 2: (255, 255, 255), 3: (255, 0, 0), 4: (0, 255, 0)}
-        car_color = color_map.get(entry['car'], (200, 200, 200))
+        car_color = color_map.get(car['car'], (200, 200, 200))
 
         rect_w = 6
         rect_h = entry_h - 6
@@ -152,10 +152,10 @@ def draw_leaderboard(frame, x=10, y=10, width=300):
         ry = line_y + 4
         cv2.rectangle(frame, (rx, ry), (rx + rect_w, ry + rect_h), car_color, -1)
 
-        pos_text = f"{entry['pos']:>2}."
-        car_text = f"{entry['driver']}"
-        lap_text = f"Lap{entry['lap']}"
-        time_text = f"{entry['time']:.2f}s"
+        pos_text = f"{car['pos']:>2}."
+        car_text = f"{car['driver']}"
+        lap_text = f"Lap{car['lap']}"
+        time_text = f"{car['time']:.2f}s"
 
         tx = rx + rect_w + 8
         draw_text(frame, pos_text, (tx, line_y + 22), font_scale=0.5, thickness=2, color=(245,245,245))
@@ -201,7 +201,7 @@ def draw_bottom_status(frame):
         gap = 4
 
         mode_text = f"Mode: {car['mode']}"
-        speed_text = f"Speed: {car['speed']}"
+        speed_text = f"Speed: {car['speed']:.2f}m/s"
         (mode_w, _), _ = cv2.getTextSize(mode_text, cv2.FONT_HERSHEY_SIMPLEX, mode_scale, 1)
         (cmd_w, _), _ = cv2.getTextSize(speed_text, cv2.FONT_HERSHEY_SIMPLEX, cmd_scale, 1)
 
