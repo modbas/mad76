@@ -21,6 +21,7 @@ except Exception:
     CvBridge = None
 import cv2
 import numpy as np
+import os
 import json
 import urllib.request
 from urllib.error import URLError
@@ -265,21 +266,25 @@ def main(args=None):
         cv2.destroyAllWindows()
         rclpy.shutdown()
     else:
-        # Fallback when ROS is not available: display a static overlay window until user quits.
-        cv2.namedWindow("MAD76 - Camera Overlay", cv2.WINDOW_NORMAL)
-        cv2.resizeWindow("MAD76 - Camera Overlay", 800, 600)
+        # Fallback when ROS is not available: write a single preview image to disk
+        # in the overlay folder so a destination PC can see the output without
+        # needing a live GUI session.
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        out_path = os.path.join(script_dir, 'camera_overlay_preview.jpg')
+
+        frame = np.full((600, 800, 3), 110, dtype=np.uint8)
+        # draw overlays on a static frame for preview
+        draw_leaderboard(frame)
+        draw_bottom_status(frame)
+
         try:
-            while True:
-                frame = np.full((600, 800, 3), 110, dtype=np.uint8)
-                # draw overlays on a static frame for preview
-                draw_leaderboard(frame)
-                draw_bottom_status(frame)
-                cv2.imshow("MAD76 - Camera Overlay", frame)
-                # exit loop when 'q' is pressed
-                if cv2.waitKey(1000) & 0xFF == ord('q'):
-                    break
-        finally:
-            cv2.destroyAllWindows()
+            ok = cv2.imwrite(out_path, frame)
+            if ok:
+                print(f"Preview image written to: {out_path}")
+            else:
+                print(f"Failed to write preview image to: {out_path}")
+        except Exception as e:
+            print(f"Error writing preview image: {e}")
 
 if __name__ == '__main__':
     try:
