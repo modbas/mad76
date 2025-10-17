@@ -185,27 +185,18 @@ def draw_bottom_status(frame):
 class OverlayNode(Node):
     def __init__(self):
         super().__init__('overlay_node')
-        # ROS parameter for mgmt server URL (GET /getranking)
-        self.declare_parameter('mgmt_url', 'http://localhost:8082/getranking')
-        self.mgmt_url = self.get_parameter('mgmt_url').get_parameter_value().string_value
         self.subscription = self.create_subscription(
             Image,
             '/mad/camera/image_raw',
             self.listener_callback,
             10)
-        # subscribe to aggregated car outputs from locate
-        try:
-            self.sub_car_outputs_ext = self.create_subscription(
-                CarOutputsExtList,
-                '/mad/locate/caroutputsext',
-                self.car_outputs_ext_callback,
-                10)
-        except Exception:
-            # if message types are not available in analysis environment this will fail here; node runtime will succeed when ROS is sourced
-            self.get_logger().warning('Could not create subscription to /mad/locate/caroutputsext (message types may not be built yet)')
+        # subscribe to control reference messages
+        self.sub_ctrl_ref = self.create_subscription(
+            CtrlReference,
+            '/mad/ctrl/reference',
+            self.ctrl_reference_callback,
+            10)
 
-        # periodic mgmt fetch (1 Hz) to retrieve driver names / ranking
-        self.create_timer(1.0, self._mgmt_fetch_timer)
         self.bridge = CvBridge()
         cv2.namedWindow("MAD76 - Camera Overlay", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("MAD76 - Camera Overlay", 800, 600)
@@ -234,103 +225,25 @@ class OverlayNode(Node):
 
         frame = canvas
 
-        # Draw overlays (using preview design)
+        # Draw overlays
         draw_leaderboard(frame)
         draw_bottom_status(frame)
 
         cv2.imshow("MAD76 - Camera Overlay", frame)
         cv2.waitKey(1)
 
-    def car_outputs_ext_callback(self, msg):
+    def ctrl_reference_callback(self, msg):
         try:
-            CAR_STATE.update_from_outputs_ext_list(msg)
+            CAR_STATE.update_car_from_topic(msg)
         except Exception as e:
-            self.get_logger().error(f'Error updating car state from outputs ext: {e}')
-
-    def _mgmt_fetch_timer(self):
-        # fetch mgmt ranking JSON
-        try:
-            with urllib.request.urlopen(self.mgmt_url, timeout=0.8) as resp:
-                raw = resp.read()
-                try:
-                    data = json.loads(raw.decode('utf-8'))
-                    if isinstance(data, list):
-                        CAR_STATE.update_from_ranking(data)
-                except Exception as e:
-                    self.get_logger().warning(f'Failed to parse mgmt ranking JSON: {e}')
-        except URLError as e:
-            # mgmt server not available; silently ignore
-            pass
-        except Exception as e:
-            self.get_logger().warning(f'Error fetching mgmt ranking: {e}')
-
+            self.get_logger().error(f'Error updating car state from control reference: {e}')
 
 def main(args=None):
-        preview_once()
-
+    rclpy.init(args=args)
+    node = OverlayNode()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
 
 if __name__ == '__main__':
-    # ensure preview runs when ROS not available
-    try:
-        main()
-    except Exception as e:
-        print(f"Error running as ROS node: {e}\nFalling back to preview mode.")
-        preview_once()
-
-
-def preview_once(output_path=None):
-    """Run a single preview render using local preview image or placeholder.
-    This also demonstrates mgmt JSON sanitization by calling update_from_ranking.
-    """
-    script_dir = __file__ and __file__[:__file__.rfind('/')]
-    img_path = None
-    try:
-        import os
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        img_path = os.path.join(script_dir, 'track_preview.jpg')
-        out_path = output_path or os.path.join(script_dir, 'track_preview_out_camera_overlay.jpg')
-    except Exception:
-        img_path = None
-        out_path = output_path or 'track_preview_out_camera_overlay.jpg'
-
-    if img_path and os.path.exists(img_path):
-        frame = cv2.imread(img_path)
-        if frame is None:
-            frame = np.full((600, 800, 3), 110, dtype=np.uint8)
-            cv2.putText(frame, 'Could not read image', (50, 300), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (200,200,200), 2)
-    else:
-        frame = np.full((600, 800, 3), 110, dtype=np.uint8)
-        cv2.putText(frame, 'Placeholder Track Preview', (50, 300), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (200,200,200), 2)
-
-    # sample mgmt data (some fields intentionally missing to test sanitization)
-    sample_ranking = [
-        {'driver': 'name_1', 'laptime': 110.56, 'avgspeed': 136.8, 'active': True},
-        {'driver': 'name_2', 'time': 112.34},
-        {'driver': 'name_3'},
-    ]
-
-    CAR_STATE.update_from_ranking(sample_ranking)
-
-    target_w, target_h = 800, 600
-    h, w = frame.shape[:2]
-    if w == target_w and h == target_h:
-        canvas = frame.copy()
-    else:
-        scale = min(target_w / float(w), target_h / float(h))
-        new_w = max(1, int(round(w * scale)))
-        new_h = max(1, int(round(h * scale)))
-        resized = cv2.resize(frame, (new_w, new_h), interpolation=cv2.INTER_AREA)
-        canvas = np.full((target_h, target_w, 3), 110, dtype=np.uint8)
-        x_off = (target_w - new_w) // 2
-        y_off = (target_h - new_h) // 2
-        canvas[y_off:y_off+new_h, x_off:x_off+new_w] = resized
-
-    frame = canvas
-    draw_leaderboard(frame)
-    draw_bottom_status(frame)
-
-    ok = cv2.imwrite(out_path, frame)
-    if ok:
-        print(f"Preview image written to: {out_path}")
-    else:
-        print("Failed to write preview image.")
+    main()
