@@ -60,8 +60,8 @@ class CarState:
                 rec = self._cars.setdefault(idx, {})
                 rec['driver'] = item.get('driver')
                 rec['pos'] = idx
-                rec['laptime'] = item.get('laptime') or item.get('time')
-                rec['avgspeed'] = item.get('avgspeed') or item.get('speed')
+                rec['laptime'] = item.get('currentlaptime')
+                rec['avgspeed'] = item.get('avgspeed')
 
     def snapshot_list(self):
         """
@@ -92,7 +92,7 @@ def draw_text(img, text, org, font_scale=0.6, thickness=1, color=(255,255,255)):
     cv2.putText(img, text, org, cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, thickness, cv2.LINE_AA)
 
 def draw_leaderboard(frame, x=10, y=10, width=300):
-    car_data = CAR_STATE()
+    car_data = CAR_STATE.snapshot_list()
     entry_h = 25
     header_h = 25
     padding = 8
@@ -131,7 +131,7 @@ def draw_leaderboard(frame, x=10, y=10, width=300):
     cv2.rectangle(frame, (x, y), (x + width, y + height), (150, 150, 150), 1)
 
 def draw_bottom_status(frame):
-    car_info = CAR_STATE()
+    car_info = CAR_STATE.snapshot_list()
     cols = len(car_info)
 
     start_y = frame.shape[0] - 64
@@ -191,8 +191,8 @@ def draw_bottom_status(frame):
 class OverlayNode(Node):
     def __init__(self):
         super().__init__('overlay_node')
-        # ROS parameter for mgmt server URL (GET /getranking)
-        self.declare_parameter('mgmt_url', 'http://localhost:8082/getranking')
+        # ROS parameter for mgmt server URL (GET /getlabdata)
+        self.declare_parameter('mgmt_url', 'http://localhost:8082/getlabdata')
         self.mgmt_url = self.get_parameter('mgmt_url').get_parameter_value().string_value
         self.subscription = self.create_subscription(
             Image,
