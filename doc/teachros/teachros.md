@@ -154,16 +154,16 @@ MAD76 and ROS
 
 -   The rectangles are *ROS2 nodes*
 
-    | ROS2 Node      | Description                                                                                |
-    |:---------------|:-------------------------------------------------------------------------------------------|
-    | `camera_node`  | standard ROS2 node for RPi camera input and image acquisition \[[2](#ref-ros-cameranode)\] |
-    | `joy_node`     | standard ROS2 node for joystick input \[[3](#ref-ros-joy)\] (will be used in this session) |
-    | `visionnode`   | computer vision based on AruCo markers                                                     |
-    | `locatenode`   | multi-object tracking                                                                      |
-    | `carctrlnode`  | speed control, position control, pathfollowing control, racing                             |
-    | `rcnode`       | controls cars via MAD76 IO (will be developed in this session)                             |
-    | `tracknode`    | stores map of MAD76 map                                                                    |
-    | `sendmaneuver` | generates maneuvers for cars                                                               |
+    | ROS2 Node          | Description                                                                                |
+    |:-------------------|:-------------------------------------------------------------------------------------------|
+    | `camera_node`      | standard ROS2 node for RPi camera input and image acquisition \[[2](#ref-ros-cameranode)\] |
+    | `joy_node`         | standard ROS2 node for joystick input \[[3](#ref-ros-joy)\] (will be used in this session) |
+    | `visionnode`       | computer vision based on AruCo markers                                                     |
+    | `locatenode`       | multi-object tracking                                                                      |
+    | `carctrlnode`      | speed control, position control, pathfollowing control, racing                             |
+    | `rcnode`           | controls cars via MAD76 IO (will be developed in this session)                             |
+    | `tracknode`        | stores map of MAD76 map                                                                    |
+    | `send_maneuver.py` | generates maneuvers for cars                                                               |
 
 -   The single-pointed arrows are *ROS2 topics*
 
@@ -397,8 +397,8 @@ Measure ROS2 Joystick Messages
 -   The y-axis is the value axis $u_J \in [-1, 1]$ of signal function
     $u_J(t)$
 
--   You may zoom the plot using the mouse wheel or the right mouse
-    button with horizontal or vertical drag
+-   You may zoom the plot hitting the `Ctrl` key whileusing the mouse
+    wheel or the right mouse button with horizontal or vertical drag
 
 -   You may move the plot using the left mouse button
 
@@ -430,6 +430,7 @@ ROS2 Workspace and Package for MAD76 IO
     <!-- -->
     ```
     ``` bash
+    mkdir -p ~/src/madpi_ws/src
     cd ~/src/madpi_ws/src
     ros2 pkg create --node-name=rcnode --build-type=ament_python mbmadpi
     ```
@@ -709,12 +710,6 @@ Code and Run ROS2 Node
 
     ``` bash
     ros2 topic echo /mad/car0/carinputs
-    ```
-
--   Or use `rqt_plot`
-
-    ``` bash
-    ros2 run rqt_plot rqt_plot
     ```
 
 -   You may now control car 0 by sending different messages to ROS2
@@ -1025,6 +1020,26 @@ ROS2 Node for Joystick Control
     ``` bash
     ros2 launch mbmadpi madjoy.launch
     ```
+
+<img src="xboxsteering.png" alt="image" />
+
+### Exercises
+
+1.  Change the processing of the joystick input signals for steering by
+    modifying the method `joy_callback` in `ctrlnode.py` such that
+
+    -   the steering signal is no longer the right, horizontal joystick
+        axis `axes[2]`
+
+    -   but the left and right triggers of the Xbox controller.
+
+    Required results are:
+
+    -   Modified method `joy_callback` in `ctrlnode.py`
+
+    -   Thrust and braking is still on left vertical joystick axis.
+
+    -   But steering is now on left and right triggers.
 
 ROS2 Node for Safe Car Control
 ------------------------------

@@ -60,7 +60,7 @@ Rationale [rationale]
 
 -   The cars have tolerances in steering, motor propulsion and friction
 
--   The RC microcontrollers ($\mu$Cs) have tolerances in the 3.3V power
+-   The RC microcontrollers (Cs) have tolerances in the 3.3V power
     supply for the potentiometers
 
 -   Due to these tolerances, each RC-to-car-coupling must be calibrated

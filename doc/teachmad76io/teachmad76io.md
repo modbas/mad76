@@ -70,18 +70,18 @@ IO):
 
 -   Power supply
 
-    | pin | in/out | SV1 pin | L293B  | function                                                                                          |
-    |:----|:-------|:--------|:-------|:--------------------------------------------------------------------------------------------------|
-    | 5V  | in     | 1       | 3Y     | 5V power supply for microcontroller ($\mu$C) and radio controller of RC (originally from battery) |
-    | GND | in     | 2       | GND1-4 | ground                                                                                            |
+    | pin | in/out | SV1 pin | L293B  | function                                                                                     |
+    |:----|:-------|:--------|:-------|:---------------------------------------------------------------------------------------------|
+    | 5V  | in     | 1       | 3Y     | 5V power supply for microcontroller (C) and radio controller of RC (originally from battery) |
+    | GND | in     | 2       | GND1-4 | ground                                                                                       |
 
 -   Lower connector for motor control (thrust and braking)
 
-    | pin                | in/out | SV1 pin | MCP42010 | function                                                               |
-    |:-------------------|:-------|:--------|:---------|:-----------------------------------------------------------------------|
-    | 3V3                | out    | 8       | PA0      | 3.3V power supply for digital poti                                     |
-    | Digital poti wiper | in     | 9       | PW0      | motor signal $u_v \in \left[ 0V, 3.3V \right]$ read in by $\mu$C of RC |
-    | GND                | out    | 10      | PB0      | ground for digital poti                                                |
+    | pin                | in/out | SV1 pin | MCP42010 | function                                                          |
+    |:-------------------|:-------|:--------|:---------|:------------------------------------------------------------------|
+    | 3V3                | out    | 8       | PA0      | 3.3V power supply for digital poti                                |
+    | Digital poti wiper | in     | 9       | PW0      | motor signal $u_v \in \left[ 0V, 3.3V \right]$ read in by C of RC |
+    | GND                | out    | 10      | PB0      | ground for digital poti                                           |
 
     | $u_v$              | function                                 |
     |:-------------------|:-----------------------------------------|
@@ -94,11 +94,11 @@ IO):
 ```
 -   Upper connector for steering control
 
-    | pin                | in/out | SV1 pin | MCP42010 | function                                                                       |
-    |:-------------------|:-------|:--------|:---------|:-------------------------------------------------------------------------------|
-    | 3V3                | out    | 5       | PA1      | 3.3V power supply for digital poti                                             |
-    | Digital poti wiper | in     | 6       | PW1      | steering signal $\delta_v \in \left[ 0V, 3.3V \right]$ read in by $\mu$C of RC |
-    | GND                | out    | 7       | PB1      | ground for digital poti                                                        |
+    | pin                | in/out | SV1 pin | MCP42010 | function                                                                  |
+    |:-------------------|:-------|:--------|:---------|:--------------------------------------------------------------------------|
+    | 3V3                | out    | 5       | PA1      | 3.3V power supply for digital poti                                        |
+    | Digital poti wiper | in     | 6       | PW1      | steering signal $\delta_v \in \left[ 0V, 3.3V \right]$ read in by C of RC |
+    | GND                | out    | 7       | PB1      | ground for digital poti                                                   |
 
     | $\delta_v$         | function                            |
     |:-------------------|:------------------------------------|
@@ -135,8 +135,8 @@ Functional Chain from RPi over MAD76 IO to RCs [functional]
 
     3.  Power on RC
 
-    4.  Onboard $\mu$Cs of RC and car auto-calibrate steering and motor
-        as soon as radio connection is established
+    4.  Onboard Cs of RC and car auto-calibrate steering and motor as
+        soon as radio connection is established
 
 -   RPi controls L293B by digital outputs
 
@@ -154,7 +154,7 @@ Functional Chain from RPi over MAD76 IO to RCs [functional]
 
     -   RPi controls MCP42010 by Serial-Peripheral-Interface (SPI)
 
-    -   MCP42010s are daisy-changed by SPI
+    -   MCP42010s are daisy-chained by SPI
 
 Digital I/O of Raspberry Pi [rpi-io]
 ---------------------------
@@ -367,16 +367,16 @@ Python Code to Power On any RC
 -   `rcpoweron.py` parses the command line and has the following command
     line argument
 
-    | argument | description                             |
-    |:---------|:----------------------------------------|
-    | `carid`  | ID of the RC to power on (0, 1, 2 or 3) |
+    | argument | description                                        |
+    |:---------|:---------------------------------------------------|
+    | `carid`  | zero-based ID of the RC to power on (0, 1, 2 or 3) |
 
--   e.g., RC 1 is powered on by entering the following command in a
-    terminal
+-   e.g., RC 1 (one-based, `carid==0`) is powered on by entering the
+    following command in a terminal
 
         python rcpoweron.py 0
 
--   e.g., RC 2 is powered on by
+-   e.g., RC 2 (one-based, `carid==1`) is powered on by
 
         python rcpoweron.py 1
 

@@ -408,7 +408,7 @@ SQL in Python
     import sqlite3 as sql
 
     # Connect to the database
-    db = sql.connect('~labor/src/mad76/mad_ws/install/mbmadmgmt/share/mbmadmgmt/data/mad.db')
+    db = sql.connect("/home/labor/src/mad76/mad_ws/install/mbmadmgmt/share/mbmadmgmt/data/mad.db")
 
     # Execute SQL commands
     rows = db.execute("select car.id, car.minlaptime, driver.name from car inner join driver on car.driver_id = driver.id order by car.minlaptime").fetchall()
