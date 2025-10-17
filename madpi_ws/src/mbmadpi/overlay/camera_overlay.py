@@ -62,6 +62,7 @@ class CarState:
                 rec['pos'] = idx
                 rec['laptime'] = item.get('currentlaptime')
                 rec['avgspeed'] = item.get('avgspeed', 0.0)
+                rec['lapctr'] = item.get('lapctr', 0)
 
     def snapshot_list(self):
         """
