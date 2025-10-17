@@ -60,7 +60,7 @@ class CarState:
                 rec = self._cars.setdefault(idx, {})
                 rec['driver'] = item.get('driver')
                 rec['pos'] = idx
-                rec['laptime'] = item.get('currentlaptime')
+                rec['laptime'] = item.get('laptime')
                 rec['avgspeed'] = item.get('avgspeed')
 
     def snapshot_list(self):
@@ -77,12 +77,12 @@ class CarState:
             for cid, rec in items:
                 item = {
                     'car': rec.get('car', cid),
-                    'pos': rec.get('pos', None) or cid,
+                    'pos': rec.get('pos', None),
                     'driver': rec.get('driver', '') or f'car_{cid}',
-                    'lap': rec.get('lap', 0),
+                    'lap': rec.get('lapctr', 0),
                     'time': rec.get('laptime', 0.0),
-                    'speed': rec.get('speed', 0.0),
-                    'mode': 'On Track' if rec.get('prob', 0.0) > 0.1 else 'Not On Track'
+                    'speed': rec.get('avgspeed', 0.0),
+                    'mode': 'On Track',
                 }
                 out.append(item)
             return out
@@ -191,8 +191,8 @@ def draw_bottom_status(frame):
 class OverlayNode(Node):
     def __init__(self):
         super().__init__('overlay_node')
-        # ROS parameter for mgmt server URL (GET /getlabdata)
-        self.declare_parameter('mgmt_url', 'http://localhost:8082/getlabdata')
+        # ROS parameter for mgmt server URL (GET /getranking)
+        self.declare_parameter('mgmt_url', 'http://localhost:8082/getranking')
         self.mgmt_url = self.get_parameter('mgmt_url').get_parameter_value().string_value
         self.subscription = self.create_subscription(
             Image,
