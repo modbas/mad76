@@ -1,7 +1,14 @@
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Image
-from mbmadmsgs.msg import CarOutputsExtList
+try:
+    from sensor_msgs.msg import Image
+except Exception:
+    Image = None
+
+try:
+    from mbmadmsgs.msg import CarOutputsExtList
+except Exception:
+    CarOutputsExtList = None
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
@@ -10,108 +17,7 @@ import urllib.request
 from urllib.error import URLError
 
 from .overlay_getcardata import CAR_STATE
-
-
-def draw_text(img, text, org, font_scale=0.6, thickness=1, color=(255, 255, 255)):
-    cv2.putText(img, text, org, cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, thickness, cv2.LINE_AA)
-
-
-def draw_leaderboard(frame, x=10, y=10, width=300):
-    car_data = CAR_STATE.snapshot_list()
-    entry_h = 25
-    header_h = 25
-    padding = 8
-    visible = [c for c in car_data if c['mode'].lower() != 'not on track']
-    height = header_h + padding + entry_h * len(visible) + padding
-
-    overlay = frame.copy()
-    cv2.rectangle(overlay, (x, y), (x + width, y + height), (18, 18, 18), -1)
-    alpha = 0.5
-    cv2.addWeighted(overlay, alpha, frame, 1 - alpha, 0, frame)
-
-    draw_text(frame, 'MAD76', (x + 12, y + 26), font_scale=0.6, thickness=2)
-
-    visible_entries = sorted(visible, key=lambda e: e['pos'])
-    for idx, entry in enumerate(visible_entries):
-        line_y = y + header_h + padding + idx * entry_h
-        color_map = {1: (0, 0, 255), 2: (255, 255, 255), 3: (255, 0, 0), 4: (0, 255, 0)}
-        car_color = color_map.get(entry['car'], (200, 200, 200))
-
-        rect_w = 6
-        rect_h = entry_h - 6
-        rx = x + 8
-        ry = line_y + 4
-        cv2.rectangle(frame, (rx, ry), (rx + rect_w, ry + rect_h), car_color, -1)
-
-        pos_text = f"{entry['pos']:>2}."
-        car_text = f"{entry['driver']}"
-        lap_text = f"Lap{entry['lap']}"
-        time_text = f"{entry['time']:.2f}s"
-
-        tx = rx + rect_w + 8
-        draw_text(frame, pos_text, (tx, line_y + 22), font_scale=0.5, thickness=2, color=(245, 245, 245))
-        draw_text(frame, car_text, (tx + 30, line_y + 22), font_scale=0.55, thickness=1, color=(220, 220, 220))
-        draw_text(frame, lap_text, (x + width - 145, line_y + 22), font_scale=0.50, thickness=1, color=(160, 255, 160))
-        draw_text(frame, time_text, (x + width - 80, line_y + 22), font_scale=0.50, thickness=1, color=(200, 200, 255))
-
-    cv2.rectangle(frame, (x, y), (x + width, y + height), (150, 150, 150), 1)
-
-
-def draw_bottom_status(frame):
-    car_info = CAR_STATE.snapshot_list()
-    cols = len(car_info)
-
-    start_y = frame.shape[0] - 64
-    box_height = 75
-    box_width = int((frame.shape[1] - 40) / max(1, cols))
-
-    overlay = frame.copy()
-    bar_y = start_y - 4
-    cv2.rectangle(overlay, (10, bar_y), (frame.shape[1] - 10, bar_y + box_height + 12), (18, 18, 18), -1)
-    cv2.addWeighted(overlay, 1, frame, 1 - .5, 0, frame)
-
-    for idx, car in enumerate(car_info):
-        x = 10 + idx * box_width
-        y = start_y
-        inner_w = box_width - 12
-        inner_h = box_height
-
-        car_name_x = x + 16
-        car_name_y = y + 16
-        car_scale = 0.60
-        car_th = 2
-        driver_scale = 0.5
-        driver_th = 1
-        mode_scale = 0.5
-        cmd_scale = 0.5
-
-        car_text = f"Car{str(car['car'])}"
-        driver_name = car.get('driver', '')
-
-        (car_w, _), _ = cv2.getTextSize(car_text, cv2.FONT_HERSHEY_SIMPLEX, car_scale, car_th)
-        (driver_w, _), _ = cv2.getTextSize(driver_name, cv2.FONT_HERSHEY_SIMPLEX, driver_scale, driver_th) if driver_name else ((0, 0), 0)
-        gap = 4
-
-        mode_text = f"Mode: {car['mode']}"
-        speed_text = f"Speed: {car['speed']}"
-        (mode_w, _), _ = cv2.getTextSize(mode_text, cv2.FONT_HERSHEY_SIMPLEX, mode_scale, 1)
-        (cmd_w, _), _ = cv2.getTextSize(speed_text, cv2.FONT_HERSHEY_SIMPLEX, cmd_scale, 1)
-
-        needed_w = car_w + gap + driver_w + 36
-        needed_w = max(needed_w, mode_w + 36, cmd_w + 36)
-
-        max_inner_w = (frame.shape[1] - 10) - (x + 6)
-        inner_w_draw = min(max(inner_w, int(needed_w)), max_inner_w)
-
-        draw_text(frame, car_text, (car_name_x, car_name_y), font_scale=car_scale, thickness=car_th)
-        if driver_name:
-            driver_x = car_name_x + car_w + gap
-            draw_text(frame, driver_name, (driver_x, car_name_y), font_scale=driver_scale, thickness=driver_th, color=(190, 190, 190))
-
-        mode_y = y + 40
-        cmd_y = y + 56
-        draw_text(frame, mode_text, (car_name_x, mode_y), font_scale=mode_scale, thickness=1, color=(180, 255, 255))
-        draw_text(frame, speed_text, (car_name_x, cmd_y), font_scale=cmd_scale, thickness=1, color=(255, 255, 200))
+from .overlay_preview import draw_leaderboard, draw_bottom_status, draw_text
 
 
 class OverlayNode(Node):
