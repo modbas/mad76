@@ -60,7 +60,7 @@ class CarState:
                 rec = self._cars.setdefault(idx, {})
                 rec['driver'] = item.get('driver')
                 rec['pos'] = item.get('pos')
-                rec['laptime'] = item.get('currentlaptime')
+                rec['laptime'] = item.get('laptime')
                 rec['avgspeed'] = item.get('avgspeed')
                 rec['lapctr'] = item.get('lapctr')
 
