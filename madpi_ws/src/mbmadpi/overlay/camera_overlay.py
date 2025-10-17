@@ -79,7 +79,7 @@ class CarState:
                     'car': rec.get('car', cid),
                     'pos': rec.get('pos', None),
                     'driver': rec.get('driver', '') or f'car_{cid}',
-                    'lap': rec.get('lapctr', 0),
+                    'lap': rec.get('lapctr'),
                     'time': rec.get('currentlaptime', 0.0),
                     'speed': rec.get('avgspeed', 0.0),
                     'mode': 'On Track',
