@@ -1,5 +1,10 @@
-import rclpy
-from rclpy.node import Node
+try:
+    import rclpy
+    from rclpy.node import Node
+except Exception:
+    rclpy = None
+    Node = None
+
 try:
     from sensor_msgs.msg import Image
 except Exception:
@@ -9,7 +14,11 @@ try:
     from mbmadmsgs.msg import CarOutputsExtList
 except Exception:
     CarOutputsExtList = None
-from cv_bridge import CvBridge
+
+try:
+    from cv_bridge import CvBridge
+except Exception:
+    CvBridge = None
 import cv2
 import numpy as np
 import json
@@ -56,13 +65,31 @@ class CarState:
             ranking_json: list of {driver, laptime, avgspeed, active}
         """
         with self._lock:
-            for idx, item in enumerate(ranking_json, start=1):
+            for idx, item in enumerate(ranking_json or [], start=1):
+                # ensure item is a dict-like object
+                try:
+                    driver = item.get('driver') if hasattr(item, 'get') else item.get('driver') if hasattr(item, 'driver') else None
+                except Exception:
+                    driver = None
+
+                # normalize fields with fallbacks
+                laptime = None
+                if isinstance(item, dict):
+                    laptime = item.get('laptime') or item.get('time')
+                    avgspeed = item.get('avgspeed') or item.get('speed') or 0.0
+                    lapctr = item.get('lapctr') or item.get('lap') or item.get('lap_count') or 0
+                else:
+                    # object with attributes
+                    laptime = getattr(item, 'laptime', None) or getattr(item, 'time', None)
+                    avgspeed = getattr(item, 'avgspeed', None) or getattr(item, 'speed', 0.0)
+                    lapctr = getattr(item, 'lapctr', None) or getattr(item, 'lap', None) or getattr(item, 'lap_count', 0)
+
                 rec = self._cars.setdefault(idx, {})
-                rec['driver'] = item.get('driver')
+                rec['driver'] = driver or ''
                 rec['pos'] = idx
-                rec['laptime'] = item.get('laptime')
-                rec['avgspeed'] = item.get('avgspeed', 0.0)
-                rec['lapctr'] = item.get('lapctr')
+                rec['laptime'] = float(laptime) if laptime is not None else 0.0
+                rec['avgspeed'] = float(avgspeed or 0.0)
+                rec['lapctr'] = int(lapctr or 0)
 
     def snapshot_list(self):
         """
@@ -76,14 +103,21 @@ class CarState:
             # sort by pos when available, else by carid
             items = sorted(self._cars.items(), key=lambda kv: kv[1].get('pos', kv[0]))
             for cid, rec in items:
+                pos = rec.get('pos', cid) or cid
+                driver = rec.get('driver') or f'car_{cid}'
+                lap = int(rec.get('lapctr') or rec.get('lap') or 0)
+                time_val = float(rec.get('laptime') or rec.get('time') or 0.0)
+                speed = float(rec.get('avgspeed') or rec.get('speed') or rec.get('speed_kmh', 0.0) or 0.0)
+                mode = 'On Track' if float(rec.get('prob', 1.0)) > 0.1 else 'Not On Track'
+
                 item = {
-                    'car': rec.get('car', cid),
-                    'pos': rec.get('pos', None),
-                    'driver': rec.get('driver', '') or f'car_{cid}',
-                    'lap': rec.get('lapctr'),
-                    'laptime': rec.get('laptime', 0.0),
-                    'avgspeed': rec.get('avgspeed', 0.0),
-                    'mode': 'On Track',
+                    'car': int(rec.get('car', cid)),
+                    'pos': int(pos),
+                    'driver': driver,
+                    'lap': lap,
+                    'time': time_val,
+                    'speed': speed,
+                    'mode': mode,
                 }
                 out.append(item)
             return out
