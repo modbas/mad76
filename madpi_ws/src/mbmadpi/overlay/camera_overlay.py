@@ -11,9 +11,9 @@ except Exception:
     Image = None
 
 try:
-    from mbmadmsgs.msg import CarOutputsExtList
+    from mbmadmsgs.msg import CtrlReference
 except Exception:
-    CarOutputsExtList = None
+    CtrlReference = None
 
 try:
     from cv_bridge import CvBridge
