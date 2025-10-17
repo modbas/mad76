@@ -194,9 +194,6 @@ class OverlayNode(Node):
             # if message types are not available in analysis environment this will fail here; node runtime will succeed when ROS is sourced
             self.get_logger().warning('Could not create subscription to /mad/locate/CtrlReference (message types may not be built yet)')
 
-        # periodic mgmt fetch (1 Hz) to retrieve driver names / ranking
-        # safely create timer even if _mgmt_fetch_timer isn't defined in this environment
-        self.create_timer(1.0, getattr(self, '_mgmt_fetch_timer', lambda: None))
         self.bridge = CvBridge()
         cv2.namedWindow("MAD76 - Camera Overlay", cv2.WINDOW_NORMAL)
         cv2.resizeWindow("MAD76 - Camera Overlay", 800, 600)
