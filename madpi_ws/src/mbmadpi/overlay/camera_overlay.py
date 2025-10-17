@@ -60,7 +60,7 @@ class CarState:
                 rec = self._cars.setdefault(idx, {})
                 rec['driver'] = item.get('driver')
                 rec['pos'] = idx
-                rec['laptime'] = item.get('currentlaptime')
+                rec['laptime'] = item.get('laptime')
                 rec['avgspeed'] = item.get('avgspeed', 0.0)
                 rec['lapctr'] = item.get('lapctr')
 
@@ -81,8 +81,8 @@ class CarState:
                     'pos': rec.get('pos', None),
                     'driver': rec.get('driver', '') or f'car_{cid}',
                     'lap': rec.get('lapctr'),
-                    'laptime': rec.get('laptime', 0.0),
-                    'avgspeed': rec.get('avgspeed', 0.0),
+                    'time': rec.get('laptime', 0.0),
+                    'speed': rec.get('avgspeed', 0.0),
                     'mode': 'On Track',
                 }
                 out.append(item)
