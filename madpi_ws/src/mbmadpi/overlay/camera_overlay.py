@@ -92,7 +92,7 @@ def draw_text(img, text, org, font_scale=0.6, thickness=1, color=(255,255,255)):
     cv2.putText(img, text, org, cv2.FONT_HERSHEY_SIMPLEX, font_scale, color, thickness, cv2.LINE_AA)
 
 def draw_leaderboard(frame, x=10, y=10, width=300):
-    car_data = get_mad76_data()
+    car_data = CAR_STATE()
     entry_h = 25
     header_h = 25
     padding = 8
@@ -131,7 +131,7 @@ def draw_leaderboard(frame, x=10, y=10, width=300):
     cv2.rectangle(frame, (x, y), (x + width, y + height), (150, 150, 150), 1)
 
 def draw_bottom_status(frame):
-    car_info = get_mad76_data()
+    car_info = CAR_STATE()
     cols = len(car_info)
 
     start_y = frame.shape[0] - 64
