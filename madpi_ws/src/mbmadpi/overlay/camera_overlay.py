@@ -258,14 +258,3 @@ if __name__ == '__main__':
         main()
     except Exception as e:
         print(f"Error running as ROS node: {e}\nFalling back to preview mode.")
-
-
-    frame = canvas
-    draw_leaderboard(frame)
-    draw_bottom_status(frame)
-
-    ok = cv2.imwrite(out_path, frame)
-    if ok:
-        print(f"Preview image written to: {out_path}")
-    else:
-        print("Failed to write preview image.")
