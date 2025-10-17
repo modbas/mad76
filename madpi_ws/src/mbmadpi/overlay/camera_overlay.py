@@ -181,60 +181,78 @@ def draw_bottom_status(frame):
 
 
 
-class OverlayNode(Node):
-    def __init__(self):
-        super().__init__('overlay_node')
-        try:
-            self.sub_car_outputs_ext = self.create_subscription(
-                CtrlReference,
-                '/mad/locate/CtrlReference',
-                self.car_outputs_ext_callback,
-                10)
-        except Exception:
-            # if message types are not available in analysis environment this will fail here; node runtime will succeed when ROS is sourced
-            self.get_logger().warning('Could not create subscription to /mad/locate/CtrlReference (message types may not be built yet)')
+if Node is not None:
+    class OverlayNode(Node):
+        def __init__(self):
+            super().__init__('overlay_node')
+            # ensure the attribute exists so callers that expect a management
+            # fetch timer won't get AttributeError. It will be set if/when
+            # a timer is created (e.g. via create_timer).
+            self._mgmt_fetch_timer = None
 
-        self.bridge = CvBridge()
-        cv2.namedWindow("MAD76 - Camera Overlay", cv2.WINDOW_NORMAL)
-        cv2.resizeWindow("MAD76 - Camera Overlay", 800, 600)
+            try:
+                self.sub_car_outputs_ext = self.create_subscription(
+                    CtrlReference,
+                    '/mad/locate/CtrlReference',
+                    self.car_outputs_ext_callback,
+                    10)
+            except Exception:
+                # if message types are not available in analysis environment this will fail here; node runtime will succeed when ROS is sourced
+                self.get_logger().warning('Could not create subscription to /mad/locate/CtrlReference (message types may not be built yet)')
 
-    def listener_callback(self, msg):
-        try:
-            frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
-        except Exception as e:
-            self.get_logger().error(f"Failed to convert image: {e}")
-            return
+            # bridge and window setup
+            try:
+                self.bridge = CvBridge()
+            except Exception:
+                self.bridge = None
+            cv2.namedWindow("MAD76 - Camera Overlay", cv2.WINDOW_NORMAL)
+            cv2.resizeWindow("MAD76 - Camera Overlay", 800, 600)
 
-        # target window size
-        target_w, target_h = 800, 600
-        h, w = frame.shape[:2]
-        if w == target_w and h == target_h:
-            canvas = frame
-        else:
-            scale = min(target_w / float(w), target_h / float(h))
-            new_w = max(1, int(round(w * scale)))
-            new_h = max(1, int(round(h * scale)))
-            resized = cv2.resize(frame, (new_w, new_h), interpolation=cv2.INTER_AREA)
-            canvas = np.full((target_h, target_w, 3), 110, dtype=np.uint8)
-            x_off = (target_w - new_w) // 2
-            y_off = (target_h - new_h) // 2
-            canvas[y_off:y_off+new_h, x_off:x_off+new_w] = resized
+        def listener_callback(self, msg):
+            try:
+                frame = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8') if self.bridge is not None else None
+            except Exception as e:
+                self.get_logger().error(f"Failed to convert image: {e}")
+                return
 
-        frame = canvas
+            if frame is None:
+                return
 
-        # Draw overlays (using preview design)
-        draw_leaderboard(frame)
-        draw_bottom_status(frame)
+            # target window size
+            target_w, target_h = 800, 600
+            h, w = frame.shape[:2]
+            if w == target_w and h == target_h:
+                canvas = frame
+            else:
+                scale = min(target_w / float(w), target_h / float(h))
+                new_w = max(1, int(round(w * scale)))
+                new_h = max(1, int(round(h * scale)))
+                resized = cv2.resize(frame, (new_w, new_h), interpolation=cv2.INTER_AREA)
+                canvas = np.full((target_h, target_w, 3), 110, dtype=np.uint8)
+                x_off = (target_w - new_w) // 2
+                y_off = (target_h - new_h) // 2
+                canvas[y_off:y_off+new_h, x_off:x_off+new_w] = resized
 
-        cv2.imshow("MAD76 - Camera Overlay", frame)
-        cv2.waitKey(1)
+            frame = canvas
 
-    def car_outputs_ext_callback(self, msg):
-        try:
-            CAR_STATE.update_car_from_topic(msg)
-        except Exception as e:
-            self.get_logger().error(f'Error updating car state from outputs ext: {e}')
+            # Draw overlays (using preview design)
+            draw_leaderboard(frame)
+            draw_bottom_status(frame)
 
+            cv2.imshow("MAD76 - Camera Overlay", frame)
+            cv2.waitKey(1)
+
+        def car_outputs_ext_callback(self, msg):
+            try:
+                CAR_STATE.update_car_from_topic(msg)
+            except Exception as e:
+                self.get_logger().error(f'Error updating car state from outputs ext: {e}')
+
+
+
+else:
+    # rclpy / ROS not available in this environment; leave OverlayNode undefined
+    OverlayNode = None
 
 
 def main(args=None):
