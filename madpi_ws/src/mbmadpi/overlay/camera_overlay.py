@@ -189,7 +189,7 @@ class OverlayNode(Node):
         # subscribe to control reference messages
         self.sub_ctrl_ref = self.create_subscription(
             CtrlReference,
-            '/mad/ctrl/reference',
+            '/mad/car0/ctlreference',
             self.ctrl_reference_callback,
             10)
 
