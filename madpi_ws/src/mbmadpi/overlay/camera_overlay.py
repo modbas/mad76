@@ -186,7 +186,7 @@ class OverlayNode(Node):
         super().__init__('overlay_node')
         try:
             self.sub_car_outputs_ext = self.create_subscription(
-                CtrlReferenceList,
+                CtrlReference,
                 '/mad/locate/CtrlReference',
                 self.car_outputs_ext_callback,
                 10)
