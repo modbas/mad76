@@ -59,9 +59,10 @@ class CarState:
             for idx, item in enumerate(ranking_json, start=1):
                 rec = self._cars.setdefault(idx, {})
                 rec['driver'] = item.get('driver')
-                rec['pos'] = idx
-                rec['laptime'] = item.get('laptime')
+                rec['pos'] = item.get('pos')
+                rec['laptime'] = item.get('currentlaptime')
                 rec['avgspeed'] = item.get('avgspeed')
+                rec['lapctr'] = item.get('lapctr')
 
     def snapshot_list(self):
         """
@@ -80,7 +81,7 @@ class CarState:
                     'pos': rec.get('pos', None),
                     'driver': rec.get('driver', '') or f'car_{cid}',
                     'lap': rec.get('lapctr'),
-                    'time': rec.get('currentlaptime', 0.0),
+                    'time': rec.get('laptime', 0.0),
                     'speed': rec.get('avgspeed', 0.0),
                     'mode': 'On Track',
                 }
