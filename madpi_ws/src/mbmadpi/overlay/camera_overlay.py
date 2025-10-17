@@ -249,12 +249,26 @@ def main(args=None):
         cv2.destroyAllWindows()
         rclpy.shutdown()
     else:
-        preview_once()
-
+        # Fallback when ROS is not available: display a static overlay window until user quits.
+        cv2.namedWindow("MAD76 - Camera Overlay", cv2.WINDOW_NORMAL)
+        cv2.resizeWindow("MAD76 - Camera Overlay", 800, 600)
+        try:
+            while True:
+                frame = np.full((600, 800, 3), 110, dtype=np.uint8)
+                # draw overlays on a static frame for preview
+                draw_leaderboard(frame)
+                draw_bottom_status(frame)
+                cv2.imshow("MAD76 - Camera Overlay", frame)
+                # exit loop when 'q' is pressed
+                if cv2.waitKey(1000) & 0xFF == ord('q'):
+                    break
+        finally:
+            cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    # ensure preview runs when ROS not available
     try:
         main()
     except Exception as e:
-        print(f"Error running as ROS node: {e}\nFalling back to preview mode.")
+        import traceback
+        print("Unhandled exception in main:", e)
+        traceback.print_exc()
