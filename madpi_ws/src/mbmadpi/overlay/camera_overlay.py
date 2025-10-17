@@ -181,50 +181,29 @@ def draw_bottom_status(frame):
         draw_text(frame, mode_text, (car_name_x, mode_y), font_scale=mode_scale, thickness=1, color=(180,255,255))
         draw_text(frame, speed_text, (car_name_x, cmd_y), font_scale=cmd_scale, thickness=1, color=(255,255,200))
 
-        class CameraOverlay(Node):
-            def __init__(self):
-                super().__init__('camera_overlay')
-                self.bridge = CvBridge()
-                self.camera_subscription = self.create_subscription(
-                    Image,
-                    '/camera/image_raw',
-                    self.camera_callback,
-                    10)
-                self.ctrl_subscription = self.create_subscription(
-                    CtrlReference,
-                    '/control/reference',
-                    self.ctrl_callback,
-                    10)
-                self.publisher = self.create_publisher(Image, '/camera/overlay', 10)
 
-            def ctrl_callback(self, msg):
-                CAR_STATE.update_car_from_topic(msg)
-
-            def camera_callback(self, msg):
-                try:
-                    frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-                    
-                    # Apply overlays
-                    draw_leaderboard(frame)
-                    draw_bottom_status(frame)
-                    
-                    # Publish the processed image
-                    overlay_msg = self.bridge.cv2_to_ros2(frame)
-                    self.publisher.publish(overlay_msg)
-                    
-                except Exception as e:
-                    self.get_logger().error(f'Error processing image: {str(e)}')
-
-        def main(args=None):
-            rclpy.init(args=args)
-            node = CameraOverlay()
-            try:
-                rclpy.spin(node)
-            except KeyboardInterrupt:
-                pass
-            finally:
-                node.destroy_node()
-                rclpy.shutdown()
-
-        if __name__ == '__main__':
-            main()
+def main():
+    # Initialize camera capture (use 0 for default camera)
+    cap = cv2.VideoCapture(0)
+    
+    while True:
+        # Read frame from camera
+        ret, frame = cap.read()
+        if not ret:
+            print("Failed to grab frame")
+            break
+            
+        # Draw overlays on the camera frame
+        draw_leaderboard(frame)
+        draw_bottom_status(frame)
+        
+        # Display the result
+        cv2.imshow('Camera Feed', frame)
+        
+        # Break loop on 'q' key
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+    
+    # Clean up
+    cap.release()
+    cv2.destroyAllWindows()
