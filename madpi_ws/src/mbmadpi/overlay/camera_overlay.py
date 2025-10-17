@@ -186,7 +186,7 @@ class OverlayNode(Node):
         super().__init__('overlay_node')
         try:
             self.sub_car_outputs_ext = self.create_subscription(
-                CarOutputsExtList,
+                CtrlReferenceList,
                 '/mad/locate/CtrlReference',
                 self.car_outputs_ext_callback,
                 10)
@@ -237,22 +237,6 @@ class OverlayNode(Node):
         except Exception as e:
             self.get_logger().error(f'Error updating car state from outputs ext: {e}')
 
-    def _mgmt_fetch_timer(self):
-        # fetch mgmt ranking JSON
-        try:
-            with urllib.request.urlopen(self.mgmt_url, timeout=0.8) as resp:
-                raw = resp.read()
-                try:
-                    data = json.loads(raw.decode('utf-8'))
-                    if isinstance(data, list):
-                        CAR_STATE.update_from_ranking(data)
-                except Exception as e:
-                    self.get_logger().warning(f'Failed to parse mgmt ranking JSON: {e}')
-        except URLError as e:
-            # mgmt server not available; silently ignore
-            pass
-        except Exception as e:
-            self.get_logger().warning(f'Error fetching mgmt ranking: {e}')
 
 
 def main(args=None):
