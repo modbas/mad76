@@ -1,0 +1,4 @@
+<launch>
+    <!-- Launch overlay_preview.py as a node -->
+    <node pkg="mbmad" type="overlay_preview.py" name="overlay_preview" output="screen" />
+</launch>

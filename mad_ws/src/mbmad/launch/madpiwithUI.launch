@@ -1,0 +1,7 @@
+<launch>
+    <!-- Include everything from madpifull.launch -->
+    <include file="$(find mbmad)/launch/madpifull.launch" />
+
+    <!-- Launch camera_overlay.py as a node -->
+    <node pkg="mbmad" type="camera_overlay.py" name="camera_overlay" output="screen" />
+</launch>
