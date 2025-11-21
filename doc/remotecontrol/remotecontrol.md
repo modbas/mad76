@@ -96,7 +96,7 @@ Before you start [before-you-start]
 
         ros2 launch mbmad madpiman.launch
 
-    This command starts the I/O of MAT76 but not the driving stack. Omit
+    This command starts the I/O of MAD76 but not the driving stack. Omit
     this step if you want to use the Python program `rctest.py` from
     MAD76 Academy [MAD76 I/O
     Programming](../teachmad76io/teachmad76io.md)

@@ -1205,7 +1205,7 @@ References [bibliography]
 <div id="ref-ros-cameranode" markdown="1">
 
 \[2\] Christian Rauch, “ROS2 Node for libcamera.” 2025. Available:
-<https://github.com/christianrauch/camera_ros>
+[https://github.com/christianrauch/camera\\\_ros](https://github.com/christianrauch/camera\_ros)
 
 </div>
 

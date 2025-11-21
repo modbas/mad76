@@ -280,7 +280,7 @@ References [bibliography]
 <div id="ref-opencv-aruco" markdown="1">
 
 \[1\] OpenCV, “Detection of ArUco Markers.” 2025. Available:
-<https://docs.opencv.org/4.x/d5/dae/tutorial_aruco_detection.html>
+[https://docs.opencv.org/4.x/d5/dae/tutorial\\\_aruco\\\_detection.html](https://docs.opencv.org/4.x/d5/dae/tutorial\_aruco\_detection.html)
 
 </div>
 
