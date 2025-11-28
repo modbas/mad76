@@ -74,22 +74,6 @@ namespace mbmad
           boost::log::trivial::severity >= boost::log::trivial::error);
       steeringOffsets = declare_parameter<std::vector<double>>("steeringoffsets", steeringOffsets);
 
-      // create subscribers and publishers
-      rclcpp::QoS qos{rclcpp::KeepLast(1)};
-      qos.best_effort().durability_volatile();
-      for (uint32_t id = 0U; id < CarParameters::p()->carCnt; ++id)
-      {
-        subInputs.push_back(
-            create_subscription<mbmadmsgs::msg::CarInputs>("/mad/car" + std::to_string(id) + "/carinputs",
-                                                           qos,
-                                                           std::bind(&RcNode::inputsCallback, this, std::placeholders::_1)));
-      }
-
-      // diagnostics updater
-      diagUpdater.setHardwareID(get_name());
-      diagUpdater.add("CheckpointSequence", this, &RcNode::diagCheckpointSequence);
-      diagUpdater.add("comm", this, &RcNode::diagCom);
-
       // Initialize WiringPi and SPI
       if (wiringPiSetup() == -1)
       {
@@ -140,6 +124,26 @@ namespace mbmad
       }
       
       spiInitialized = true;
+
+      // create subscribers and publishers
+      rclcpp::QoS qos{rclcpp::KeepLast(1)};
+      qos.best_effort().durability_volatile();
+      for (uint32_t id = 0U; id < CarParameters::p()->carCnt; ++id)
+      {
+        subInputs.push_back(
+            create_subscription<mbmadmsgs::msg::CarInputs>("/mad/car" + std::to_string(id) + "/carinputs",
+                                                           qos,
+                                                           std::bind(&RcNode::inputsCallback, this, std::placeholders::_1)));
+      }
+
+      // clock for timeout
+      timeoutClock = create_wall_timer(std::chrono::milliseconds(TIMEOUT_DT_MS), std::bind(&RcNode::timeoutCallback, this));
+
+      // diagnostics updater
+      diagUpdater.setHardwareID(get_name());
+      diagUpdater.add("CheckpointSequence", this, &RcNode::diagCheckpointSequence);
+      diagUpdater.add("comm", this, &RcNode::diagCom);
+
       return true;
     }
 
@@ -167,7 +171,10 @@ namespace mbmad
   private:
     static constexpr int SPI_CHANNEL = 0;
     static constexpr int SPI_SPEED = 1000000;
-    static constexpr std::array<int, 4> POWER_PINS = { 25, 23, 24, 18 }; // { GPIO25, pin22 ; GPIO23, pin16 ; GPIO24, pin18 ; GPIO18, pin12 }
+    static constexpr std::array<int, CarParameters::carCnt> POWER_PINS = { 25, 23, 24, 18 }; // { GPIO25, pin22 ; GPIO23, pin16 ; GPIO24, pin18 ; GPIO18, pin12 }
+    const uint32_t TIMEOUT = 80U; // timeout steps (2s)
+    const uint32_t TIMEOUT_DT_MS = 25U; // timeout check period [ms]
+  
     // static constexpr int SPI_CS_PIN = 23;
 
     mbsafe::CheckpointSequence cpSeq{*this, CheckpointGraph::lastCheckpoint};
@@ -181,6 +188,7 @@ namespace mbmad
                                                            0.0, CheckpointGraph::maxDeadline};
     mbsafe::CheckpointGraphMonitor cpGraphMon{*this, CheckpointGraph::graph};
     std::vector<rclcpp::Subscription<mbmadmsgs::msg::CarInputs>::SharedPtr> subInputs;
+    rclcpp::TimerBase::SharedPtr timeoutClock;
     diagnostic_updater::Updater diagUpdater{this, 1.0};
     std::vector<double> steeringOffsets;
     bool spiInitialized = false;
@@ -188,6 +196,7 @@ namespace mbmad
     std::string diagComErrText;
     uint8_t bufPedals[2 * mbmad::CarParameters::carCnt];
     uint8_t bufSteering[2 * mbmad::CarParameters::carCnt];
+    std::array<uint32_t, mbmad::CarParameters::carCnt> timeoutCtr { };
 
     inline uint8_t convertFloat32(float u)
     {
@@ -224,6 +233,25 @@ namespace mbmad
         if (msg->carid < CarParameters::p()->carCnt)
         {
           writeSpi(msg->carid, msg->pedals, msg->steering);
+          timeoutCtr.at(msg->carid) = 0U; // reset timeout counter
+        }
+      }
+    }
+
+    void timeoutCallback()
+    {
+      if (spiInitialized) {
+        for (uint8_t id = 0U; id < CarParameters::p()->carCnt; ++id)
+        {
+          if (timeoutCtr.at(id) < TIMEOUT)
+          {
+            ++timeoutCtr.at(id);
+            if (timeoutCtr.at(id) >= TIMEOUT)
+            {
+              // timeout reached, set pedals, steering to zero
+              writeSpi(id, 0.0F, 0.0F);
+            }
+          }
         }
       }
     }
