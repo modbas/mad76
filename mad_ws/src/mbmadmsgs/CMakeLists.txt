@@ -29,6 +29,7 @@ include_directories(include)
 # messages
 set(msg_files
   "msg/CarInputs.msg"
+  "msg/CarLap.msg"
   "msg/CarOutputs.msg"
   "msg/CarOutputsList.msg"
   "msg/CarOutputsExt.msg"

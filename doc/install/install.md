@@ -426,15 +426,16 @@ Software Architecture
 
 <div id="T-ros2topics" markdown="1">
 
-| ROS2 Topic                  | ROS2 Message Type                   | Description                                      |
-|:----------------------------|:------------------------------------|:-------------------------------------------------|
-| `/mad/camera/image_raw`     | `sensor_msgs::msg::Image`           | camera frames with sampling time $25\mathrm{ms}$ |
-| `/mad/camera/camera_info`   | `sensor_msgs::msg::CameraInfo`      | camera calibration info                          |
-| `/mad/vision/caroutputs`    | `mbmadmsgs::msg::CarOutputsList`    | list of car poses                                |
-| `/mad/locate/caroutputsext` | `mbmadmsgs::msg::CarOutputsExtList` | list of car poses including velocities           |
-| `/mad/car?/carinputs`       | `mbmadmsgs::msg::CarInputs`         | control signals for each individual car          |
-| `/mad/car?/maneuver`        | `mbmadmsgs::msg::DriveManeuver`     | maneuvers for path following and parking         |
-| `/mad/car?/joy`             | `sensor_msgs::msg::Joy`             | standard ROS2 joystick messages                  |
+| ROS2 Topic                  | ROS2 Message Type                   | Description                                                  |
+|:----------------------------|:------------------------------------|:-------------------------------------------------------------|
+| `/mad/camera/image_raw`     | `sensor_msgs::msg::Image`           | camera frames with sampling time $25\mathrm{ms}$             |
+| `/mad/camera/camera_info`   | `sensor_msgs::msg::CameraInfo`      | camera calibration info                                      |
+| `/mad/vision/caroutputs`    | `mbmadmsgs::msg::CarOutputsList`    | list of car poses                                            |
+| `/mad/locate/caroutputsext` | `mbmadmsgs::msg::CarOutputsExtList` | list of car poses including velocities (deprecated)          |
+| `/mad/locate/carobs`        | `mbmadmsgs::msg::CarObsList`        | list of car states and Frenet coordinates w.r.t. center line |
+| `/mad/car?/carinputs`       | `mbmadmsgs::msg::CarInputs`         | control signals for each individual car                      |
+| `/mad/car?/maneuver`        | `mbmadmsgs::msg::DriveManeuver`     | maneuvers for path following and parking                     |
+| `/mad/car?/joy`             | `sensor_msgs::msg::Joy`             | standard ROS2 joystick messages                              |
 
 </div>
 
@@ -749,8 +750,8 @@ Test Simulink Model on the Real MAD76 System
     `Motion Control and carinputs msg/Motion Control/Sliders or Joystick/Sliders`
 
 -   You can measure the vehicle states (elements of bussignal
-    `caroutputsext/caroutputsext(1)`) including position, speed, and yaw
-    angle in the Simulink Data Inspector
+    `carobs/carobs(1)`) including position, speed, and yaw angle in the
+    Simulink Data Inspector
 
 -   Stopping the simulation triggers an emergency stop of the car
 

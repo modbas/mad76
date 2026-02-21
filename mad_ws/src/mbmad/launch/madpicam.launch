@@ -1,7 +1,7 @@
 <!-- ros2 run camera_ros camera_node -ros-args -p FrameDurationLimits:="[20000,20000]" -p role:="viewfinder" -p width:=800 -p height:=600 -p format:="XBGR8888"  -p ExposureTime:=2000 -p AnalogueGain:=1.0 -->
 
 <launch>
-    <node pkg="camera_ros" exec="camera_node" name="camera" namespace="/mad" output="screen">
+    <node pkg="camera_ros" exec="camera_node" name="camera" namespace="/mad" output="screen" launch-prefix="taskset -c 0">
         <param name="FrameDurationLimits" value="[25000,25000]" />
         <param name="role" value="viewfinder" />
         <param name="width" value="800" />
@@ -20,7 +20,7 @@
     </node>
     <node pkg="mbmadvisionaruco" exec="setexposuretime.sh" name="workaround" output="screen">
     </node>
-    <node pkg="mbmadvisionaruco" exec="visionnode" name="vision" output="screen">
+    <node pkg="mbmadvisionaruco" exec="visionnode" name="vision" output="screen" launch-prefix="taskset -c 1,2">
         <param name="HeightCompensation" value="[-0.01, 0.000, 0.001, 0.008]"/>
         <param name="DisplayImage" value="true"/>
         <remap from="/diagnostics" to="diagnostics"/>

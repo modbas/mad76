@@ -17,10 +17,10 @@ clf;
 set(gca, 'Color', config.figure.bgcolor);
 hold on;
 grid on;
-fnplt(this.right.pp, 'r-');
-fnplt(this.left.pp, 'g-');
-fnplt(this.center.pp, 'c--');
-fnplt(this.opt.pp, 'm--');
+fnplt(this.opt.pp, config.track.ideallinecolor);
+fnplt(this.right.pp, config.track.rightcurbcolor);
+fnplt(this.left.pp, config.track.leftcurbcolor);
+fnplt(this.center.pp, config.track.centercolor);
 if config.track.debug
     plot(this.right.points(2,:), this.right.points(3,:), 'ro');
     plot(this.left.points(2,:), this.left.points(3,:), 'go');
@@ -28,7 +28,7 @@ if config.track.debug
     plot(this.opt.points(2,:), this.opt.points(3,:), 'mo');
 end
 for l = this.lanes
-    fnplt(l.pp, 'w--');
+    fnplt(l.pp, config.track.lanecolor);
 end
 axis(this.size);
 axis equal;

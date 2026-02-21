@@ -33,6 +33,7 @@
 #include "mbmadmsgs/msg/car_outputs.hpp"
 #include "mbmadmsgs/msg/car_outputs_ext.hpp"
 #include "mbmadmsgs/msg/car_obs.hpp"
+#include "mbmadmsgs/msg/car_lap.hpp"
 
 namespace mbmad {
 
@@ -51,6 +52,7 @@ public:
 
   void update(const uint64_t newSeqctr, mbmadmsgs::msg::CarOutputs& msg, rclcpp::Time& camTime, std::shared_ptr<Spline> spline)
   {
+    newlap = false;
     msgExt.s = msg.s;
     msgExt.psi = msg.psi;
     if (newSeqctr != seqctr + 1ULL && !firstCall) {
@@ -103,11 +105,27 @@ public:
     msgObs.v = msgExt.v;
     msgObs.cxe = spline->breaks.back();
     if (firstCall) {
-      msgObs.cxd = 0.0F;      
+      msgObs.cxd = 0.0F;
+      msgLap.lapctr = 0;
+      msgLap.laptime = 9999.0F;
+      msgLap.avgspeed = 0.0F;      
     } else {
-      msgObs.cxd = (std::fmod(wx - msgObs.cx + 10.5F * msgObs.cxe, msgObs.cxe) - 0.5F * msgObs.cxe) / CarParameters::p()->Tva;  
+      msgObs.cxd = (std::fmod(wx - msgObs.cx + 10.5F * msgObs.cxe, msgObs.cxe) - 0.5F * msgObs.cxe) / CarParameters::p()->Tva;
+      // lap detection
+      if (msgObs.cx > msgObs.cxe-epsLaplength && wx < epsLaplength) {
+        newlap = true;
+        ++msgLap.lapctr;
+        rclcpp::Time now = rclcpp::Clock().now();
+        rclcpp::Time lapEstimate = now - rclcpp::Duration::from_seconds(wx / msgObs.cxd); // estimate lap time by compensating Tva with center line speed
+        if (msgLap.lapctr >= 2) {
+          msgLap.laptime = (lapEstimate - lapEstimatekm1).seconds();
+          msgLap.avgspeed = msgObs.cxe / msgLap.laptime;
+        }
+        lapEstimatekm1 = lapEstimate;
+      }
     }
     msgObs.cx = wx;
+    msgObs.cs = ws;
     msgObs.cey = -std::sin(wpsi) * (msg.s.at(0) - ws.at(0)) + std::cos(wpsi) * (msg.s.at(1) - ws.at(1));;
     msgObs.cepsi = Utils::normalizeRad(msg.psi - wpsi);
     msgObs.ckappa = std::sqrt(wsdd.at(0)*wsdd.at(0) + wsdd.at(1)*wsdd.at(1));
@@ -145,15 +163,29 @@ public:
     return msgObs;
   }
 
+  mbmadmsgs::msg::CarLap& messageLap()
+  {
+    return msgLap;
+  }
+
+  bool isNewLap() const
+  {
+    return newlap;
+  }
+
 
 private:
   const float vValidMax { 3.0F }; // maximum valid speed [ m/s ]
   const float aValidMax { 20.0F }; // maximum valid acceleration [ m/s^2 ]
+  const float epsLaplength { 0.3F }; // tolerance for lap detection [ m ]
+  bool newlap { false };
   uint64_t seqctr { 0ULL };
   mbmadmsgs::msg::CarOutputsExt msgExt;
   mbmadmsgs::msg::CarObs msgObs;
+  mbmadmsgs::msg::CarLap msgLap;
   const float probDecay { 0.1F };
   rclcpp::Time timekm1;
+  rclcpp::Time lapEstimatekm1;
   bool firstCall { true };
   
   void degrade()

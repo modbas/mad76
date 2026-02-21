@@ -22,7 +22,7 @@ rightLanePoints = (rightPoints * 0.75 + leftPoints * 0.25);
 rightLanePp = mbc_trackpi_spline(rightLanePoints);
 leftLanePoints = (rightPoints * 0.25 + leftPoints * 0.75);
 leftLanePp = mbc_trackpi_spline(leftLanePoints);
-optPp = mbc_trackpi_spline(optPoints, 0.02);
+optPp = mbc_trackpi_spline(optPoints, 0.02, true);
 
 this = struct('right', rightPp, ...
     'left', leftPp, ...

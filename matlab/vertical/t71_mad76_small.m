@@ -36,5 +36,15 @@ if config.track.debug
     plot(sl(1, :), sl(2, :), 'yx');
     sr = s + 0.5 * P_width * ey * [ sin(psi) ; -cos(psi)];
     plot(sr(1, :), sr(2, :), 'yx');
+    % breakslen = length(track.center.points(1, :));
+    % for i=1:length(track.right.points(1, :))
+    %     sc = track.center.points(2:3, i);
+    %     [ x, xi ] = mbc_spline_get_nearest(breakslen, track.right.points, track.right.pp.coefs, true, sc);
+    %     sr = mbc_ppval(track.right.pp, x);
+    %     plot([ sc(1), sr(1) ], [ sc(2), sr(2) ], 'w');        
+    %     [ x, xi ] = mbc_spline_get_nearest(breakslen, track.left.points, track.left.pp.coefs, true, sc);
+    %     sl = mbc_ppval(track.left.pp, x);
+    %     plot([ sc(1), sl(1) ], [ sc(2), sl(2) ], 'w');        
+    % end
 end
 

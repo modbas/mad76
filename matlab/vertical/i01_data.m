@@ -74,26 +74,30 @@ elems(7) = Simulink.BusElement;
 elems(7).Name = 'cxd'; % center line pos speed
 elems(7).DataType = 'single';
 elems(8) = Simulink.BusElement;
-elems(8).Name = 'cey'; % lateral deviation
+elems(8).Name = 'cs'; % center line pos cartesian coordinates
 elems(8).DataType = 'single';
+elems(8).Dimensions = [ 2 1 ];
 elems(9) = Simulink.BusElement;
-elems(9).Name = 'cepsi'; % yaw angle deviation
+elems(9).Name = 'cey'; % lateral deviation
 elems(9).DataType = 'single';
 elems(10) = Simulink.BusElement;
-elems(10).Name = 'ckappa'; % center line curvature
+elems(10).Name = 'cepsi'; % yaw angle deviation
 elems(10).DataType = 'single';
-% right curb distance
 elems(11) = Simulink.BusElement;
-elems(11).Name = 'rey';
+elems(11).Name = 'ckappa'; % center line curvature
 elems(11).DataType = 'single';
-% left curb distance
+% right curb distance
 elems(12) = Simulink.BusElement;
-elems(12).Name = 'ley';
+elems(12).Name = 'rey';
 elems(12).DataType = 'single';
-% reliability
+% left curb distance
 elems(13) = Simulink.BusElement;
-elems(13).Name = 'prob';
+elems(13).Name = 'ley';
 elems(13).DataType = 'single';
+% reliability
+elems(14) = Simulink.BusElement;
+elems(14).Name = 'prob';
+elems(14).DataType = 'single';
 CAROBS = Simulink.Bus;
 CAROBS.Elements = elems;
 

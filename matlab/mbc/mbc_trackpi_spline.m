@@ -1,10 +1,13 @@
-function path = mbc_trackpi_spline(points, dx)
+function path = mbc_trackpi_spline(points, dx, smooth)
 %% creates spline from points
 %
 %   points - array of 2 rows for s1 and s2 coordinates
 
 if ~exist('dx', 'var')
     dx = 0;
+end
+if ~exist('smooth', 'var')
+    smooth = false;
 end
 
 if mbc_cmp(points(1,1), points(1,end)) && mbc_cmp(points(2,1), points(2,end))
@@ -21,7 +24,11 @@ if mbc_cmp(points(1,1), points(1,end)) && mbc_cmp(points(2,1), points(2,end))
     end
     xnew = linspace(0, x(end), len);
     pointsnew = ppval(pp, xnew);
-    ppnew = csape(xnew, pointsnew, 'periodic');
+    if smooth
+        ppnew = csaps(xnew, pointsnew);
+    else
+        ppnew = csape(xnew, pointsnew, 'periodic');
+    end
     path = struct('pp', ppnew, ...
         'ppd', fnder(ppnew), ...
         'ppdd', fnder(ppnew, 2), ...

@@ -5,15 +5,20 @@ function config = mbc_config()
 % MODBAS CAR mbc
 % Copyright (c) 2015, Frank Traenkle
 config.track.debug = 0;
+config.figure.bgcolor = 0.3 * ones(1, 3);
 config.track.color = 'k';
-config.track.centercolor = 'w';
-config.track.centerwidth = 1;
-config.track.centerstyle = '--';
 config.track.bgcolor = zeros(1, 3);
 config.track.bordercolor = 'w';
 config.track.borderwidth = 2;
 config.track.borderstyle = '-';
-config.figure.bgcolor = 0.3 * ones(1, 3);
+config.track.rightcurbcolor = 'r';
+config.track.leftcurbcolor = 'g';
+config.track.ideallinecolor = 'm';
+config.track.lanecolor = 'w--';
+config.track.color = 'k';
+config.track.centercolor = 'c--';
+config.track.centerwidth = 1;
+config.track.centerstyle = '--';
 config.car.colors = { [1 0.3 0], [0.7 1 0], [0 0 1], [1 1 1] };
 config.carwheel.color = 'r';
 config.carwheel.w = 0.005;
