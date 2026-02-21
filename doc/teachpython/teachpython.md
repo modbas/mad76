@@ -343,11 +343,11 @@ $$
 $$
 
 
-    Required results are:
+    -   Required results are:
 
-    -   Python code
+        -   Python code
 
-    -   Results $x_1$ and $x_2$
+        -   Results $x_1$ and $x_2$
 
 2.  Solve the linear equation system of order $n = 3$
    
@@ -361,11 +361,11 @@ $$
 $$
 
 
-    Required results are:
+    -   Required results are:
 
-    -   Python code
+        -   Python code
 
-    -   Results $x_1$, $x_2$ and $x_3$
+        -   Results $x_1$, $x_2$ and $x_3$
 
 Function Plotting
 -----------------
@@ -524,7 +524,7 @@ Procedural Programming
     Section <a href="#hello-world" data-reference-type="ref" data-reference="hello-world">4.1</a>)
 
 -   Hello world program with functions (see
-    Section <a href="#hello-world-functions" data-reference-type="ref" data-reference="hello-world-functions">4.2</a>)
+    Section <a href="#hello-world-with-functions" data-reference-type="ref" data-reference="hello-world-with-functions">4.2</a>)
 
 -   Function for solving quadratic equations (see
     Section <a href="#function-for-solving-quadratic-equations" data-reference-type="ref" data-reference="function-for-solving-quadratic-equations">4.3</a>)
@@ -610,7 +610,7 @@ Hello World
 
         import helloworld
 
-Hello World with Functions [hello-world-functions]
+Hello World with Functions
 --------------------------
 
 1.  Create a new Python program `helloworld_function.py` in VS Code
@@ -756,7 +756,7 @@ Object-Oriented Programming
         -   A *quadratic equation* is a sub-type of a *polynomial
             equation*, which in turn is a sub-type of an *equation*
 
-Class for Quadratic Equations [class-quadratic-equations]
+Class for Quadratic Equations
 -----------------------------
 
 -   The following code defines a class `QuadraticEquation` for solving
@@ -781,43 +781,40 @@ Class for Quadratic Equations [class-quadratic-equations]
 
 -   With `eq.solve()`, the `solve` method is called for object `eq`
 
-```{=html}
-<!-- -->
-```
-``` python
-#!/usr/bin/env python3
+    ``` python
+    #!/usr/bin/env python3
 
-import numpy as np
+    import numpy as np
 
-class QuadraticEquation:
-    def __init__(self, a, b, c):
-        self.a = a
-        self.b = b
-        self.c = c
+    class QuadraticEquation:
+        def __init__(self, a, b, c):
+            self.a = a
+            self.b = b
+            self.c = c
 
-    def solve(self):
-        """
-        Solves the quadratic equation ax^2 + bx + c = 0 for real roots.
+        def solve(self):
+            """
+            Solves the quadratic equation ax^2 + bx + c = 0 for real roots.
 
-        Returns:
-            tuple: A tuple containing the two real roots (x1, x2)
-        """
-        d = self.b ** 2 - 4.0 * self.a * self.c
-        if d < 0.0:
-            return None # No real roots
-        x1 = (-self.b + np.sqrt(d)) / (2.0 * self.a)
-        x2 = (-self.b - np.sqrt(d)) / (2.0 * self.a)
-        return (x1, x2)
+            Returns:
+                tuple: A tuple containing the two real roots (x1, x2)
+            """
+            d = self.b ** 2 - 4.0 * self.a * self.c
+            if d < 0.0:
+                return None # No real roots
+            x1 = (-self.b + np.sqrt(d)) / (2.0 * self.a)
+            x2 = (-self.b - np.sqrt(d)) / (2.0 * self.a)
+            return (x1, x2)
 
-    def __str__(self):
-        return f"QuadraticEquation({self.a}*x^2 + {self.b}*x + {self.c} = 0)"
+        def __str__(self):
+            return f"QuadraticEquation({self.a}*x^2 + {self.b}*x + {self.c} = 0)"
 
-if __name__ == "__main__":
-    eq = QuadraticEquation(1, -3, 2)
-    print(eq)
-    roots = eq.solve()
-    print("The roots are:", roots)
-```
+    if __name__ == "__main__":
+        eq = QuadraticEquation(1, -3, 2)
+        print(eq)
+        roots = eq.solve()
+        print("The roots are:", roots)
+    ```
 
 References [bibliography]
 ==========

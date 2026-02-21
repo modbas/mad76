@@ -49,7 +49,7 @@ Functional Chain
 #### Agenda
 
 -   Remote controllers (RCs) (see
-    Section <a href="#rc" data-reference-type="ref" data-reference="rc">2.1</a>)
+    Section <a href="#remote-controllers-rcs" data-reference-type="ref" data-reference="remote-controllers-rcs">2.1</a>)
 
 -   Functional chain from RPi over MAD76 IO to RCs (see
     Section <a href="#functional" data-reference-type="ref" data-reference="functional">2.2</a>)
@@ -57,7 +57,7 @@ Functional Chain
 -   Digital I/O of RPi (see
     Section <a href="#rpi-io" data-reference-type="ref" data-reference="rpi-io">2.3</a>)
 
-Remote Controllers (RCs) [rc]
+Remote Controllers (RCs)
 ------------------------
 
 <img src="rc.png" alt="image" />
@@ -89,9 +89,6 @@ IO):
     | $0V$               | full braking / reverse thrust            |
     | $3.3V$             | full forward thrust                      |
 
-```{=html}
-<!-- -->
-```
 -   Upper connector for steering control
 
     | pin                | in/out | SV1 pin | MCP42010 | function                                                                  |
@@ -753,9 +750,8 @@ $$
 u_q = 255 \cdot (u_n + 1) / 2 \in [ 0, 255]
                 \label{E-resistor-spi-value}
 $$
-
-
-    -   Inserting this equation into
+ Inserting this equation
+        into equation
         (<a href="#E-motor-voltage" data-reference-type="ref" data-reference="E-motor-voltage">[E-motor-voltage]</a>)
         yields the motor signal voltage for the RC
        
@@ -769,11 +765,11 @@ $$
 -   Function `write_steering` sets the steering signal voltages
     $\delta_v$ and is similar to `write_pedals`
 
-    | argument | description                                                                               |
-    |:---------|:------------------------------------------------------------------------------------------|
-    | `spi`    | SPI object of `spidev`                                                                    |
-    | `carid`  | RC / car ID from 0 to 3                                                                   |
-    | `pedals` | Normalized steering signal $u_n \in [-1, 1]$. -1 is full right, 1 is full left cornering. |
+    | argument   | description                                                                               |
+    |:-----------|:------------------------------------------------------------------------------------------|
+    | `spi`      | SPI object of `spidev`                                                                    |
+    | `carid`    | RC / car ID from 0 to 3                                                                   |
+    | `steering` | Normalized steering signal $u_n \in [-1, 1]$. -1 is full right, 1 is full left cornering. |
 
 -   The Python module `rctest.py` is an extension of `rcpoweron.py` from
     Section <a href="#python-poweron" data-reference-type="ref" data-reference="python-poweron">[python-poweron]</a>
@@ -919,11 +915,12 @@ $$
 $$
 R_{bw} = \frac{R_{ba}}{255} \cdot u_q = 10\mathrm{k\Omega} \cdot (u_n + 1) / 2 \in \left[ 0\mathrm{k\Omega}, 10\mathrm{k\Omega} \right]$$
 
-    Required results are:
+    -   Required results are:
 
-    -   Table with columns for $u_n$, expected
-        $R_{bw} / \mathrm{\Omega}$, measured $R_{bw} / \mathrm{\Omega}$
-        and at least 3 rows for different $u_n$ values
+        -   Table with columns for $u_n$, expected
+            $R_{bw} / \mathrm{\Omega}$, measured
+            $R_{bw} / \mathrm{\Omega}$ and at least 3 rows for different
+            $u_n$ values
 
 2.  Measure the motor and steering signal voltages of the digital potis
     of RC 1 with a multimeter (see
@@ -949,14 +946,14 @@ R_{bw} = \frac{R_{ba}}{255} \cdot u_q = 10\mathrm{k\Omega} \cdot (u_n + 1) / 2 \
 $$
 u_v = 3.3\mathrm{V} \cdot (u_n + 1) / 2 \in [ 0, 3.3\mathrm{V} ]$$
 
-    Required results are:
+    -   Required results are:
 
-    -   Table with columns for motor signal $u_n$, expected
-        $u_v / \mathrm{V}$, measured $u_v / \mathrm{V}$ and at least 3
-        rows for different $u_n$ values
+        -   Table with columns for motor signal $u_n$, expected
+            $u_v / \mathrm{V}$, measured $u_v / \mathrm{V}$ and at least
+            3 rows for different $u_n$ values
 
-    -   Optional: same table for steering signals $\delta_n$ and
-        $\delta_v$
+        -   Optional: same table for steering signals $\delta_n$ and
+            $\delta_v$
 
 3.  Calibrate the remote control according to [Remote Control Cabling
     and
