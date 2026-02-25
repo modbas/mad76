@@ -213,9 +213,9 @@ Calibrate the motor
         | `steering` | normalized steering signal $\delta_n \in [-1, 1]$ |
 
         Or you may run MATLAB/Simulink model `c71_template_car0.slx`
-        from MAD76 Academy [MATLAB/Simulink
-        Modeling](../teachmatlab/teachmatlab.md) and use the sliders in
-        this model.
+        from MAD76 Academy [H.
+        MATLAB/Simulink](../teachmatlab/teachmatlab.md) and use the
+        sliders in this model.
 
     3.  Adjust RC knob `thrust trim` until the car stops and is in
         standing still
@@ -231,10 +231,10 @@ Calibrate the motor
             ...
 
         or by running the Python program `rctest.py` or by running
-        MATLAB/Simulink model `c71_template_car0.slx` from
-        [MATLAB/Simulink Modeling](../teachmatlab/teachmatlab.md). The
-        car should start moving forward at $u_n \approx 0.04$. If not,
-        adjust the RC knob `thrust trim`.
+        MATLAB/Simulink model `c71_template_car0.slx` from [H.
+        MATLAB/Simulink](../teachmatlab/teachmatlab.md). The car should
+        start moving forward at $u_n \approx 0.04$. If not, adjust the
+        RC knob `thrust trim`.
 
     2.  Decrease $u_n$ in small steps from $0$ to $-0.06$
 
@@ -269,8 +269,8 @@ Calibrate the steering
 
         python rctest.py 0 0.06 0.0
 
-    or by running MATLAB/Simulink model `c71_template_car0.slx` from
-    [MATLAB/Simulink Modeling](../teachmatlab/teachmatlab.md).
+    or by running MATLAB/Simulink model `c71_template_car0.slx` from [H.
+    MATLAB/Simulink](../teachmatlab/teachmatlab.md).
 
 2.  The car should move on a straight line. If not, adjust RC button
     `steering trim`

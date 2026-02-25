@@ -79,7 +79,10 @@ Model-in-the-Loop Simulation
 
 -   As soon as you have finished testing in model-in-the-loop (MiL), you
     can reuse `Car0/Motion Control` for software-in-the-loop (SiL)
-    testing and real MAD76 control.
+    testing and real MAD76 control in
+    Sections <a href="#software-in-the-loop-simulation" data-reference-type="ref" data-reference="software-in-the-loop-simulation">1.3</a>
+    and
+    <a href="#real-mad76-control" data-reference-type="ref" data-reference="real-mad76-control">1.4</a>.
 
 -   `rcnode` for remote control is not modeled. The actuation
     `Car0/Vehicle Dynamics` by `Car0/Motion Control` is assumed to be
@@ -103,7 +106,7 @@ Model-in-the-Loop Simulation
         ```
 
     3.  The model should run without errors and display initial
-        positions of the vehicles in the MATLAB figure But the car in
+        positions of the vehicles in the MATLAB figure. But the car in
         the MATLAB figure is not moving, yet, because subsystems
         `Car0/Vehicle Dynamics` and `Car0/Motion Control` are empty.
 
@@ -153,10 +156,10 @@ Interfaces
 
         The main elements are:
 
-        | Element | Symbol       | Datatype | Unit           | Description                              |
-        |:--------|:-------------|:---------|:---------------|:-----------------------------------------|
-        | `s`     | $\mathbf{s}$ | `single` | $\mathrm{m}$   | rear axle center position in fixed frame |
-        | `psi`   | $\psi$       | `single` | $\mathrm{rad}$ | yaw angle                                |
+        | Element | Symbol        | Datatype | Unit           | Description                              |
+        |:--------|:--------------|:---------|:---------------|:-----------------------------------------|
+        | `s`     | $[s_1,s_2]^T$ | `single` | $\mathrm{m}$   | rear axle center position in fixed frame |
+        | `psi`   | $\psi$        | `single` | $\mathrm{rad}$ | yaw angle                                |
 
     -   `mbmadmsgs::msg::CarObsList` for car observations / process
         variables (position, speed, yaw angle, etc.)
@@ -171,11 +174,11 @@ Interfaces
 
         The main elements are:
 
-        | Element | Symbol       | Datatype | Unit           | Description                              |
-        |:--------|:-------------|:---------|:---------------|:-----------------------------------------|
-        | `v`     | $y=v$        | `single` | $\mathrm{m/s}$ | rear axle center speed                   |
-        | `s`     | $\mathbf{s}$ | `single` | $\mathrm{m}$   | rear axle center position in fixed frame |
-        | `psi`   | $\psi$       | `single` | $\mathrm{rad}$ | yaw angle                                |
+        | Element | Symbol        | Datatype | Unit           | Description                              |
+        |:--------|:--------------|:---------|:---------------|:-----------------------------------------|
+        | `v`     | $y=v$         | `single` | $\mathrm{m/s}$ | rear axle center speed                   |
+        | `s`     | $[s_1,s_2]^T$ | `single` | $\mathrm{m}$   | rear axle center position in fixed frame |
+        | `psi`   | $\psi$        | `single` | $\mathrm{rad}$ | yaw angle                                |
 
     -   `mbmadmsgs::msg::DriveManeuver` for maneuvers and reference
         signals
@@ -198,7 +201,7 @@ Software-in-the-Loop Simulation
 -------------------------------
 
 <figure>
-<img src="ros2sil.png" id="F-silarch" style="width:90.0%" alt="" /><figcaption>ROS2 nodes in SiL simulation mode</figcaption>
+<img src="ros2sil.png" id="F-silarch" style="width:80.0%" alt="" /><figcaption>ROS2 nodes in SiL simulation mode</figcaption>
 </figure>
 
 -   Simulink model `c71_car0_template.slx` is the template model for
