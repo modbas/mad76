@@ -27,17 +27,17 @@ Driverless Race
     the Raspberry Pi 5 and run:
 
     ``` bash
-    ros2 launch mbmad madpifull.launch
+    ros2 launch mbmad madpislfull.launch
     ```
 
 -   Alternatively, if you have installed MAD76 on a PC, you may start
     the race in simulation mode by running:
 
     ``` bash
-    ros2 launch mbmad madpisim.launch
+    ros2 launch mbmad madpislsim.launch
     ```
 
--   Note: Never start `madpifull.launch` or `madpisim.launch` at the
+-   Note: Never start `madpislfull.launch` or `madpislsim.launch` at the
     same time or more than once without stopping the previous instance
     first.
 
@@ -49,11 +49,17 @@ Driverless Race
 
 -   The driverless cars will race against each other.
 
-Adapt Behavior of Individual Cars
----------------------------------
+-   Whereas car id 0 (orange/red) is controlled by PI and state-space
+    controllers, known from Bachelor-degree programs,
 
--   The behavior of an individual car can be adapted by sending
-    individual maneuver messages.
+-   all other cars with ids 1 ot 3 are controlled by AI agents
+    (reinforcement learning Software-Actor-Critic agents, SAC agents).
+
+Adapt Behavior of Car Id 0
+--------------------------
+
+-   The behavior of an id car 0 can be adapted by sending maneuver
+    messages.
 
 -   Stop `send_maneuver.py` from above by hitting `Ctrl+C`.
 
@@ -65,15 +71,7 @@ Adapt Behavior of Individual Cars
     ros2 run mbmadcar send_maneuver.py 0 0.3 0.25
     ```
 
-    -   First argument is the car identifier (0 for orange car, 1 for
-        yellow car)
-
-        |     |                  |
-        |:----|:-----------------|
-        | 0   | orange/red car   |
-        | 1   | yellow/white car |
-        | 2   | blue car         |
-        | 3   | green car        |
+    -   First argument is the car identifier
 
     -   Second argument is the car reference speed in
         $\mathrm{m \over s}$
@@ -117,5 +115,34 @@ Human Player
 
 -   You may pass the control of car 0 back to autonomous driving by
     switching off the Xbox controller.
+
+-   The lap times of car 0 are measured and displayed in the web browser
+    at <http://localhost:8082>.
+
+    -   Enter a driver name and hit `Start`
+
+    -   Then the lap times and average lap speed are measured and
+        displayed
+
+    -   Lap times of drivers are ranked in a leaderboard
+
+Measuring Vehicle Dynamics States
+---------------------------------
+
+-   With `rqt_plot` of ROS2, message signals can be measured and plotted
+    in oscilloscopes
+
+-   Open a new terminal and run:
+
+    ``` bash
+    ros2 run rqt_plot rqt_plot
+    ```
+
+-   In the opened window, enter the topic name with signal element name
+    in the entry field and hit the button `+`
+
+-   E.g. enter `/mad/locate/carobs/list[0]/v` to plot the speed of car 0
+
+<img src="rqtplotscreenshot.png" alt="image" />
 
 [^1]: frank.traenkle@hs-heilbronn.de

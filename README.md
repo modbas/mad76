@@ -76,9 +76,9 @@ MAD76 Kit
 MAD76 Academy
 =============
 
-MAD76 Academy offers a variety of learning lessons to help you to get
-started with your MAD76 kit. To configure and start the MAD76 car
-racing, please follow modules B and C.
+MAD76 Academy offers a variety of learning lessons to get started with
+your MAD76 kit. To configure and start MAD76 car racing without any
+programming efforts, please follow modules B and C.
 
 -   [A. Linux Basics](doc/teachlinux/teachlinux.md)
     ([teachlinux.pdf](doc/teachlinux/teachlinux.pdf))
