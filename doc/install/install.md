@@ -18,19 +18,29 @@ The installation steps are:
 -   Build the MAD76 Box including the MAD76 IO PCB (see
     Section <a href="#mad76-box" data-reference-type="ref" data-reference="mad76-box">2</a>)
 
+-   Connect the Turboracing Radio Controllers (RCs) to the MAD76 IO PCB
+    (see
+    Section <a href="#rc-cabling" data-reference-type="ref" data-reference="rc-cabling">3</a>)
+
 -   Install Raspberry Pi OS, drivers, and ROS2 (see
-    Section <a href="#raspberry-pi-installation" data-reference-type="ref" data-reference="raspberry-pi-installation">3</a>)
+    Section <a href="#raspberry-pi-installation" data-reference-type="ref" data-reference="raspberry-pi-installation">4</a>)
 
 -   Optionally install ROS2 on optional Linux-PC for distributed
     computing and software-in-the-loop (SiL) simulation (see
-    Section <a href="#linux-pc-installation" data-reference-type="ref" data-reference="linux-pc-installation">4</a>)
+    Section <a href="#linux-pc-installation" data-reference-type="ref" data-reference="linux-pc-installation">5</a>)
+
+-   Calibrate the Raspberry Pi camera (see
+    Section <a href="#camera-calibration" data-reference-type="ref" data-reference="camera-calibration">6</a>)
+
+-   Install AruCo markers for computer vision (see
+    Section <a href="#markers" data-reference-type="ref" data-reference="markers">[markers]</a>)
 
 -   Install MAD76 Driving Stack (see
-    Section <a href="#mad76-driving-stack" data-reference-type="ref" data-reference="mad76-driving-stack">5</a>)
+    Section <a href="#mad76-driving-stack" data-reference-type="ref" data-reference="mad76-driving-stack">8</a>)
 
 -   Optionally install MATLAB/Simulink for model-based software
     engineering (see
-    Section <a href="#matlab-simulink-installation" data-reference-type="ref" data-reference="matlab-simulink-installation">6</a>)
+    Section <a href="#matlab-simulink-installation" data-reference-type="ref" data-reference="matlab-simulink-installation">9</a>)
 
 MAD76 Box
 =========
@@ -147,6 +157,39 @@ MAD76 IO
 <figure>
 <img src="mad76io_board.png" id="F-board" alt="" /><figcaption>MAD76 IO Board Layout (Eagle layout <a href="../../pcb/MAD76.brd">../../pcb/MAD76.brd</a>)</figcaption>
 </figure>
+
+RC Cabling
+==========
+
+<figure>
+<img src="rccabling.jpg" id="f-rc-cabling" alt="" /><figcaption>RC Cabling</figcaption>
+</figure>
+
+-   Connect the ribbon cables to the 4 RCs and the ports SV1, SV2, SV3,
+    and SV4 on the MAD76 IO board
+
+-   Use a length of at least 170mm for the 10-pin ribbon cables
+
+-   In
+    Figure <a href="#f-rc-cabling" data-reference-type="ref" data-reference="f-rc-cabling">5</a>,
+    the nose of the black SV1 connector is facing upward
+
+-   Solder the 5V and GND wires (SV1 pins 1 and 2) to the RC power
+    supply pads
+
+-   Pins 3 and 4 are not used and can be cut off
+
+-   Crimp steering poti wires (SV1 pins 5, 6, 7) to the upper JST
+    connector (from top to bottom)
+
+-   Crimp motor poti wires (SV1 pins 8, 9, 10) to the middle JST
+    connector (from top to bottom)
+
+-   Please note that the cabling is designed in such a nice way, such
+    that the individual wires of the ribbon cable do not cross each
+    other
+
+-   Connect the cable to SV 1 of MAD76 IO
 
 Raspberry Pi Installation
 =========================
@@ -400,6 +443,159 @@ and the Linux PC.
     sudo apt-get install ros-dev-tools ros-jazzy-desktop ros-jazzy-diagnostic-updater
     ```
 
+Camera Calibration
+==================
+
+<figure>
+<img src="charucoboard.png" id="F-charuco" alt="" /><figcaption>ChArUco board for camera calibration.</figcaption>
+</figure>
+
+The Raspberry Pi camera must be calibrated, so that the MAD76 software
+can undistort the camera image frames
+\[[6](#ref-ros-camera-calibration)\]. The calibration is performed
+applying an ChArUco board, which is an augmentation of a chess board by
+AruCo markers for higher precision. Follow the following steps for
+calibrating your camera:
+
+-   Print the marker board in
+    Fig. <a href="#F-charuco" data-reference-type="ref" data-reference="F-charuco">6</a>
+    on a snow-white DIN-A4 paper. Use high-quality printer settings.
+
+-   Scale the printing such that the black area of the AruCo markers has
+    a height and width of 21mm each.
+
+-   This PNG image can optionally be created by
+
+        cd ~/src/mad2/mad_ws
+        install/mbmadvisionaruco/lib/mbmadvisionaruco/create_board_charuco -d=0 -w=7 -h=5 -ml=500 -sl=800 charucoboard.png
+
+-   Fix this paper on a cardboard.
+
+-   Calibrate the camera by running the following command:
+
+        ros2 run camera_calibration cameracalibrator --pattern=charuco --size 7x5 --square 0.036 --charuco_marker_size 0.022 --aruco_dict 4x4_50 image:=/mad/camera/image_raw camera:=/mad/camera camera/set_camera_info:=/mad/camera/set_camera_info
+
+-   After successful calibration the camera matrix and distortion
+    coefficients are stored in the file
+
+        ~/.ros/camera_info/imx296__base_axi_pcie_120000_rp1_i2c_88000_imx296_1a_800x600.yaml
+
+    or similar.
+
+-   This calibration data file will then be automatically loaded by the
+    MAD76 computer vision for undistorting camera frames.
+
+AruCo Markers
+=============
+
+MAD76 applies AuUco markers in computer vision for detecting and
+tracking cars. This section explains
+
+-   how to generate and print the markers (see
+    Section <a href="#marker-generation" data-reference-type="ref" data-reference="marker-generation">7.1</a>),
+
+-   how to place the coordinate frame markers (see
+    Section <a href="#frame-markers" data-reference-type="ref" data-reference="frame-markers">7.2</a>),
+
+-   how to place the car markers (see
+    Section <a href="#car-markers" data-reference-type="ref" data-reference="car-markers">7.3</a>),
+
+Marker Generation
+-----------------
+
+<figure>
+<img src="markers.png" id="F-markers" alt="" /><figcaption>AruCo markers for cars and coordinate frame.</figcaption>
+</figure>
+
+-   The cars are tracked by ArUco markers \[[7](#ref-opencv-aruco)\].
+
+-   Computer vision computes the Cartesian coordinates and the yaw
+    angles of the cars.
+
+-   The markers are generated with the OpenCV ArUco library.
+
+-   A custom ArUco dictionary of 8 markers with a size of 3x3 bits is
+    used to increase the reliability of computer vision.
+
+-   The PNG image of the 8 markers can be optionally created by
+
+        cd ~/src/mad2/mad_ws
+        install/mbmadvisionaruco/lib/mbmadvisionaruco/create_board --bb=1 -d=17 -w=4 -h=2 -l=200 -s=100 markers.png
+
+-   The markers IDs are from 0 to 7, 0 to 3 in the first row from left
+    to right, and 4 to 7 in the second row.
+
+-   Print the markers in
+    Fig. <a href="#F-markers" data-reference-type="ref" data-reference="F-markers">7</a>
+    on a snow-white, 80 grams paper.
+
+    -   Make sure to configure high quality printing.
+
+    -   Scale the printing such that the black area of the markers have
+        a height and width of 21mm each.
+
+-   Cut the markers as squares including approx. 5mm boundaries.
+
+-   Note the marker IDs before cutting with a thin pencil on the
+    boundaries, because you will need these IDs later on.
+
+Frame Markers
+-------------
+
+<figure>
+<img src="track.png" id="F-framemarkers" alt="" /><figcaption>Track with 4 coordinate frame markers.</figcaption>
+</figure>
+
+-   4 frame markers define the coordinate frame of the track.
+
+-   All coordinates of cars and track are measured in meters.
+
+-   The frame origin $(s_{01},s_{02})=(0\mathrm{m},0\mathrm{m})$ is at
+    the center point of marker ID4.
+
+-   Place frame markers with IDs 4, 5, 6, 7 at corners of board as
+    depicted in figure.
+
+    -   It is recommended to place the markers with high accuracy in the
+        1mm range. Otherwise, the control functions of the MAD76 driving
+        stack will loose precision.
+
+    -   Although modified distances may be later configured in the ROS2
+        package `mbmadvisionaruco`.
+
+    -   The distances are measured at the marker center points.
+
+    -   The markers must form a rectangle.
+
+    -   The sequence of the marker IDs is essential.
+
+Car Markers
+-----------
+
+<figure>
+<img src="carmarker.jpg" id="F-carmarker" alt="" /><figcaption>Red car with marker ID 0.</figcaption>
+</figure>
+
+-   Each car has its individual marker.
+
+-   The following configuration is recommended:
+
+    | Marker ID | Car                  |
+    |:----------|:---------------------|
+    | 0         | orang / red orange   |
+    | 1         | green yellow / white |
+    | 2         | blue / white         |
+    | 3         | white                |
+
+-   If you have fewer than four cars, please start with ID 0 in any
+    case.
+
+-   Each marker’s center point must be placed exactly at the car’s rear
+    axle center point.
+
+-   The horizontal orientation of the marker must match to the forward
+    direction of the car.
+
 MAD76 Driving Stack
 ===================
 
@@ -456,7 +652,7 @@ Build MAD76
     a common ROS domain ID
 
 -   For running MAD76 in Software-in-the-Loop (SiL) simulation mode (see
-    Section <a href="#software-in-the-loop-simulation" data-reference-type="ref" data-reference="software-in-the-loop-simulation">5.3</a>),
+    Section <a href="#software-in-the-loop-simulation" data-reference-type="ref" data-reference="software-in-the-loop-simulation">8.3</a>),
     a build of MAD76 on an Ubuntu Linux-PC is sufficient because SiL
     mode does not do any input / output, except for optional joystick
     control
@@ -535,6 +731,9 @@ Software-in-the-Loop Simulation
 
 MATLAB-Simulink Installation
 ============================
+
+-   MATLAB/Simulink may be optionally installed for model-based software
+    engineering of MAD76 driving stacks.
 
 -   The following MATLAB release and toolboxes are required
 
@@ -646,10 +845,10 @@ Test Simulink Model in SiL Simulation
 
 -   `c71_car0_template.slx` runs as a ROS2 node replacing the ROS2 node
     `carctrlnode` in
-    Figure <a href="#F-silarch" data-reference-type="ref" data-reference="F-silarch">6</a>
+    Figure <a href="#F-silarch" data-reference-type="ref" data-reference="F-silarch">11</a>
 
 -   All other ROS2 nodes of
-    Figure <a href="#F-silarch" data-reference-type="ref" data-reference="F-silarch">6</a>
+    Figure <a href="#F-silarch" data-reference-type="ref" data-reference="F-silarch">11</a>
     run as usual
 
 -   Start this ROS2 environment in manual simulation mode (without MAD76
@@ -685,7 +884,7 @@ Test Simulink Model on the Real MAD76 System
     MAD76 Linux PC to control the real MAD76 cars
 
 -   All ROS2 nodes in
-    Figure <a href="#F-swarch" data-reference-type="ref" data-reference="F-swarch">5</a>
+    Figure <a href="#F-swarch" data-reference-type="ref" data-reference="F-swarch">10</a>
     run on the Raspberry Pi except for `carctrlnode`
 
 -   `c71_car0_template.slx` runs as a ROS2 node replacing `carctrlnode`
@@ -796,6 +995,20 @@ References [bibliography]
 
 \[5\] ROS, “Installation Ubuntu (deb packages).” 2025. Available:
 <https://docs.ros.org/en/jazzy/Installation/Alternatives/Ubuntu-Install-Binary.html>
+
+</div>
+
+<div id="ref-ros-camera-calibration" markdown="1">
+
+\[6\] ROS, “How to Calibrate a Monocular Camera.” 2025. Available:
+<https://wiki.ros.org/camera_calibration/Tutorials/MonocularCalibration>
+
+</div>
+
+<div id="ref-opencv-aruco" markdown="1">
+
+\[7\] OpenCV, “Detection of ArUco Markers.” 2025. Available:
+[https://docs.opencv.org/4.x/d5/dae/tutorial\\\_aruco\\\_detection.html](https://docs.opencv.org/4.x/d5/dae/tutorial\_aruco\_detection.html)
 
 </div>
 

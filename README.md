@@ -70,19 +70,8 @@ MAD76 Kit
 
 -   Contributions are greatly welcome
 
--   User Manuals
-
-    -   [Installation](doc/install/install.md)
-        ([install.pdf](doc/install/install.pdf))
-
-    -   [Remote Control Cabling and
-        Calibration](doc/remotecontrol/remotecontrol.md)
-        ([remotecontrol.pdf](doc/remotecontrol/remotecontrol.pdf))
-
-    -   [Computer Vision Configuration](doc/vision/vision.md)
-        ([vision.pdf](doc/vision/vision.pdf))
-
-    -   [Car Race](doc/race/race.md) ([race.pdf](doc/race/race.pdf))
+-   [Installation Guide](doc/install/install.md)
+    ([install.pdf](doc/install/install.pdf))
 
 MAD76 Academy
 =============
@@ -93,16 +82,22 @@ started with your MAD76 kit
 -   [A. Linux Basics](doc/teachlinux/teachlinux.md)
     ([teachlinux.pdf](doc/teachlinux/teachlinux.pdf))
 
--   [B. Python Basics](doc/teachpython/teachpython.md)
+-   [B. Adjust MAD76](doc/teachlinux/teachadjust.md)
+    ([teachadjust.pdf](doc/teachlinux/teachadjust.pdf))
+
+-   [C. Car Race](doc/teachlinux/teachrace.md)
+    ([teachrace.pdf](doc/teachlinux/teachrace.pdf))
+
+-   [D. Python Basics](doc/teachpython/teachpython.md)
     ([teachpython.pdf](doc/teachpython/teachpython.pdf))
 
--   [C. MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
+-   [E. MAD76 I/O Programming](doc/teachmad76io/teachmad76io.md)
     ([teachmad76io.pdf](doc/teachmad76io/teachmad76io.pdf))
 
--   [D. ROS2 Coding for MAD76](doc/teachros/teachros.md)
+-   [F. ROS2 Coding for MAD76](doc/teachros/teachros.md)
     ([teachros.pdf](doc/teachros/teachros.pdf))
 
--   [E. MAD76 SQL Database](doc/teachsql/teachsql.md)
+-   [G. MAD76 SQL Database](doc/teachsql/teachsql.md)
     ([teachsql.pdf](doc/teachsql/teachsql.pdf))
 
 You may further start a Bachelor- or Master-degree study program at

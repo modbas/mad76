@@ -4,7 +4,7 @@ bibliography: ../lib/bib.bib
 csl: ../lib/ieee.csl
 link-citations: true
 reference-section-title: References
-title: MAD76 Academy: E. SQL Databases
+title: MAD76 Academy: G. SQL Databases
 
 Agenda
 ======

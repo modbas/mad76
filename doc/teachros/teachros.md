@@ -4,7 +4,7 @@ bibliography: ../lib/bib.bib
 csl: ../lib/ieee.csl
 link-citations: true
 reference-section-title: References
-title: MAD76 Academy: D. ROS2 Coding
+title: MAD76 Academy: F. ROS2 Coding
 
 Agenda
 ======

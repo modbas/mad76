@@ -4,7 +4,7 @@ bibliography: ../lib/bib.bib
 csl: ../lib/ieee.csl
 link-citations: true
 reference-section-title: References
-title: MAD76 Academy: C. MAD76 I/O Programming
+title: MAD76 Academy: E. MAD76 I/O Programming
 
 Agenda
 ======
