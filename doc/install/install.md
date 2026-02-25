@@ -33,7 +33,7 @@ The installation steps are:
     Section <a href="#camera-calibration" data-reference-type="ref" data-reference="camera-calibration">6</a>)
 
 -   Install AruCo markers for computer vision (see
-    Section <a href="#markers" data-reference-type="ref" data-reference="markers">[markers]</a>)
+    Section <a href="#aruco-markers" data-reference-type="ref" data-reference="aruco-markers">7</a>)
 
 -   Install MAD76 Driving Stack (see
     Section <a href="#mad76-driving-stack" data-reference-type="ref" data-reference="mad76-driving-stack">8</a>)

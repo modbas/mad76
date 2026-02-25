@@ -77,16 +77,17 @@ MAD76 Academy
 =============
 
 MAD76 Academy offers a variety of learning lessons to help you getting
-started with your MAD76 kit
+started with your MAD76 kit. To configure and start the MAD76 car
+racing, please follow modules B and C.
 
 -   [A. Linux Basics](doc/teachlinux/teachlinux.md)
     ([teachlinux.pdf](doc/teachlinux/teachlinux.pdf))
 
--   [B. Adjust MAD76](doc/teachlinux/teachadjust.md)
-    ([teachadjust.pdf](doc/teachlinux/teachadjust.pdf))
+-   [B. Adjust MAD76](doc/teachadjust/teachadjust.md)
+    ([teachadjust.pdf](doc/teachadjust/teachadjust.pdf))
 
--   [C. Car Race](doc/teachlinux/teachrace.md)
-    ([teachrace.pdf](doc/teachlinux/teachrace.pdf))
+-   [C. Car Race](doc/teachrace/teachrace.md)
+    ([teachrace.pdf](doc/teachrace/teachrace.pdf))
 
 -   [D. Python Basics](doc/teachpython/teachpython.md)
     ([teachpython.pdf](doc/teachpython/teachpython.pdf))
