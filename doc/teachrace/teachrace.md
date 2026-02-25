@@ -58,8 +58,8 @@ Driverless Race
 Adapt Behavior of Car Id 0
 --------------------------
 
--   The behavior of an id car 0 can be adapted by sending maneuver
-    messages.
+-   The behavior of car id 0 can be adapted by individual sending
+    maneuver messages.
 
 -   Stop `send_maneuver.py` from above by hitting `Ctrl+C`.
 
@@ -110,14 +110,11 @@ Human Player
 -   In slow driving, MAD76 supports the human player by stabilizing the
     car in the lane.
 
--   For lap statistics and ranking, open a web browser on the Raspberry
-    Pi 5 and navigate to <http://localhost:8082>.
-
 -   You may pass the control of car 0 back to autonomous driving by
     switching off the Xbox controller.
 
--   The lap times of car 0 are measured and displayed in the web browser
-    at <http://localhost:8082>.
+-   For lap statistics and ranking, open a web browser on the Raspberry
+    Pi 5 and navigate to <http://localhost:8082>.
 
     -   Enter a driver name and hit `Start`
 
@@ -138,7 +135,7 @@ Measuring Vehicle Dynamics States
     ros2 run rqt_plot rqt_plot
     ```
 
--   In the opened window, enter the topic name with signal element name
+-   In the opened window, enter the topic name plus signal element name
     in the entry field and hit the button `+`
 
 -   E.g. enter `/mad/locate/carobs/list[0]/v` to plot the speed of car 0
