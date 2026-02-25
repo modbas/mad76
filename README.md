@@ -76,7 +76,7 @@ MAD76 Kit
 MAD76 Academy
 =============
 
-MAD76 Academy offers a variety of learning lessons to help you getting
+MAD76 Academy offers a variety of learning lessons to help you to get
 started with your MAD76 kit. To configure and start the MAD76 car
 racing, please follow modules B and C.
 
@@ -86,7 +86,7 @@ racing, please follow modules B and C.
 -   [B. Adjust MAD76](doc/teachadjust/teachadjust.md)
     ([teachadjust.pdf](doc/teachadjust/teachadjust.pdf))
 
--   [C. Car Race](doc/teachrace/teachrace.md)
+-   [C. Start Car Race](doc/teachrace/teachrace.md)
     ([teachrace.pdf](doc/teachrace/teachrace.pdf))
 
 -   [D. Python Basics](doc/teachpython/teachpython.md)
@@ -100,6 +100,10 @@ racing, please follow modules B and C.
 
 -   [G. MAD76 SQL Database](doc/teachsql/teachsql.md)
     ([teachsql.pdf](doc/teachsql/teachsql.pdf))
+
+-   [H. Model-Based Software Engineering with
+    MATLAB/Simulink](doc/teachmatlab/teachmatlab.md)
+    ([teachmatlab.pdf](doc/teachmatlab/teachmatlab.pdf))
 
 You may further start a Bachelor- or Master-degree study program at
 [Hochschule

@@ -127,7 +127,7 @@ RC Calibration
 <img src="rcbuttons.png" id="f-rc-buttons" alt="" /><figcaption>RC Buttons</figcaption>
 </figure>
 
-Rationale [rationale]
+Rationale
 ---------
 
 -   The cars have tolerances in steering, motor propulsion and friction
@@ -145,7 +145,7 @@ Rationale [rationale]
     that all cars can be controlled by the same MAD76 driving stack with
     good performance
 
-Before you start [before-you-start]
+Before you start
 ----------------
 
 1.  If MAD76 is running, switch off the RC by stopping ROS by hitting
@@ -184,7 +184,7 @@ Before you start [before-you-start]
     3.  Wait for the car’s headlights to stop flashing, indicating a
         successful coupling
 
-Calibrate the motor [calibrate-the-motor]
+Calibrate the motor
 -------------------
 
 1.  Calibrate standing still
@@ -194,9 +194,10 @@ Calibrate the motor [calibrate-the-motor]
         Figure <a href="#f-rc-buttons" data-reference-type="ref" data-reference="f-rc-buttons">3</a>
 
     2.  Set the normalized motor signal to zero: $u_n = 0$ by running
-        the ROS command
+        the ROS command, which sends `CarInputs` messages to the topic
+        `/mad/car0/carinputs` with a rate of 10Hz:
 
-            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.0, steering: 0.0}"
+            ros2 topic pub -r 10 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.0, steering: 0.0}"
 
         or by running the Python program `rctest.py` from MAD76 Academy
         [MAD76 I/O Programming](../teachmad76io/teachmad76io.md)
@@ -211,6 +212,11 @@ Calibrate the motor [calibrate-the-motor]
         | `pedals`   | normalized motor signal $u_n \in [-1, 1]$         |
         | `steering` | normalized steering signal $\delta_n \in [-1, 1]$ |
 
+        Or you may run MATLAB/Simulink model `c71_template_car0.slx`
+        from MAD76 Academy [MATLAB/Simulink
+        Modeling](../teachmatlab/teachmatlab.md) and use the sliders in
+        this model.
+
     3.  Adjust RC knob `thrust trim` until the car stops and is in
         standing still
 
@@ -219,30 +225,31 @@ Calibrate the motor [calibrate-the-motor]
 
     1.  Increase $u_n$ in small steps from $0$ to $0.06$
 
-            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.01, steering: 0.0}"
-            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.02, steering: 0.0}"
+            ros2 topic pub -r 10 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.01, steering: 0.0}"
+            ros2 topic pub -r 10 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.02, steering: 0.0}"
 
             ...
 
-        or by running the Python program `rctest.py`. The car should
-        start moving forward at $u_n \approx 0.04$. If not, adjust the
-        RC knob `thrust trim`.
+        or by running the Python program `rctest.py` or by running
+        MATLAB/Simulink model `c71_template_car0.slx` from
+        [MATLAB/Simulink Modeling](../teachmatlab/teachmatlab.md). The
+        car should start moving forward at $u_n \approx 0.04$. If not,
+        adjust the RC knob `thrust trim`.
 
     2.  Decrease $u_n$ in small steps from $0$ to $-0.06$
 
-            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: -0.01, steering: 0.0}"
-            ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: -0.02, steering: 0.0}"
+            ros2 topic pub -r 10 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: -0.01, steering: 0.0}"
+            ros2 topic pub -r 10 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: -0.02, steering: 0.0}"
             ...
 
-        or by running the Python program `rctest.py`. The car should
-        start moving backward at $u_n \approx -0.04$. If not, adjust the
-        RC knob `thrust trim`.
+        The car should start moving backward at $u_n \approx -0.04$. If
+        not, adjust the RC knob `thrust trim`.
 
     3.  Repeat this calibration procedure until the car starts moving
         forward and backward at the same absolute level, e.g.,
         $|u_n| \approx 0.04$
 
-Calibrate the steering [calibrate-the-steering]
+Calibrate the steering
 ----------------------
 
 1.  Set
@@ -255,12 +262,15 @@ Calibrate the steering [calibrate-the-steering]
 
     by running the ROS command
 
-        ros2 topic pub -1 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.06, steering: 0.0}"
+        ros2 topic pub -r 10 /mad/car0/carinputs mbmadmsgs/msg/CarInputs "{carid: 0, pedals: 0.06, steering: 0.0}"
 
     or by running the Python program `rctest.py` from [MAD76 I/O
     Programming](../teachmad76io/teachmad76io.md)
 
         python rctest.py 0 0.06 0.0
+
+    or by running MATLAB/Simulink model `c71_template_car0.slx` from
+    [MATLAB/Simulink Modeling](../teachmatlab/teachmatlab.md).
 
 2.  The car should move on a straight line. If not, adjust RC button
     `steering trim`
