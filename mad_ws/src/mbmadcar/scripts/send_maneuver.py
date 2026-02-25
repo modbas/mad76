@@ -29,7 +29,7 @@ class SendManeuverNode(Node):
   def __init__(self):
     super().__init__('send_maneuver')
     self.carid = -1
-    vmax = 0.5
+    vmax = 0.3
     xref = 0.0
     type = DriveManeuver.TYPE_PATHFOLLOW
     alpha = -1.0

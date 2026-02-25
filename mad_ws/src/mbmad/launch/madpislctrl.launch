@@ -1,0 +1,38 @@
+<launch>
+    <node pkg="mbmadcar" exec="carctrlnode" name="carctrl" namespace="/mad/car0" output="screen">
+        <param name="joySteeringLevel" value="0.7"/>
+        <remap from="/diagnostics" to="diagnostics"/>    
+    </node>
+    <!-- <node pkg="mbmadctrl" exec="carctrlnode" name="carctrl" namespace="/mad/car0" output="screen" launch-prefix="taskset -c 3">
+        <remap from="/diagnostics" to="diagnostics"/>    
+    </node>  -->
+    <node pkg="mbmadctrl" exec="carctrlnode" name="carctrl" namespace="/mad/car1" output="screen" launch-prefix="taskset -c 3">
+        <remap from="/diagnostics" to="diagnostics"/>    
+    </node>
+    <node pkg="mbmadctrl" exec="carctrlnode" name="carctrl" namespace="/mad/car2" output="screen" launch-prefix="taskset -c 3">
+        <remap from="/diagnostics" to="diagnostics"/>    
+    </node>
+    <node pkg="mbmadctrl" exec="carctrlnode" name="carctrl" namespace="/mad/car3" output="screen" launch-prefix="taskset -c 3">
+        <remap from="/diagnostics" to="diagnostics"/>    
+    </node>
+    <!--
+    <node pkg="c46_race_obsaction" exec="c46_race_obsaction" name="carctrl" namespace="/mad/car1" output="screen">
+        <param name="carid" value="1"/>
+        <remap from="/mad/car0/carinputs" to="/mad/car1/carinputs"/>
+        <remap from="/mad/car0/maneuver" to="/mad/car1/maneuver"/>
+        <remap from="/diagnostics" to="diagnostics"/>
+    </node>
+    <node pkg="c46_race_obsaction" exec="c46_race_obsaction" name="carctrl" namespace="/mad/car2" output="screen">
+        <param name="carid" value="2"/>
+        <remap from="/mad/car0/carinputs" to="/mad/car2/carinputs"/>
+        <remap from="/mad/car0/maneuver" to="/mad/car2/maneuver"/>
+        <remap from="/diagnostics" to="diagnostics"/>
+    </node>
+    <node pkg="c46_race_obsaction" exec="c46_race_obsaction" name="carctrl" namespace="/mad/car3" output="screen">
+        <param name="carid" value="3"/>
+        <remap from="/mad/car0/carinputs" to="/mad/car3/carinputs"/>
+        <remap from="/mad/car0/maneuver" to="/mad/car3/maneuver"/>
+        <remap from="/diagnostics" to="diagnostics"/>
+    </node>
+    -->
+</launch>

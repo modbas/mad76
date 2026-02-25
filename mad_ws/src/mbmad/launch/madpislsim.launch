@@ -1,0 +1,21 @@
+<launch>
+    <arg name="rvizconfig" default="$(find-pkg-share mbmadcar)/data/track76.rviz"/>
+    <include file="$(find-pkg-share mbmad)/launch/madpitrack.launch"/>        
+    <include file="$(find-pkg-share mbmad)/launch/madpislctrl.launch"/>
+    <node pkg="mbmadcar" exec="carsimnode" name="carsim" namespace="/mad/car0" output="screen">
+        <param name="x0" value="[ 0.0, 0.6, 0.35, 0.0]"/>
+        <param name="deltaMax" value="22.0"/>
+    </node>
+    <node pkg="mbmadcar" exec="carsimnode" name="carsim" namespace="/mad/car1" output="screen">
+        <param name="x0" value="[ 0.0, 0.4, 0.35, 0.0]"/>        
+    </node>
+    <node pkg="mbmadcar" exec="carsimnode" name="carsim" namespace="/mad/car2" output="screen">
+        <param name="x0" value="[ 0.0, 0.4, 0.37, 0.0]"/>        
+    </node>
+    <node pkg="mbmadcar" exec="carsimnode" name="carsim" namespace="/mad/car3" output="screen">
+        <param name="x0" value="[ 0.0, 0.3, 0.37, 0.0]"/>
+    </node>
+    <node pkg="mbmadmgmt" exec="MgmtServer.py" name="mgmtserver" output="screen"/>
+    <node pkg="mbmadcar" exec="visionsimnode" name="visionsim" output="screen"/> 
+    <node pkg="rviz2" exec="rviz2" name="rviz" args="-d $(var rvizconfig)"/>
+</launch>
