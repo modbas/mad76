@@ -361,7 +361,7 @@ Important Commands
 | `ls -al /home/lab01`                   | list files in home directory of user `lab01`                         |
 | `cd /home/lab01`                       | change to home directory of user `lab01`                             |
 | `cd`                                   | dito                                                                 |
-|                                        | dito (                                                               |
+| `cd ~`                                 | dito (\~is shortcut for home directory)                              |
 | `mkdir src`                            | create directory src in current directory                            |
 | `touch src/myaddress.txt`              | create empty file in directory `src`                                 |
 | `cp src/myaddress.txt youraddress.txt` | copy existing file `src/myaddress.txt` to new file `youraddress.txt` |

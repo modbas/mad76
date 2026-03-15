@@ -56,15 +56,13 @@ MAD76 Kit
 
     -   Motion Control controls the cars on the trajectories
 
-    -   Optional race simulation
-
--   MAD76 Driving Stack is programmed in C++, Python,
+-   MAD76 Driving Stack is programmed in C++, Python
 
 -   MAD76 Driving Stack may run in a distributed computer environment
     (Raspberry Pi and Linux-PCs)
 
 -   Optional Linux-PCs are for race simulation, programming,
-    MATLAB/Simulink simulation, deep neural network training
+    MATLAB/Simulink simulation, AI agents training
 
 -   MAD76 is open source
 
