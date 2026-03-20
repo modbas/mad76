@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Motion'.
  *
- * Model version                  : 11.541
+ * Model version                  : 11.610
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Wed Feb 18 12:57:11 2026
+ * C/C++ source code generated on : Thu Mar 19 19:58:17 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)

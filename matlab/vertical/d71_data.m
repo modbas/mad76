@@ -20,8 +20,10 @@ P_p_J = 3e-6; % moment of inertia (yaw) [ kg*m^2 ]
 P_p_k = 3.4; % gain [ m/s ]
 P_p_T = 120e-3; % time constant [ s ]
 P_p_uTt = 100e-3; % input dead time [ s ] 
-P_p_un_max = 0.19; % maximum motor input signal [ 1 ] 
+P_p_un_max = 0.2; % maximum motor input signal [ 1 ] 
 P_p_un_min = -P_p_un_max; % minimum motor input signal [ 1 ]
+P_p_kd0 = 0.04; % disturbance const. static friction [ ]
+P_p_kd1 = 0.15; % disturbance const. cornering resistance [ ]
 
 % car 10
 % P_p_k = 3.2; % gain [ m/s ]
@@ -87,23 +89,42 @@ P_p(2).karr = [ 0.046 4.1476    0.6845  -50.3300 0.5 ];
     
 
 %% Initial Conditions
-% carid 0 
+% % carid 0 
+% P_p_v0 = 0;     % speed [ m/s ]
+% P_p_s10 = 0.5;  % s1 position [ m ]
+% P_p_s20 = 0.38;  % s2 position [ m ]
+% P_p_psi0 = 0;   % yaw angle [ rad ]
+% % carid 1
+% P_p_s11 = -0.02;  % s1 position [ m ]
+% P_p_s21 = 0.3;  % s2 position [ m ]
+% P_p_psi1 = 70/180*pi;  % yaw angle [ rad ]
+% % carid 2
+% P_p_s12 = 0.3;  % s1 position [ m ]
+% P_p_s22 = 0.35; % s2 position [ m ]
+% P_p_psi2 = 0.0; % yaw angle [ rad ]
+% % carid 3
+% P_p_s13 = 0.2;  % s1 position [ m ]
+% P_p_s23 = 0.15; % s2 position [ m ]
+% P_p_psi3 = 1.1*pi; % yaw angle [ rad ]
+
+%% Starting Grid
+% % carid 0 
 P_p_v0 = 0;     % speed [ m/s ]
-P_p_s10 = 0.5;  % s1 position [ m ]
-P_p_s20 = 0.38;  % s2 position [ m ]
+P_p_s10 = 0.460;  % s1 position [ m ]
+P_p_s20 = 0.350;  % s2 position [ m ]
 P_p_psi0 = 0;   % yaw angle [ rad ]
 % carid 1
-P_p_s11 = -0.02;  % s1 position [ m ]
-P_p_s21 = 0.3;  % s2 position [ m ]
-P_p_psi1 = 70/180*pi;  % yaw angle [ rad ]
+P_p_s11 = 0.435;  % s1 position [ m ]
+P_p_s21 = 0.413;  % s2 position [ m ]
+P_p_psi1 = 0;  % yaw angle [ rad ]
 % carid 2
-P_p_s12 = 0.3;  % s1 position [ m ]
-P_p_s22 = 0.35; % s2 position [ m ]
+P_p_s12 = P_p_s10-0.072;  % s1 position [ m ]
+P_p_s22 = 0.350; % s2 position [ m ]
 P_p_psi2 = 0.0; % yaw angle [ rad ]
 % carid 3
-P_p_s13 = 0.2;  % s1 position [ m ]
-P_p_s23 = 0.15; % s2 position [ m ]
-P_p_psi3 = 1.1*pi; % yaw angle [ rad ]
+P_p_s13 = P_p_s11-0.072;  % s1 position [ m ]
+P_p_s23 = 0.413; % s2 position [ m ]
+P_p_psi3 = 0; % yaw angle [ rad ]
 
 % vc1, s1, s2, psi, dpsi/dt, vc2, path length x
 P_p_xvec0 = [ P_p_v0; P_p_s10; P_p_s20; P_p_psi0; 0; 0; 0 ];

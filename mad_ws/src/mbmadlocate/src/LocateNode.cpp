@@ -83,6 +83,10 @@ public:
     }
     pubOutputsExt = create_publisher<mbmadmsgs::msg::CarOutputsExtList>("caroutputsext", qos);
     pubObs = create_publisher<mbmadmsgs::msg::CarObsList>("carobs", qos);
+    for (uint8_t carid = 0; carid < mbmad::CarParameters::carCnt; ++carid) {
+      pubLap.at(carid) = create_publisher<mbmadmsgs::msg::CarLap>(
+        "/mad/car" + std::to_string(carid) + "/lap", qos);
+    }
     clientWaypoints = create_client<mbmadmsgs::srv::TrackGetWaypoints>("/mad/get_waypoints");
 
     bool success = getSpline(0.5F, 0.01F, true, spline);
@@ -119,6 +123,7 @@ private:
   rclcpp::Subscription<mbmadmsgs::msg::CarOutputsList>::SharedPtr subOutputs;
   rclcpp::Publisher<mbmadmsgs::msg::CarOutputsExtList>::SharedPtr pubOutputsExt;
   rclcpp::Publisher<mbmadmsgs::msg::CarObsList>::SharedPtr pubObs;
+  std::array<rclcpp::Publisher<mbmadmsgs::msg::CarLap>::SharedPtr, mbmad::CarParameters::carCnt> pubLap;
   rclcpp::CallbackGroup::SharedPtr callbackGroup;
   rclcpp::Client<mbmadmsgs::srv::TrackGetWaypoints>::SharedPtr clientWaypoints;
   std::shared_ptr<mbmad::Spline> spline;
@@ -163,6 +168,9 @@ private:
       if (msgExt.carid < msgExtList.list.size()) {
         msgExtList.list.at(msgExt.carid) = msgExt;
         msgObsList.list.at(msgExt.carid) = msgObs;
+      }
+      if (msgExt.carid < pubLap.size() && car.second.isNewLap()) {
+        pubLap.at(msgExt.carid)->publish(car.second.messageLap());
       }
     }
     cpSeq.update(CheckpointGraph::Checkpoint::LocatePublish);

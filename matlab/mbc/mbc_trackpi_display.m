@@ -17,7 +17,7 @@ clf;
 set(gca, 'Color', config.figure.bgcolor);
 hold on;
 grid on;
-fnplt(this.opt.pp, config.track.ideallinecolor);
+%fnplt(this.opt.pp, config.track.ideallinecolor);
 fnplt(this.right.pp, config.track.rightcurbcolor);
 fnplt(this.left.pp, config.track.leftcurbcolor);
 fnplt(this.center.pp, config.track.centercolor);

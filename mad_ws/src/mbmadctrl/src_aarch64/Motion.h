@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Motion'.
  *
- * Model version                  : 11.541
+ * Model version                  : 11.610
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Wed Feb 18 12:57:11 2026
+ * C/C++ source code generated on : Thu Mar 19 19:58:17 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -47,6 +47,7 @@ typedef struct {
   real32_T UnitDelay3_DSTATE[2];       /* '<S7>/Unit Delay3' */
   real32_T UnitDelay2_DSTATE[2];       /* '<S7>/Unit Delay2' */
   real32_T UnitDelay1_DSTATE[2];       /* '<S7>/Unit Delay1' */
+  real32_T UnitDelay4_DSTATE[2];       /* '<S7>/Unit Delay4' */
   uint32_T state[625];                 /* '<S6>/PolicyWrapper' */
   boolean_T policy_not_empty;          /* '<S6>/PolicyWrapper' */
 } DW_Motion_T;

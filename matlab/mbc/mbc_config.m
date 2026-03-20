@@ -6,6 +6,8 @@ function config = mbc_config()
 % Copyright (c) 2015, Frank Traenkle
 config.track.debug = 0;
 config.figure.bgcolor = 0.3 * ones(1, 3);
+config.figure.bgcolorcrash = [ 1, 1, 0 ];
+config.figure.video = false;
 config.track.color = 'k';
 config.track.bgcolor = zeros(1, 3);
 config.track.bordercolor = 'w';

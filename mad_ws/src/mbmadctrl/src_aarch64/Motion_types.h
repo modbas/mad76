@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Motion'.
  *
- * Model version                  : 11.541
+ * Model version                  : 11.610
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Wed Feb 18 12:57:11 2026
+ * C/C++ source code generated on : Thu Mar 19 19:58:17 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: ARM Compatible->ARM Cortex-A (64-bit)
@@ -103,20 +103,20 @@ typedef struct tag_4ECu3HFT3NowpyqvgWxJAC cell_wrap_12_Motion_T;
 
 #endif                                 /* typedef_cell_wrap_12_Motion_T */
 
-#ifndef struct_tag_v04emYtH0gA9oC4XEZTQ9G
-#define struct_tag_v04emYtH0gA9oC4XEZTQ9G
+#ifndef struct_tag_tBI4JMdkW6NGogk0EB9ZvF
+#define struct_tag_tBI4JMdkW6NGogk0EB9ZvF
 
-struct tag_v04emYtH0gA9oC4XEZTQ9G
+struct tag_tBI4JMdkW6NGogk0EB9ZvF
 {
-  real32_T f1[97];
+  real32_T f1[99];
 };
 
-#endif                                 /* struct_tag_v04emYtH0gA9oC4XEZTQ9G */
+#endif                                 /* struct_tag_tBI4JMdkW6NGogk0EB9ZvF */
 
 #ifndef typedef_cell_wrap_15_Motion_T
 #define typedef_cell_wrap_15_Motion_T
 
-typedef struct tag_v04emYtH0gA9oC4XEZTQ9G cell_wrap_15_Motion_T;
+typedef struct tag_tBI4JMdkW6NGogk0EB9ZvF cell_wrap_15_Motion_T;
 
 #endif                                 /* typedef_cell_wrap_15_Motion_T */
 
