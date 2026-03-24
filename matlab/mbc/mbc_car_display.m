@@ -36,6 +36,9 @@ if gcf().Number ~= 1
     figure(1);
 end
 
+ret = 0;
+    
+
 if isempty(carstruct) || length(carstruct) < carid+1 || init
     figure(1);
     carstruct{carid+1}.car = patch([ 0; P_p_c_1; P_p_c_1; 0 ], [ 0; 0; P_p_c_2; P_p_c_2 ], ...
@@ -115,9 +118,7 @@ if s1~=0 || s2~=0 || psi~=0 % avoid display at origin during Simulink init
     
     %% Car trace
     carstruct{carid+1}.trace = mbc_car_trace(t, s1, s2, v, config.cartrace, carstruct{carid+1}.trace, config.car.colors{carid+1});
-    
-    ret = 0;
-    
+        
     %% Crash: flash background
     if leadcrash
        set(gca, 'Color', config.figure.bgcolorcrash);
