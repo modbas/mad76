@@ -7,9 +7,9 @@
  *
  * Code generated for Simulink model 'Motion'.
  *
- * Model version                  : 11.610
+ * Model version                  : 11.624
  * Simulink Coder version         : 25.1 (R2025a) 21-Nov-2024
- * C/C++ source code generated on : Thu Mar 19 19:52:56 2026
+ * C/C++ source code generated on : Mon Mar 30 13:18:14 2026
  *
  * Target selection: ert.tlc
  * Embedded hardware selection: Intel->x86-64 (Linux 64)
@@ -23,22 +23,22 @@
 #include "Motion_types.h"
 #include "Motion.h"
 
-extern void microKernel18124090737296182265(int32_T K, const real32_T *A,
+extern void microKernel8852179518563533973(int32_T K, const real32_T *A, int32_T
+  LDA, const real32_T *B, real32_T *C);
+extern void microKernel11657995306558833888(int32_T K, const real32_T *A,
   int32_T LDA, const real32_T *B, real32_T *C);
-extern void microKernel3791100967271251290(int32_T K, const real32_T *A, int32_T
-  LDA, const real32_T *B, real32_T *C);
-extern void microKernel9801792490683380668(int32_T K, const real32_T *A, int32_T
-  LDA, const real32_T *B, real32_T *C);
-extern void macroKernel10497874968216590063(int32_T M, int32_T K, int32_T N,
+extern void microKernel13366152722203212406(int32_T K, const real32_T *A,
+  int32_T LDA, const real32_T *B, real32_T *C);
+extern void macroKernel18082550786003172829(int32_T M, int32_T K, int32_T N,
   const real32_T *A, int32_T LDA, const real32_T *B, int32_T LDB, real32_T *C,
   int32_T LDC);
-extern void matrixMultiply10497874968216590063(int32_T M, int32_T K, int32_T N,
+extern void matrixMultiply18082550786003172829(int32_T M, int32_T K, int32_T N,
   int32_T blockSizeM, int32_T blockSizeK, int32_T blockSizeN, const real32_T *A,
   const real32_T *B, real32_T *C);
-extern void macroKernel10102573564308770940(int32_T M, int32_T K, int32_T N,
+extern void macroKernel17489594099368619836(int32_T M, int32_T K, int32_T N,
   const real32_T *A, int32_T LDA, const real32_T *B, int32_T LDB, real32_T *C,
   int32_T LDC);
-extern void matrixMultiply10102573564308770940(int32_T M, int32_T K, int32_T N,
+extern void matrixMultiply17489594099368619836(int32_T M, int32_T K, int32_T N,
   int32_T blockSizeM, int32_T blockSizeK, int32_T blockSizeN, const real32_T *A,
   const real32_T *B, real32_T *C);
 extern int32_T div_nde_s32_floor(int32_T numerator, int32_T denominator);

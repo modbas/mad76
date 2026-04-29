@@ -9,7 +9,10 @@
     <script>
         const prec = 3;
         const maxpos = 20;
-        const maxposscore = 10;
+        const scoremax = 10;
+        const scoremin = 0;
+        const scoretimemin = 4;
+        const scoretimemax = 6;
         lapctr = 0;
 
         async function fetchData() {
@@ -84,11 +87,9 @@
                     document.getElementById('driver' + istr).textContent = data[i].driver;
                     document.getElementById('laptime' + istr).textContent = data[i].laptime.toFixed(prec);
                     document.getElementById('avgspeed' + istr).textContent = data[i].avgspeed.toFixed(prec);
-                    score = 0;
-                    if (i < maxposscore) {
-                        score = maxposscore - i;
-                    }
-                    document.getElementById('score' + istr).textContent = score;
+                    score = scoremax - (data[i].laptime - scoretimemin) / (scoretimemax - scoretimemin) * (scoremax - scoremin);
+                    score = Math.max(scoremin, Math.min(scoremax, score));
+                    document.getElementById('score' + istr).textContent = score.toFixed(prec);
                 }
             }
             for (let i = data.length; i < maxpos; ++i) {

@@ -14,9 +14,10 @@ ds2 = 10e-3; % find point on starting line
 dx = 20e-3; % resolution of resulting spline
 
 p = logsout.get('s').Values.Data;
+p = reshape(p, [2 , length(p)])';
 
 % search for starting point
-s0 = [ 0.4 , 0.373 ];
+s0 = [ 0.466 , 0.378 ];
 
 idx1list = find(abs(p(:,1) - s0(1)) <= ds1 & abs(p(:,2) - s0(2)) <= ds2);
 idx1 = idx1list(1);

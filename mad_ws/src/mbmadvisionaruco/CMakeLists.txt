@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 project(mbmadvisionaruco)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
+  add_compile_options(-Wall -Wextra -Wpedantic -march=native)
 endif()
 
 # find dependencies
@@ -40,20 +40,20 @@ target_link_libraries(visionnode dl ${Boost_LIBRARIES} ${OpenCV_LIBRARIES})
 install(TARGETS visionnode
   DESTINATION lib/${PROJECT_NAME})
 
-add_library(visioncomponent SHARED src/VisionComponent.cpp src/Frame.hpp)
-target_include_directories(visioncomponent PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>
-  ${OpenCV_INCLUDE_DIRS}
-  ${rclcpp_INCLUDE_DIRS}
-  ${rclcpp_components_INCLUDE_DIRS}
-  )
-target_compile_features(visioncomponent PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-ament_target_dependencies(visioncomponent rclcpp std_msgs diagnostic_msgs diagnostic_updater sensor_msgs image_transport cv_bridge mbmad mbmadmsgs mbsafe mbsafemsgs)
-target_link_libraries(visioncomponent dl ${Boost_LIBRARIES} ${OpenCV_LIBRARIES})
-rclcpp_components_register_nodes(visioncomponent "mbmad::Vision")
-install(TARGETS visioncomponent
-  LIBRARY DESTINATION lib)
+# add_library(visioncomponent SHARED src/VisionComponent.cpp src/Frame.hpp)
+# target_include_directories(visioncomponent PUBLIC
+#   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+#   $<INSTALL_INTERFACE:include>
+#   ${OpenCV_INCLUDE_DIRS}
+#   ${rclcpp_INCLUDE_DIRS}
+#   ${rclcpp_components_INCLUDE_DIRS}
+#   )
+# target_compile_features(visioncomponent PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+# ament_target_dependencies(visioncomponent rclcpp std_msgs diagnostic_msgs diagnostic_updater sensor_msgs image_transport cv_bridge mbmad mbmadmsgs mbsafe mbsafemsgs)
+# target_link_libraries(visioncomponent dl ${Boost_LIBRARIES} ${OpenCV_LIBRARIES})
+# rclcpp_components_register_nodes(visioncomponent "mbmad::Vision")
+# install(TARGETS visioncomponent
+#   LIBRARY DESTINATION lib)
 
 add_executable(create_board src/create_board.cpp)
 target_include_directories(create_board PUBLIC

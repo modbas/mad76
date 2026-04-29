@@ -25,8 +25,8 @@
 #include "mbmadmsgs/msg/drive_maneuver.hpp"
 #include "mbmadmsgs/msg/ctrl_reference.hpp"
 #include "mbmadmsgs/srv/track_get_waypoints.hpp"
-#include "mbmad/CheckpointGraph.hpp"
 #include "mbmad/CarParameters.hpp"
+#include "mbmad/CheckpointGraph.hpp"
 extern "C" {
 #include "Motion.h"
 }

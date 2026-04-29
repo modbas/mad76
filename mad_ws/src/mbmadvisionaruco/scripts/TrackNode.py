@@ -108,6 +108,9 @@ class TrackNode(Node):
                 plt.plot(sr[0,0], sr[0,1], 'ro')             
                 plt.show()
                 self.get_logger().info('computeWaypoints done')            
+                sopt1 = rclpy.parameter.Parameter('sopt1', rclpy.Parameter.Type.DOUBLE_ARRAY, [])
+                sopt2 = rclpy.parameter.Parameter('sopt2', rclpy.Parameter.Type.DOUBLE_ARRAY, [])
+                self.set_parameters([sopt1, sopt2])
                 self.__transformWaypoints(sl, self.__transformFutureCallbackSl)
                 self.__transformWaypoints(sr, self.__transformFutureCallbackSr)
                 self.curbs_available = True            

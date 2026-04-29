@@ -18,6 +18,7 @@
 #include <cstdint>
 #include <unordered_map>
 #include <thread>
+#include <chrono>
 #include <boost/log/core.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/trivial.hpp>
@@ -224,12 +225,18 @@ private:
 
     auto result = clientWaypoints->async_send_request(req);
     // Wait for the result.
-    if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), result) == rclcpp::FutureReturnCode::SUCCESS)
-    {
+    const auto timeout = 30s;
+    const double timeout_s = std::chrono::duration_cast<std::chrono::duration<double>>(timeout).count();
+    const auto rc = rclcpp::spin_until_future_complete(this->get_node_base_interface(), result, timeout);
+    if (rc == rclcpp::FutureReturnCode::SUCCESS) {
       auto resp = result.get();
       spline = std::make_shared<Spline>(resp->breaks, resp->s1, resp->s2, resp->segments, periodic);
     } else {
-      RCLCPP_ERROR(get_logger(), "Failed to call service /mad/get_waypoints");
+      if (rc == rclcpp::FutureReturnCode::TIMEOUT) {
+        RCLCPP_ERROR(get_logger(), "Timeout waiting for /mad/get_waypoints response after %.1fs", timeout_s);
+      } else {
+        RCLCPP_ERROR(get_logger(), "Interrupted while waiting for /mad/get_waypoints response");
+      }
       return false;
     }
     return true;

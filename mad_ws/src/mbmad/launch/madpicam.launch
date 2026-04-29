@@ -21,8 +21,15 @@
     <node pkg="mbmadvisionaruco" exec="setexposuretime.sh" name="workaround" output="screen">
     </node>
     <node pkg="mbmadvisionaruco" exec="visionnode" name="vision" output="screen" launch-prefix="taskset -c 1,2">
-        <param name="HeightCompensation" value="[-0.01, 0.000, 0.001, 0.008]"/>
         <param name="DisplayImage" value="true"/>
+        <param name="HeightCompensation" value="[0.000, 0.006, -0.006, 0.006]"/>
         <remap from="/diagnostics" to="diagnostics"/>
-    </node>    
+    </node>
+    <!--
+        <param name="FrameMarkersId" value="[4, 7, 6]"/>
+        <param name="FrameMarkersS1" value="[0.0, 0.80, 0.0]"/>        
+        <param name="FrameMarkersS2" value="[0.0, 0.0, 0.45]"/>  
+        -->
+        
+        
 </launch>

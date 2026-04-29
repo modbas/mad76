@@ -53,6 +53,9 @@ public:
     detectorParams = cv::aruco::DetectorParameters::create();
     detectorParams->markerBorderBits = 1;
 
+    // enable OpenCV optimized SIMD paths
+    cv::setUseOptimized(true);
+
     cpSeq.registerMonitor(cpJitterMonCameraAcquisition);
     cpSeq.registerMonitor(cpJitterMonReceive);
     cpSeq.registerMonitor(cpDeadlineMonReceive);
@@ -72,7 +75,7 @@ public:
     // ROS2 param HeightCompensation
     heightCompensation = declare_parameter<std::vector<double>>("HeightCompensation", heightCompensation);
     if (heightCompensation.size() != 4) {
-      RCLCPP_ERROR(get_logger(), "Invalid height compensation configuration: number of height compensations must be 4: left, right, bottom, top.");
+      RCLCPP_ERROR(get_logger(), "Invalid height compensation configuration: number of height compensations must be 4: bottom, top, left, right.");
       return false;
     }
 
@@ -83,14 +86,18 @@ public:
     displayImage = declare_parameter<bool>("DisplayImage", displayImage);
     
     // frame markers parameters
-    std::vector<int64> frameMarkersId = {4, 7, 6, 5};
+    std::vector<int64> frameMarkersId = {4, 7, 5, 6};
+    std::vector<double> frameMarkersS1 = {0.0, 0.80, 0.80, 0.0};
+    std::vector<double> frameMarkersS2 = {0.0, 0.0, 0.45, 0.45};
+    /*
+    std::vector<int64> frameMarkersId = {4, 7, 6};
+    std::vector<double> frameMarkersS1 = {0.0, 0.80, 0.0};
+    std::vector<double> frameMarkersS2 = {0.0, 0.0, 0.45};
+    */
+   
     frameMarkersId = declare_parameter<std::vector<int64>>("FrameMarkersId", frameMarkersId);
     carMaxId = (*std::min_element(frameMarkersId.begin(), frameMarkersId.end())) - 1;
-
-    std::vector<double> frameMarkersS1 = {0.0, 0.80, 0.0, 0.80};
-    
     frameMarkersS1 = declare_parameter<std::vector<double>>("FrameMarkersS1", frameMarkersS1);
-    std::vector<double> frameMarkersS2 = {0.0, 0.0, 0.45, 0.45};
     frameMarkersS2 = declare_parameter<std::vector<double>>("FrameMarkersS2", frameMarkersS2);
 
     if (frameMarkersId.size() != 3 && frameMarkersId.size() != 4) {
@@ -102,21 +109,15 @@ public:
       return false;
     }
 
-    cv::Vec2f heightCompensation1(heightCompensation[0], heightCompensation[1]);
-    cv::Vec2f heightCompensation2(heightCompensation[2], heightCompensation[3]);
+    cv::Vec2f heightCompensationBottomTop(heightCompensation[0], heightCompensation[1]);
+    cv::Vec2f heightCompensationLeftRight(heightCompensation[2], heightCompensation[3]);
 
-    frames.push_back(std::make_shared<mbmad::Frame>(
+    frame = std::make_shared<mbmad::Frame>(
       frameMarkersId[0], cv::Point2f(frameMarkersS1[0], frameMarkersS2[0]), 
       frameMarkersId[1], cv::Point2f(frameMarkersS1[1], frameMarkersS2[1]), 
       frameMarkersId[2], cv::Point2f(frameMarkersS1[2], frameMarkersS2[2]),
-      heightCompensation1, heightCompensation2));
-    if (frameMarkersId.size() == 4) {
-      frames.push_back(std::make_shared<mbmad::Frame>(
-        frameMarkersId[3], cv::Point2f(frameMarkersS1[3], frameMarkersS2[3]), 
-        frameMarkersId[2], cv::Point2f(frameMarkersS1[2], frameMarkersS2[2]), 
-        frameMarkersId[1], cv::Point2f(frameMarkersS1[1], frameMarkersS2[1]),
-        heightCompensation1, heightCompensation2));
-    }
+      frameMarkersId[3], cv::Point2f(frameMarkersS1[3], frameMarkersS2[3]),
+      heightCompensationBottomTop, heightCompensationLeftRight);
     
     rclcpp::QoS qos { rclcpp::KeepLast(1) };
     //qos.reliable();
@@ -144,10 +145,9 @@ private:
   const int detectBoardCtrMax = 100;
   const uint32_t displayImageDownsample = 4;
   int carMaxId = 3;
-  //std::vector<double> heightCompensation = {-0.015, 0.008, -0.014, 0.022};
   
   // ROS2 params
-  std::vector<double> heightCompensation = {-0.004, 0.0, 0.0, 0.0};
+  std::vector<double> heightCompensation = {0.0, 0.0, 0.0, 0.0};
   cv::Size imageSize = cv::Size(860, 645);
   bool displayImage = false;
 
@@ -169,7 +169,7 @@ private:
   
   cv::Ptr<cv::aruco::Dictionary> dictionary;
   cv::Ptr<cv::aruco::DetectorParameters> detectorParams;    
-  std::vector<std::shared_ptr<mbmad::Frame>> frames;
+  std::shared_ptr<mbmad::Frame> frame;
 
   mbsafe::CheckpointSequence cpSeq { *this, CheckpointGraph::lastCheckpoint };
   mbsafe::CheckpointJitterMonitor cpJitterMonCameraAcquisition { *this, cpSeq,
@@ -194,6 +194,14 @@ private:
   diagnostic_updater::Updater diagUpdater { this, 1.0 };
   uint64_t seqctr = 0ULL;
 
+  // store vectors globally to avoid reallocations
+  std::vector<int> ids;
+  std::vector<std::vector<cv::Point2f>> corners;
+  std::vector<std::vector<cv::Point2f>> rejected;
+  std::vector<cv::Point2f> points;
+  std::vector<Frame::dtype> psis;
+
+
   void camerainfoCallback(const sensor_msgs::msg::CameraInfo::SharedPtr msg)
   {
     if (!camCalibDone) {
@@ -201,7 +209,7 @@ private:
       cv::Mat distCoeffs = cv::Mat(1, 5, CV_64F, (void *)msg->d.data()).clone();
       cv::initUndistortRectifyMap(camMatrix, distCoeffs, cv::Mat(),
                                   camMatrix, imageSize,
-                                  CV_32FC1, undistortMap1, undistortMap2);
+                                  CV_16SC2, undistortMap1, undistortMap2);
   #ifdef _MB_DEBUG
       std::cout << "camMatrix=" << camMatrix << std::endl;
       std::cout << "distCoeffs=" << distCoeffs << std::endl;
@@ -265,7 +273,7 @@ private:
       for (std::size_t i=0; i<request->s1.size(); ++i) {
         const cv::Point2f point(request->s1[i], request->s2[i]);
         cv::Point2f pointW;
-        Frame::avgPoint2Point(frames, point, pointW);
+        frame->point2point(point, pointW);
         response->s1.push_back(pointW.x);
         response->s2.push_back(pointW.y);
       }
@@ -292,10 +300,7 @@ private:
     std::vector< std::vector< cv::Point2f > > corners, rejected;
          
     cv::aruco::detectMarkers(img, dictionary, corners, ids, detectorParams, rejected);
-    boardCalibDone = true;
-    for (auto frame: frames) {
-      boardCalibDone &= frame->computeFrame(ids, corners);
-    }
+    boardCalibDone = frame->computeFrame(ids, corners);
     if (boardCalibDone) {
       if (srvTransform == nullptr) {
           srvTransform = this->create_service<mbmadmsgs::srv::VisionTransformPoints>("transform_points",
@@ -306,20 +311,26 @@ private:
 
   void detectMarkers(const cv::Mat& img)
   {
-    std::vector< int > ids;
-    std::vector< std::vector< cv::Point2f > > corners, rejected;
-    std::vector<cv::Point2f> points;
-    std::vector<Frame::dtype> psis;
-
+    ids.clear();
+    corners.clear();
+    rejected.clear();
+    points.clear();
+    psis.clear();
     
     // detect markers and estimate pose
     cv::aruco::detectMarkers(img, dictionary, corners, ids, detectorParams, rejected);
+
+    // for better performance, prereserve vector sizes based on number of detected markers
+    points.reserve(ids.size());
+    psis.reserve(ids.size());
         
     for (std::size_t i = 0; i < ids.size(); ++i) {
+      std::array<cv::Point2f, 4> cornersW;
+      frame->corners2corners(corners[i], cornersW);
       cv::Point2f point;
-      Frame::avgCorners2Point(frames, corners[i], point);
+      frame->corners2point(cornersW, point);
       points.push_back(point);
-      psis.push_back(Frame::avgCorners2Yawangle(frames, corners[i], point));
+      psis.push_back(frame->corners2yawangle(cornersW));
     }
 
     mbmadmsgs::msg::CarOutputsList msg;      
@@ -329,13 +340,13 @@ private:
         if (ids[i] <= carMaxId) {
           mbmadmsgs::msg::CarOutputs carOutputs;
           cv::Point2f pointCompensated;
-          frames[0]->compensateHeight(points[i], pointCompensated);
+          frame->compensateHeight(points[i], pointCompensated);
           carOutputs.carid = ids[i];
           carOutputs.s.at(0) = pointCompensated.x;
           carOutputs.s.at(1) = pointCompensated.y;
           carOutputs.psi = psis[i];
           carOutputs.prob = 1.0f;
-          msg.list.push_back(carOutputs);
+          msg.list.push_back(std::move(carOutputs));
         }
 #ifdef _MB_DEBUG
         std::cout << "i=" << i << " id=" << ids[i] << " s=" << points[i] << " psi=" << psis[i]*180.0f/M_PIf << " corners=" << corners[i] << std::endl;
